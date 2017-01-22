@@ -6,7 +6,6 @@ import (
 	"github.com/cloudfoundry-community/gautocloud"
 	"golang.org/x/oauth2"
 	. "github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
-	"fmt"
 )
 
 func init() {
@@ -37,7 +36,6 @@ func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
 		return nil, err
 	}
 	fSchema := schema.(Oauth2Schema)
-	fmt.Println(fSchema)
 	config := &oauth2.Config{
 		ClientID: fSchema.ClientId,
 		ClientSecret: fSchema.ClientSecret,
@@ -47,7 +45,6 @@ func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
 			TokenURL: fSchema.TokenUri,
 		},
 	}
-	fmt.Println(config)
 	return config, nil
 }
 func (c Oauth2ConfigConnector) Schema() interface{} {

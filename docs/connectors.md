@@ -1,5 +1,3 @@
-{http://localhost/authUri http://localhost/userInfo http://localhost/tokenUri myId mySecret [grant1 grant2] [scope1 scope2]}
-&{myId mySecret {http://localhost/authUri http://localhost/tokenUri}  [scope1 scope2]}
 ## Connectors
 
 **Tip**: To load all default connectors import: `_ "github.com/cloudfoundry-community/gautocloud/connectors/all"`
