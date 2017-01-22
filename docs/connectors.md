@@ -1,3 +1,5 @@
+{http://localhost/authUri http://localhost/userInfo http://localhost/tokenUri myId mySecret [grant1 grant2] [scope1 scope2]}
+&{myId mySecret {http://localhost/authUri http://localhost/tokenUri}  [scope1 scope2]}
 ## Connectors
 
 **Tip**: To load all default connectors import: `_ "github.com/cloudfoundry-community/gautocloud/connectors/all"`
@@ -16,6 +18,9 @@
   - [Mysql - Client](#mysql---client)
   - [Mysql - Gorm](#mysql---gorm)
   - [Mysql - Raw](#mysql---raw)
+- [Oauth2](#oauth2)
+  - [Oauth2 - Config](#oauth2---config)
+  - [Oauth2 - Raw](#oauth2---raw)
 - [Oracle](#oracle)
   - [Oracle - Raw](#oracle---raw)
 - [Postgresql](#postgresql)
@@ -574,6 +579,119 @@ func main() {
         svcSlice = make([]dbtype.MysqlDatabase,0)
         for _, elt := range data {
                 svcSlice = append(svcSlice, elt.(dbtype.MysqlDatabase))
+        }
+}
+```
+
+
+### Oauth2
+
+All of these connectors responds on:
+- Regex name: `.*oauth.*`
+- Regex tags:
+  - `oauth.*`
+  - `sso`
+
+
+#### Oauth2 - Config
+
+- **Id**: `config:oauth2`
+- **Given type**: `*oauth2.Config`
+
+**Tip**: You can load all based *Auth Config* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/auth/config"`
+
+##### Type documentation
+The type `*oauth2.Config` can be found in package: `golang.org/x/oauth2`.
+
+You can find documentation related to package `golang.org/x/oauth2` here: [https://golang.org/x/oauth2](https://golang.org/x/oauth2).
+
+
+##### Example
+```go
+package main
+import (
+        "github.com/cloudfoundry-community/gautocloud"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/auth/config/oauth2"
+        "golang.org/x/oauth2"
+)
+func main() {
+        var err error
+        // As single element
+        var svc *oauth2.Config
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("config:oauth2", &svc)
+        // or
+        data, err := gautocloud.GetFirst("config:oauth2")
+        svc = data.(*oauth2.Config)
+        // ----------------------
+        // as slice of elements
+        var svcSlice []*oauth2.Config
+        err = gautocloud.Inject(&svcSlice)
+        // or
+        err = gautocloud.InjectFromId("config:oauth2", &svcSlice)
+        // or
+        data, err := gautocloud.GetAll("config:oauth2")
+        svcSlice = make([]*oauth2.Config,0)
+        for _, elt := range data {
+                svcSlice = append(svcSlice, elt.(*oauth2.Config))
+        }
+}
+```
+
+#### Oauth2 - Raw
+
+- **Id**: `raw:oauth2`
+- **Given type**: `schema.Oauth2Schema`
+
+**Tip**: You can load all based *Auth Raw* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/auth"`
+
+##### Type documentation
+The type `schema.Oauth2Schema` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/auth/schema`.
+
+This type refers to this structure:
+```go
+type Oauth2Schema struct { 
+        AuthorizationUri string 
+        UserInfoUri string 
+        TokenUri string 
+        ClientId string 
+        ClientSecret string 
+        GrantTypes []string 
+        Scopes []string 
+}
+```
+
+
+##### Example
+```go
+package main
+import (
+        "github.com/cloudfoundry-community/gautocloud"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/auth"
+        "github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
+)
+func main() {
+        var err error
+        // As single element
+        var svc schema.Oauth2Schema
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:oauth2", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:oauth2")
+        svc = data.(schema.Oauth2Schema)
+        // ----------------------
+        // as slice of elements
+        var svcSlice []schema.Oauth2Schema
+        err = gautocloud.Inject(&svcSlice)
+        // or
+        err = gautocloud.InjectFromId("raw:oauth2", &svcSlice)
+        // or
+        data, err := gautocloud.GetAll("raw:oauth2")
+        svcSlice = make([]schema.Oauth2Schema,0)
+        for _, elt := range data {
+                svcSlice = append(svcSlice, elt.(schema.Oauth2Schema))
         }
 }
 ```

@@ -20,6 +20,7 @@ import (
 	csmtp "github.com/cloudfoundry-community/gautocloud/connectors/smtp/client"
 	cs3minio "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/minio"
 	cs3goamz "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/goamz"
+	coauth2 "github.com/cloudfoundry-community/gautocloud/connectors/auth/config/oauth2"
 	"gopkg.in/redis.v5"
 	"gopkg.in/mgo.v2"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mongodb"
@@ -29,6 +30,7 @@ import (
 	"github.com/goamz/goamz/s3"
 	"log"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
+	"golang.org/x/oauth2"
 )
 
 var _ = Describe("Connectors integration", func() {
@@ -66,6 +68,13 @@ var _ = Describe("Connectors integration", func() {
 		Port: 27017,
 		Target: "test",
 	}))
+	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
+	os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
+	os.Setenv("SSO_CLIENT_ID", "myId")
+	os.Setenv("SSO_CLIENT_SECRET", "mySecret")
+	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
+	os.Setenv("SSO_SCOPES", "scope1,scope2")
 	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
 		Type: "redis",
 		User: "redis",
@@ -701,6 +710,94 @@ var _ = Describe("Connectors integration", func() {
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
+				})
+			})
+
+		})
+	})
+	Context("Oauth2", func() {
+		Context("config", func() {
+			Context("By injection", func() {
+				It("should inject a oauth2.Config when use Get", func() {
+					var svc *oauth2.Config
+					err := gautocloud.Inject(&svc)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
+				})
+				It("should inject a slice of oauth2.Config when use Get and slice", func() {
+					var svcs []*oauth2.Config
+					err := gautocloud.Inject(&svcs)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(len(svcs)).Should(Equal(1))
+					svc := svcs[0]
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
+				})
+				It("should inject a oauth2.Config when use GetWithId", func() {
+					var svc *oauth2.Config
+					err := gautocloud.InjectFromId(coauth2.Oauth2ConfigConnector{}.Id(), &svc)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
+				})
+				It("should inject a slice of oauth2.Config when use GetWithId and slice", func() {
+					var svcs []*oauth2.Config
+					err := gautocloud.InjectFromId(coauth2.Oauth2ConfigConnector{}.Id(), &svcs)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(len(svcs)).Should(Equal(1))
+					svc := svcs[0]
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
+				})
+			})
+			Context("By return", func() {
+				It("should return a oauth2.Config when use GetFirst", func() {
+					var svc *oauth2.Config
+					data, err := gautocloud.GetFirst(coauth2.Oauth2ConfigConnector{}.Id())
+					Expect(err).ToNot(HaveOccurred())
+					svc = data.(*oauth2.Config)
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
+				})
+				It("should return a slice of oauth2.Config when use GetAll", func() {
+					var svc *oauth2.Config
+					data, err := gautocloud.GetAll(coauth2.Oauth2ConfigConnector{}.Id())
+					Expect(err).ToNot(HaveOccurred())
+					Expect(len(data)).Should(Equal(1))
+					svc = data[0].(*oauth2.Config)
+					Expect(svc).ShouldNot(BeNil())
+
+					Expect(svc.Scopes).Should(BeEquivalentTo([]string{"scope1", "scope2"}))
+					Expect(svc.ClientSecret).Should(Equal("mySecret"))
+					Expect(svc.ClientID).Should(Equal("myId"))
+					Expect(svc.Endpoint.AuthURL).Should(Equal("http://localhost/authUri"))
+					Expect(svc.Endpoint.TokenURL).Should(Equal("http://localhost/tokenUri"))
 				})
 			})
 

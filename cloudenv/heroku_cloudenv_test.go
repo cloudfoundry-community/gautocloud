@@ -47,9 +47,9 @@ var _ = Describe("HerokuCloudenv", func() {
 			services := cloudEnv.GetServicesFromTags([]string{"MY"})
 			Expect(services).Should(HaveLen(1))
 			Expect(services[0].Credentials).Should(HaveLen(3))
-			Expect(services[0].Credentials["host"]).Should(Equal("host.com"))
-			Expect(services[0].Credentials["user"]).Should(Equal("user"))
-			Expect(services[0].Credentials["password"]).Should(Equal("password"))
+			Expect(services[0].Credentials["mysql_database_host"]).Should(Equal("host.com"))
+			Expect(services[0].Credentials["mysql_database_user"]).Should(Equal("user"))
+			Expect(services[0].Credentials["mysql_database_password"]).Should(Equal("password"))
 		})
 		It("should give correct service with uri when giving a tag which target an env var", func() {
 			services := cloudEnv.GetServicesFromTags([]string{"S3"})

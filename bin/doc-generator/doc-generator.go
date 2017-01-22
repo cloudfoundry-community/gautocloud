@@ -76,6 +76,13 @@ func before() {
 		Port: 1433,
 		Target: "test",
 	}))
+	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
+	os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
+	os.Setenv("SSO_CLIENT_ID", "myId")
+	os.Setenv("SSO_CLIENT_SECRET", "mySecret")
+	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
+	os.Setenv("SSO_SCOPES", "scope1,scope2")
 	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
 		Type: "mongo",
 		Port: 27017,

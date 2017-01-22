@@ -10,5 +10,7 @@ import (
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/smtp/client"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/auth"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/auth/config"
 )
 

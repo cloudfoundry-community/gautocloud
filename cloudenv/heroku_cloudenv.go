@@ -75,7 +75,7 @@ func (c HerokuCloudEnv) getServicesFromPrefix(prefix string) []Service {
 			services[name].Credentials["uri"] = c.extractCredValue(splitKey, envVar.Value)
 			continue
 		}
-		services[name].Credentials[splitKey[len(splitKey) - 1]] = c.extractCredValue(splitKey[toSplitPos:], envVar.Value)
+		services[name].Credentials[strings.Join(splitKey[toSplitPos:], "_")] = c.extractCredValue(splitKey[toSplitPos:], envVar.Value)
 
 	}
 	sliceServices := make([]Service, 0)
