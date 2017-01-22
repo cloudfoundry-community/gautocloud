@@ -343,7 +343,7 @@ func (l *Loader) load(connector connectors.Connector) []StoredService {
 	storedServices := make([]StoredService, 0)
 	cloudEnv := l.getFirstValidCloudEnv()
 	services = append(services, cloudEnv.GetServicesFromTags(connector.Tags())...)
-	l.addService(services, cloudEnv.GetServicesFromName(connector.Name())...)
+	services = l.addService(services, cloudEnv.GetServicesFromName(connector.Name())...)
 	if len(services) == 0 {
 		l.logger.Debug(
 			"No service found for connector '%s' \n\twith name: '%s' \n\tor tags: [ %s ]",
@@ -377,13 +377,14 @@ func (l *Loader) load(connector connectors.Connector) []StoredService {
 	}
 	return storedServices
 }
-func (l Loader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) {
+func (l Loader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {
 	for _, service := range toAdd {
 		if l.serviceAlreadyExists(services, service) {
 			continue
 		}
 		services = append(services, service)
 	}
+	return services
 }
 func (l Loader) serviceAlreadyExists(services []cloudenv.Service, toFind cloudenv.Service) bool {
 	for _, service := range services {
