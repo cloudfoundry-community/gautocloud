@@ -25,10 +25,10 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mongodb"
 	"github.com/streadway/amqp"
 	"net/smtp"
-	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
 	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	"github.com/goamz/goamz/s3"
 	"log"
+	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
 )
 
 var _ = Describe("Connectors integration", func() {
@@ -538,7 +538,7 @@ var _ = Describe("Connectors integration", func() {
 		Context("minio", func() {
 			Context("By injection", func() {
 				It("should inject a MinioClient when use Get", func() {
-					var svc *objstoretype.MinioClient
+					var svc *miniotype.MinioClient
 					err := gautocloud.Inject(&svc)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(svc).ShouldNot(BeNil())
@@ -546,7 +546,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc.Client.RemoveBucket(svc.Bucket)).ToNot(HaveOccurred())
 				})
 				It("should inject a slice of MinioClient when use Get and slice", func() {
-					var svcs []*objstoretype.MinioClient
+					var svcs []*miniotype.MinioClient
 					err := gautocloud.Inject(&svcs)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(len(svcs)).Should(Equal(1))
@@ -556,7 +556,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc.Client.RemoveBucket(svc.Bucket)).ToNot(HaveOccurred())
 				})
 				It("should inject a MinioClient when use GetWithId", func() {
-					var svc *objstoretype.MinioClient
+					var svc *miniotype.MinioClient
 					err := gautocloud.InjectFromId(cs3minio.MinioConnector{}.Id(), &svc)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(svc).ShouldNot(BeNil())
@@ -564,7 +564,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc.Client.RemoveBucket(svc.Bucket)).ToNot(HaveOccurred())
 				})
 				It("should inject a slice of MinioClient when use GetWithId and slice", func() {
-					var svcs []*objstoretype.MinioClient
+					var svcs []*miniotype.MinioClient
 					err := gautocloud.InjectFromId(cs3minio.MinioConnector{}.Id(), &svcs)
 					Expect(err).ToNot(HaveOccurred())
 					Expect(len(svcs)).Should(Equal(1))
@@ -576,20 +576,20 @@ var _ = Describe("Connectors integration", func() {
 			})
 			Context("By return", func() {
 				It("should return a MinioClient when use GetFirst", func() {
-					var svc *objstoretype.MinioClient
+					var svc *miniotype.MinioClient
 					data, err := gautocloud.GetFirst(cs3minio.MinioConnector{}.Id())
 					Expect(err).ToNot(HaveOccurred())
-					svc = data.(*objstoretype.MinioClient)
+					svc = data.(*miniotype.MinioClient)
 					Expect(svc).ShouldNot(BeNil())
 					Expect(svc.Client.MakeBucket(svc.Bucket, "")).ToNot(HaveOccurred())
 					Expect(svc.Client.RemoveBucket(svc.Bucket)).ToNot(HaveOccurred())
 				})
 				It("should return a slice of MinioClient when use GetAll", func() {
-					var svc *objstoretype.MinioClient
+					var svc *miniotype.MinioClient
 					data, err := gautocloud.GetAll(cs3minio.MinioConnector{}.Id())
 					Expect(err).ToNot(HaveOccurred())
 					Expect(len(data)).Should(Equal(1))
-					svc = data[0].(*objstoretype.MinioClient)
+					svc = data[0].(*miniotype.MinioClient)
 					Expect(svc).ShouldNot(BeNil())
 					Expect(svc.Client.MakeBucket(svc.Bucket, "")).ToNot(HaveOccurred())
 					Expect(svc.Client.RemoveBucket(svc.Bucket)).ToNot(HaveOccurred())
@@ -599,7 +599,7 @@ var _ = Describe("Connectors integration", func() {
 		})
 		Context("goamz", func() {
 			BeforeEach(func() {
-				var s3svcminio *objstoretype.MinioClient
+				var s3svcminio *miniotype.MinioClient
 				err := gautocloud.Inject(&s3svcminio)
 				if err != nil {
 					Fail(err.Error())
@@ -610,7 +610,7 @@ var _ = Describe("Connectors integration", func() {
 				}
 			})
 			AfterEach(func() {
-				var s3svcminio *objstoretype.MinioClient
+				var s3svcminio *miniotype.MinioClient
 				err := gautocloud.Inject(&s3svcminio)
 				if err != nil {
 					Fail(err.Error())
