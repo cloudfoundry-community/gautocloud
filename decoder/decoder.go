@@ -52,7 +52,10 @@ type QueryUri struct {
 
 // Decode a map of credentials into a reflected Value
 func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Value) error {
-	v := ps.Elem()
+	v := ps
+	if ps.Kind() == reflect.Ptr {
+		v = ps.Elem()
+	}
 	t := v.Type()
 	var err error
 	for index := 0; index < v.NumField(); index++ {
@@ -173,8 +176,11 @@ func affect(data interface{}, vField reflect.Value) error {
 		break
 	default:
 		servUriType := reflect.TypeOf(ServiceUri{})
-		if vField.Type() != servUriType {
+		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
 			return errors.New(fmt.Sprintf("Type '%s' is not supported", vField.Type().String()))
+		}
+		if reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
+			return UnmarshalToValue(data.(map[string]interface{}), vField)
 		}
 		serviceUrl, err := url.Parse(data.(string))
 		if err != nil {
