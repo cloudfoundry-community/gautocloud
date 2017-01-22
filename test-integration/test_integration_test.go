@@ -38,7 +38,7 @@ var _ = Describe("Connectors integration", func() {
 
 	logger := log.New(os.Stdout, "", log.Ldate | log.Ltime)
 	gautocloud.SetLogger(logger, ldlogger.Lall)
-	os.Unsetenv("MAIL")
+	os.Unsetenv("MAIL") // travis set this env var which make connector detect it
 	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
 		Type: "mysql",
 		User: "user",
