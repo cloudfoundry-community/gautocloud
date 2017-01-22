@@ -1,0 +1,26 @@
+{
+  "services": [
+    {
+      "name": "myelephantsql",
+      "tags": [
+        "postgresql",
+        "service"
+      ],
+      "credentials": {
+        "uri": "postgres://seilbmbd:PHxTPJSbkcDakfK4cYwXHiIX9Q8p5Bxn@babar.elephantsql.com:5432/seilbmbd"
+      }
+    },
+    {
+      "name": "mysendgrid",
+      "tags": [
+        "smtp",
+        "service"
+      ],
+      "credentials": {
+        "hostname": "smtp.sendgrid.net",
+        "username": "QvsXMbJ3rK",
+        "password": "HCHMOYluTv"
+      }
+    }
+  ]
+}

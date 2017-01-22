@@ -1,0 +1,76 @@
+@startuml
+skinparam class {
+	BackgroundColor<<User>> PaleGreen
+	BorderColor<<User>> SpringGreen
+}
+class Loader {
+    +Inject(service interface{}) error
+    +InjectFromId(id string, service interface{}) error
+    +GetFirst(id string) (interface{}, error)
+    +GetAll(id string) ([]interface{}, error)
+    +SetLogger(Logger, lvl logger.Level)
+    +GetAppInfo() CloudEnv.AppInfo
+}
+class Gautocloud << (F,#FF7700) Facade >> {
+    -Loader loader
+    +Inject(service interface{}) error
+    +InjectFromId(id string, service interface{}) error
+    +GetFirst(id string) (interface{}, error)
+    +GetAll(id string) ([]interface{}, error)
+    +SetLogger(Logger, lvl logger.Level)
+    +GetAppInfo() CloudEnv.AppInfo
+}
+interface CloudEnv {
+    +Name() string
+    +GetServicesFromTags(tags []string) ([]Service)
+    +GetServicesFromName(name string) ([]Service)
+    +IsInCloudEnv() bool
+    +Load() error
+    +GetAppInfo() AppInfo
+}
+class CfCloudEnv {
+
+}
+class HerokuCloudEnv {
+
+}
+class LocalCloudEnv {
+
+}
+class Logger {
+
+}
+class CloudDecoder {
+
+}
+CloudEnv <|-- CfCloudEnv
+CloudEnv <|-- HerokuCloudEnv
+CloudEnv <|-- LocalCloudEnv
+interface Connector {
+    +Id() string
+    +Name() string
+    +Tags() []string
+    +Load(interface{}) (interface{}, error)
+    +Schema() interface{}
+}
+Class ExampleConnector {
+
+}
+class YourProgram << (U,#888888) User >> {
+
+}
+Connector <|- ExampleConnector
+note right on link #white
+	Connector(s) creator(s) implements
+	this interface.
+	You can have multiple connectors
+	by importing them.
+end note
+Loader "1" *- "1..*" CloudEnv : "detect and retrieve services from"
+Loader "1" o-- "0..*" Connector : "store and loads"
+Loader "1" o- Logger
+Gautocloud o-- Loader : "store an instance"
+Gautocloud - YourProgram : "use"
+Gautocloud .. Connector
+
+@enduml

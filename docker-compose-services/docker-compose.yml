@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+  mysql:
+    image: mariadb:latest
+    ports:
+    - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+  postgres:
+    image: postgres:latest
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+#  skipping mssql, composer image required 3.5gb...
+#  mssql:
+#    image: microsoft/mssql-server-linux:latest
+#    ports:
+#    - "1433:1433"
+#    environment:
+#      SA_PASSWORD: password
+#    #environment:
+#      # user: sa
+#      # password: ~
+#      # db: test
+  mongodb:
+    image: mongo:latest
+    ports:
+    - "27017:27017"
+    #environment:
+     # user: admin
+     # password: ~
+     # db: test
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass redis
+    ports:
+    - "6379:6379"
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+    - "15672:15672"
+    - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+  smtp:
+    image: namshi/smtp:latest
+    ports:
+    - "587:25"
+  objstorage:
+    image: scality/s3server:mem-latest
+    ports:
+    - "8090:8000"
+    #environment:
+      # accessKey: accessKey1
+      # secretAccessKey: verySecretKey1

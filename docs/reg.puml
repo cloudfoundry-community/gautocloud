@@ -1,0 +1,15 @@
+@startuml
+Gautocloud -> Loader : create a loader with cloud environments
+Connector -> Gautocloud : Pass an instance of itself
+Gautocloud -> Loader : Make it store the connector
+Loader -> CloudEnv : Ask to CloudEnv which services correspond to connector
+CloudEnv -> Loader : Give it back a list of services corresponding
+Loader -> Connector : Pass each service one by one and call load on connector
+Connector -> Loader : Give an output (e.g.: MySql client) or an error
+
+alt error given
+    Loader -> Loader : log the error
+else
+    Loader -> Loader : store the output and its type
+end
+@enduml

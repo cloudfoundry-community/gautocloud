@@ -1,0 +1,21 @@
+@startuml
+YourProgram -> Gautocloud : Call inject(&svc)
+note left
+see example above to
+understand inject(&svc)
+end note
+Gautocloud -> Loader : Call inject(&svc) on loader
+Loader -> Loader : Find matching type of svc in its store
+alt give an error
+    Loader -> Gautocloud : return the error
+    Gautocloud -> YourProgram : return the error
+else
+    alt Type is a slice
+        Loader -> Loader : inject a slice of the corresponding type stored into the var svc
+    else
+        Loader -> Loader : inject the first corresponding type stored into the var svc
+    end
+    Loader -> Gautocloud : return no error
+    Gautocloud -> YourProgram : return no error
+end
+@enduml

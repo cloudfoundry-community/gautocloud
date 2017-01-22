@@ -1,0 +1,12 @@
+sudo: required
+langage: go
+go:
+- 1.7.x
+
+services:
+- docker
+
+install:
+- go get github.com/onsi/ginkgo/ginkgo
+- go get github.com/onsi/gomega
+script: bin/test.sh
