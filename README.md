@@ -1,5 +1,5 @@
 
-# Gautocloud [![Build Status](https://travis-ci.org/cloudfoundry-community/gautocloud.svg?branch=master)](https://travis-ci.org/cloudfoundry-community/gautocloud)
+# Gautocloud [![Build Status](https://travis-ci.org/cloudfoundry-community/gautocloud.svg?branch=master)](https://travis-ci.org/cloudfoundry-community/gautocloud) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Gautocloud provides a simple abstraction that golang based applications can use 
 to discover information about the cloud environment on which they are running, 
