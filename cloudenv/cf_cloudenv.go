@@ -62,9 +62,6 @@ func (c *CfCloudEnv) Load() error {
 	if !c.IsInCloudEnv() {
 		return nil
 	}
-	if c.appEnv != nil {
-		return nil
-	}
 	var err error
 	c.appEnv, err = cfenv.Current()
 	if err != nil {
