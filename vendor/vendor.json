@@ -1,6 +1,6 @@
 {
   "comment": "",
-  "ignore": "test github.com/streadway/amqp/ gopkg.in/mgo.v2/ github.com/denisenkom/go-mssqldb/ github.com/go-sql-driver/mysql/ github.com/lib/pq/ gopkg.in/redis.v5/ github.com/jinzhu/gorm/ github.com/goamz/goamz/ github.com/minio/minio-go/ github.com/onsi/gomega/ github.com/onsi/ginkgo/",
+  "ignore": "test github.com/streadway/amqp/ gopkg.in/mgo.v2/ github.com/denisenkom/go-mssqldb/ github.com/go-sql-driver/mysql/ github.com/lib/pq/ gopkg.in/redis.v5/ github.com/jinzhu/gorm/ github.com/goamz/goamz/ github.com/minio/minio-go/ github.com/onsi/gomega/ github.com/onsi/ginkgo/ golang.org/x/sys",
   "package": [
     {
       "checksumSHA1": "xlE6mwC9lTeJrnoif0e5exvaFpk=",
@@ -109,12 +109,6 @@
       "path": "github.com/spf13/viper",
       "revision": "5ed0fc31f7f453625df314d8e66b9791e8d13003",
       "revisionTime": "2016-12-13T09:38:49Z"
-    },
-    {
-      "checksumSHA1": "15doxxBfOxOhWExkxjPNo6Y7fEw=",
-      "path": "golang.org/x/sys/unix",
-      "revision": "833a04a10549a95dc34458c195cbad61bbb6cb4d",
-      "revisionTime": "2015-12-11T01:34:15Z"
     },
     {
       "checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
