@@ -1,3 +1,6 @@
+// It has the responsibility to find the *CloudEnv* where your program run, store *Connector*s and retrieve
+// services from *CloudEnv* which corresponds to one or many *Connector* and finally it will pass to *Connector* the service
+// and store the result from connector.
 package loader
 
 import (

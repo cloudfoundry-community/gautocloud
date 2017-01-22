@@ -1,3 +1,5 @@
+// A connector register itself on the loader when using *Gautocloud Facade*. It handle the conversion of
+// a service to a real client or structure which can be manipulated after by user.
 package connectors
 
 
