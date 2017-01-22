@@ -375,6 +375,7 @@ func (l *Loader) load(connector connectors.Connector) []StoredService {
 			Data: loadedService,
 		})
 	}
+	l.logger.Info("Connector '%s' load %d services", connector.Id(), len(storedServices))
 	return storedServices
 }
 func (l Loader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {
