@@ -1,7 +1,5 @@
 package objstoretype
 
-import "github.com/minio/minio-go"
-
 type S3 struct {
 	Host            string
 	AccessKeyID     string
@@ -9,9 +7,4 @@ type S3 struct {
 	Bucket          string
 	Port            int
 	UseSsl          bool
-}
-
-type MinioClient struct {
-	Client *minio.Client
-	Bucket string
 }

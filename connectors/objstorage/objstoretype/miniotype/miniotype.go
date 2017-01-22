@@ -1,4 +1,4 @@
-package minio
+package miniotype
 
 import "github.com/minio/minio-go"
 

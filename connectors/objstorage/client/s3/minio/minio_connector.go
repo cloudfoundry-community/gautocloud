@@ -7,6 +7,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
 	"github.com/minio/minio-go"
 	"strconv"
+	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
 )
 
 func init() {
@@ -46,7 +47,7 @@ func (c MinioConnector) Load(schema interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	return &objstoretype.MinioClient{
+	return &miniotype.MinioClient{
 		Client: minioClient,
 		Bucket: fSchema.Bucket,
 	}, nil
