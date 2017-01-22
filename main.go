@@ -116,3 +116,7 @@ func CurrentCloudEnv() cloudenv.CloudEnv {
 func GetAppInfo() cloudenv.AppInfo {
 	return defaultLoader.GetAppInfo()
 }
+// Return true if you are in a cloud environment
+func IsInACloudEnv() bool {
+	return defaultLoader.IsInACloudEnv()
+}

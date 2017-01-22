@@ -334,4 +334,22 @@ var _ = Describe("Loader", func() {
 			Expect(fakeCloudEnv.(*fakecloud.FakeCloudEnv).CallLoad()).Should(Equal(1))
 		})
 	})
+	Context("IsInACloudEnv", func() {
+		It("should return true if one of CloudEnv detected its environment", func() {
+			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
+			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+			Expect(loader.IsInACloudEnv()).Should(BeTrue())
+		})
+		It("should return false if no CloudEnv detected its environment", func() {
+			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+			Expect(loader.IsInACloudEnv()).Should(BeFalse())
+		})
+	})
 })

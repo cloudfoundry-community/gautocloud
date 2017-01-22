@@ -183,7 +183,7 @@ func (l Loader) GetAppInfo() cloudenv.AppInfo {
 	return l.getFirstValidCloudEnv().GetAppInfo()
 }
 func (l Loader) checkInCloudEnv() error {
-	if l.hasAValidCloudEnv() {
+	if l.IsInACloudEnv() {
 		return nil
 	}
 	return errors.New(fmt.Sprintf(
@@ -198,7 +198,8 @@ func (l Loader) getCloudEnvNames() []string {
 	}
 	return names
 }
-func (l Loader) hasAValidCloudEnv() bool {
+// Return true if you are in a cloud environment
+func (l Loader) IsInACloudEnv() bool {
 	for _, cloudEnv := range l.cloudEnvs {
 		if !cloudEnv.IsInCloudEnv() {
 			continue
