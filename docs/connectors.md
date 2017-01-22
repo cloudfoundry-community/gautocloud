@@ -123,6 +123,12 @@ func main() {
         var err error
         // As single element
         var svc amqptype.Amqp
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:amqp", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:amqp")
+        svc = data.(amqptype.Amqp)
         // ----------------------
         // as slice of elements
         var svcSlice []amqptype.Amqp
@@ -229,6 +235,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.MongodbDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:mongodb", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:mongodb")
+        svc = data.(dbtype.MongodbDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.MongodbDatabase
@@ -384,6 +396,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.MssqlDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:mssql", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:mssql")
+        svc = data.(dbtype.MssqlDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.MssqlDatabase
@@ -539,6 +557,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.MysqlDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:mysql", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:mysql")
+        svc = data.(dbtype.MysqlDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.MysqlDatabase
@@ -599,6 +623,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.OracleDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:oracle", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:oracle")
+        svc = data.(dbtype.OracleDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.OracleDatabase
@@ -753,6 +783,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.PostgresqlDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:postgresql", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:postgresql")
+        svc = data.(dbtype.PostgresqlDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.PostgresqlDatabase
@@ -856,6 +892,12 @@ func main() {
         var err error
         // As single element
         var svc dbtype.RedisDatabase
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:redis", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:redis")
+        svc = data.(dbtype.RedisDatabase)
         // ----------------------
         // as slice of elements
         var svcSlice []dbtype.RedisDatabase
@@ -906,6 +948,12 @@ func main() {
         var err error
         // As single element
         var svc *s3.Bucket
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("s3", &svc)
+        // or
+        data, err := gautocloud.GetFirst("s3")
+        svc = data.(*s3.Bucket)
         // ----------------------
         // as slice of elements
         var svcSlice []*s3.Bucket
@@ -952,6 +1000,12 @@ func main() {
         var err error
         // As single element
         var svc *objstoretype.MinioClient
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("minio:s3", &svc)
+        // or
+        data, err := gautocloud.GetFirst("minio:s3")
+        svc = data.(*objstoretype.MinioClient)
         // ----------------------
         // as slice of elements
         var svcSlice []*objstoretype.MinioClient
@@ -1002,6 +1056,12 @@ func main() {
         var err error
         // As single element
         var svc objstoretype.S3
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:s3", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:s3")
+        svc = data.(objstoretype.S3)
         // ----------------------
         // as slice of elements
         var svcSlice []objstoretype.S3
@@ -1107,6 +1167,12 @@ func main() {
         var err error
         // As single element
         var svc smtptype.Smtp
+        err = gautocloud.Inject(&svc)
+        // or
+        err = gautocloud.InjectFromId("raw:smtp", &svc)
+        // or
+        data, err := gautocloud.GetFirst("raw:smtp")
+        svc = data.(smtptype.Smtp)
         // ----------------------
         // as slice of elements
         var svcSlice []smtptype.Smtp

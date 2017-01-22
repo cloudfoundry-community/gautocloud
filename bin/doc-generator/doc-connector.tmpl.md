@@ -41,13 +41,13 @@ import (
 func main() {
         var err error
         // As single element
-        var svc {{$connector.TypeName}}{{if .Closeable}}
+        var svc {{$connector.TypeName}}
         err = gautocloud.Inject(&svc)
         // or
         err = gautocloud.InjectFromId("{{$connector.Id}}", &svc)
         // or
         data, err := gautocloud.GetFirst("{{$connector.Id}}")
-        svc = data.({{$connector.TypeName}})
+        svc = data.({{$connector.TypeName}}){{if .Closeable}}
         defer svc.Close(){{end}}
         // ----------------------
         // as slice of elements
