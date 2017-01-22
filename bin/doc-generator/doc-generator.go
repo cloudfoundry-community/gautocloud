@@ -206,6 +206,10 @@ func getDocMap() map[string]Doc {
 				}
 			}
 		}
+		pkgConn := connType.PkgPath()
+		if connName == "raw" {
+			pkgConn = path.Dir(pkgConn)
+		}
 		globalType := ""
 		pkgSplit := strings.Split(connType.PkgPath(), "/")
 		if len(pkgSplit) >= 5 {
@@ -214,7 +218,7 @@ func getDocMap() map[string]Doc {
 		connDoc := DocConnector{
 			Name: strings.Title(rootId + " - " + connName),
 			Id: conn.Id(),
-			Pkg: connType.PkgPath(),
+			Pkg: pkgConn,
 			TypeName: givenType.String(),
 			TypePkg: giventTypePkg.PkgPath(),
 			TypeWrapped: typeWrapped,

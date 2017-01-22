@@ -116,7 +116,7 @@ type Amqp struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/amqp"
         "github.com/cloudfoundry-community/gautocloud/connectors/amqp/amqptype"
 )
 func main() {
@@ -228,7 +228,7 @@ type MongodbDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -389,7 +389,7 @@ type MssqlDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -550,7 +550,7 @@ type MysqlDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -616,7 +616,7 @@ type OracleDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -776,7 +776,7 @@ type PostgresqlDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -885,7 +885,7 @@ type RedisDatabase struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/databases"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
@@ -972,12 +972,12 @@ func main() {
 #### S3 - Minio
 
 - **Id**: `minio:s3`
-- **Given type**: `*objstoretype.MinioClient`
+- **Given type**: `*miniotype.MinioClient`
 
 **Tip**: You can load all based *Objstorage Minio* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3"`
 
 ##### Type documentation
-The type `*objstoretype.MinioClient` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype`.
+The type `*miniotype.MinioClient` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype`.
 
 This type refers to this structure:
 ```go
@@ -994,29 +994,29 @@ package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
         _ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/minio"
-        "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
+        "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
 )
 func main() {
         var err error
         // As single element
-        var svc *objstoretype.MinioClient
+        var svc *miniotype.MinioClient
         err = gautocloud.Inject(&svc)
         // or
         err = gautocloud.InjectFromId("minio:s3", &svc)
         // or
         data, err := gautocloud.GetFirst("minio:s3")
-        svc = data.(*objstoretype.MinioClient)
+        svc = data.(*miniotype.MinioClient)
         // ----------------------
         // as slice of elements
-        var svcSlice []*objstoretype.MinioClient
+        var svcSlice []*miniotype.MinioClient
         err = gautocloud.Inject(&svcSlice)
         // or
         err = gautocloud.InjectFromId("minio:s3", &svcSlice)
         // or
         data, err := gautocloud.GetAll("minio:s3")
-        svcSlice = make([]*objstoretype.MinioClient,0)
+        svcSlice = make([]*miniotype.MinioClient,0)
         for _, elt := range data {
-                svcSlice = append(svcSlice, elt.(*objstoretype.MinioClient))
+                svcSlice = append(svcSlice, elt.(*miniotype.MinioClient))
         }
 }
 ```
@@ -1049,7 +1049,7 @@ type S3 struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/objstorage"
         "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
 )
 func main() {
@@ -1160,7 +1160,7 @@ type Smtp struct {
 package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
-        _ "github.com/cloudfoundry-community/gautocloud/connectors/smtp/raw"
+        _ "github.com/cloudfoundry-community/gautocloud/connectors/smtp"
         "github.com/cloudfoundry-community/gautocloud/connectors/smtp/smtptype"
 )
 func main() {
