@@ -35,20 +35,22 @@ var _ = Describe("Connectors integration", func() {
 	if os.Getenv("GAUTOCLOUD_HOST_SERVICES") == "" {
 		return
 	}
+
 	logger := log.New(os.Stdout, "", log.Ldate | log.Ltime)
 	gautocloud.SetLogger(logger, ldlogger.Lall)
+	os.Unsetenv("MAIL")
 	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
 		Type: "mysql",
 		User: "user",
 		Password: "password",
-		Port: 3306,
+		Port: 3406,
 		Target: "mydb",
 	}))
 	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
 		Type: "postgres",
 		User: "user",
 		Password: "password",
-		Port: 5432,
+		Port: 5532,
 		Target: "mydb",
 		Options: "sslmode=disable",
 	}))

@@ -58,14 +58,14 @@ func before() {
 		Type: "mysql",
 		User: "user",
 		Password: "password",
-		Port: 3306,
+		Port: 3406,
 		Target: "mydb",
 	}))
 	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
 		Type: "postgres",
 		User: "user",
 		Password: "password",
-		Port: 5432,
+		Port: 5532,
 		Target: "mydb",
 		Options: "sslmode=disable",
 	}))
