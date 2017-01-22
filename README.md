@@ -106,6 +106,8 @@ func main() {
 }
 ```
 
+**Tip**: You can either do the same thing without the gautocloud facade, see: [use gautocloud without facade](#use-it-without-the-facade)
+
 ## Default connectors
 
 Doc for default connectors can be found here: [/docs/connectors.md](/docs/connectors.md).
