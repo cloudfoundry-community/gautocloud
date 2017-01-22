@@ -204,9 +204,9 @@ services from *CloudEnv* which corresponds to one or many *Connector* and finall
 and store the result from connector.
 - **Gautocloud *facade***: This facade was made to make things easier for users. It store one instance of a *Loader*
  and give the ability to make lazy loading (this is why to register a *Connector* you only need to do `import _ "a/connector"`) 
-- **CloudEnv**: Each *CloudEnv* correspond to have a real cloud. It manages the detection of the environment but 
+- **CloudEnv**: Each *CloudEnv* correspond to a real cloud. It manages the detection of the environment but 
 also the detections of services asked by the *Loader*.
-- **Connector**: A connector register itself on the loader when using *Gautocloud Facade*. It handle the conversion of 
+- **Connector**: A connector register itself on the loader when using *Gautocloud Facade*. It handles the conversion of 
 a service to a real client or structure which can be manipulated after by user.
 - **CloudDecoder**: This decoder do the conversion of a service to an expected schema. 
 In *Gautocloud* context this decoder is used to convert a given service to an expected schema given by a connector.

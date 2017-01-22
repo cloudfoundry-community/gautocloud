@@ -1,5 +1,4 @@
-// Each *CloudEnv* correspond to have a real cloud. It manages the detection of the environment but
-// also the detections of services asked by the *Loader*.
+//  It manages the detection of the environment but also the detections of services asked by a Loader.
 package cloudenv
 
 import "regexp"
