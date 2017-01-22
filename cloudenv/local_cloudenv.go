@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/viper"
-	"github.com/mongodb/mongo-tools/common/json"
+	"encoding/json"
 	"io"
 	"reflect"
 	"path/filepath"
