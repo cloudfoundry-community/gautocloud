@@ -18,7 +18,7 @@ This project can be assimilated to the [spring-cloud-connector](https://github.c
   - [Cloud Foundry](#cloud-foundry)
   - [Heroku](#heroku)
   - [Local](#local)
-- [Concept](#Concept)
+- [Concept](#concept)
   - [Architecture](#architecture)
   - [Connector registration sequence](#connector-registration-sequence)
   - [Usage by injection sequence](#usage-by-injection-sequence)
@@ -228,7 +228,7 @@ The best way is to look at an example here: [/connectors/example_test.go](/conne
 
 The best way to implement yourself a cloud environment is too look at interface here [/cloudenv/cloudenv.go](/cloudenv/cloudenv.go).
 
-You will need to load you cloud env after by [use gautocloud without facade](#use-it-without-gautocloud-facade), 
+You will need to load you cloud env after by [use gautocloud without facade](#use-it-without-the-facade), 
 you can either do a pull request to had your cloud environment as builtin by doing a pull request.
 
 ## Use it without the facade
