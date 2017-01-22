@@ -34,7 +34,7 @@ Let's define a context: We are in a Cloud Foundry environment where we connect a
 application.
 
 We now wants to use this service without parsing a json or anything else to have a MySql client to use our service.
-Gautocloud comes to help for this kind of use case.
+Gautocloud is here to help for this kind of use case.
 
 This software will retrieve all services found in your environment and will pass informations from service to what we call
 a connector. A connector is responsible to create, in our context, a MySql client which make it available in your program.
