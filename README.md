@@ -26,6 +26,7 @@ This project can be assimilated to the [spring-cloud-connector](https://github.c
 - [Create your own Cloud Environment](#create-your-own-cloud-environment)
 - [Use it without the facade](#use-it-without-the-facade)
 - [Run tests](#run-tests)
+- [Contributing](#contributing)
 - [FAQ](#faq)
 
 ## Usage by example
@@ -108,9 +109,11 @@ func main() {
 
 **Tip**: You can either do the same thing without the gautocloud facade, see: [use gautocloud without facade](#use-it-without-the-facade)
 
-## Default connectors
+## Connectors
 
 Doc for default connectors can be found here: [/docs/connectors.md](/docs/connectors.md).
+
+You can see connectors made by the community on the dedicated wiki page: https://github.com/cloudfoundry-community/gautocloud/wiki/Connectors
 
 ## Cloud Environments
 
@@ -226,6 +229,8 @@ This decoder can be used in other context. (see: [/decoder/decoder.go](/decoder/
 
 The best way is to look at an example here: [/connectors/example_test.go](/connectors/example_test.go).
 
+**Note**: Add your connector on the dedicated wiki page: https://github.com/cloudfoundry-community/gautocloud/wiki/Connectors
+
 ## Create your own Cloud Environment
 
 The best way to implement yourself a cloud environment is too look at interface here [/cloudenv/cloudenv.go](/cloudenv/cloudenv.go).
@@ -286,6 +291,12 @@ Requirements for integration tests:
 **Note**: We need docker and docker-compose for integrations to run services and ensure clients works.
 
 Simply run in a terminal `bin/test.sh`.
+
+## Contributing
+
+Any PR or/and issues are welcomes.
+
+Don't be shy to send a PR to add another cloud environment as a builtin one.
 
 ## FAQ
 
