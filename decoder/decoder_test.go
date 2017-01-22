@@ -21,6 +21,7 @@ type TestCompleteStruct struct {
 	Nuint32           uint32
 	Nuint64           uint64
 	Ainterface        interface{}
+	Aslice            []string
 	Abool             bool
 	Nfloat32          float32
 	Nfloat64          float64
@@ -75,6 +76,7 @@ var _ = Describe("Decoder", func() {
 			Nint32Default: int32(4),
 			Nint64Default: int64(5),
 			NuintDefault: uint(6),
+			Aslice: []string{"titi", "toto"},
 			Nuint8Default: uint8(7),
 			Nuint16Default: uint16(8),
 			Nuint32Default: uint32(9),
@@ -97,6 +99,7 @@ var _ = Describe("Decoder", func() {
 			"nint32": int32(4),
 			"nint64": int64(5),
 			"nuint": uint(6),
+			"aslice": []string{"titi", "toto"},
 			"nuint8": uint8(7),
 			"nuint16": uint16(8),
 			"nuint32": uint32(9),
@@ -114,6 +117,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint16 = int16(3)
 		expectedStruct.Nint32 = int32(4)
 		expectedStruct.Nint64 = int64(5)
+		expectedStruct.Aslice = []string{"titi", "toto"}
 		expectedStruct.Nuint = uint(6)
 		expectedStruct.Nuint8 = uint8(7)
 		expectedStruct.Nuint16 = uint16(8)
@@ -139,6 +143,7 @@ var _ = Describe("Decoder", func() {
 			"nint32": "4",
 			"nint64": "5",
 			"nuint": "6",
+			"aslice": "titi, toto",
 			"nuint8": "7",
 			"nuint16": "8",
 			"nuint32": "9",
@@ -158,6 +163,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint64 = int64(5)
 		expectedStruct.Nuint = uint(6)
 		expectedStruct.Nuint8 = uint8(7)
+		expectedStruct.Aslice = []string{"titi", "toto"}
 		expectedStruct.Nuint16 = uint16(8)
 		expectedStruct.Nuint32 = uint32(9)
 		expectedStruct.Nuint64 = uint64(10)

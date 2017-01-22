@@ -6,7 +6,8 @@
 //  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
 //  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
 //  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-//  	Pasword string `cloud:".*user.*,regex,default=apassword"` // by passing `default=avalue` decoder will understand that if the key is not found it must fill the field with this value
+//  	Password string `cloud:".*user.*,regex,default=apassword"` // by passing `default=avalue` decoder will understand that if the key is not found it must fill the field with this value
+//      Aslice   []string `cloud:"aslice,default=value1,value2"` // you can also pass a slice
 //  }
 package decoder
 
@@ -136,6 +137,18 @@ func affect(data interface{}, vField reflect.Value) error {
 		break
 	case reflect.Uint64:
 		vField.SetUint(data.(uint64))
+		break
+	case reflect.Slice:
+		if vField.IsNil() {
+			vField.Set(reflect.MakeSlice(reflect.SliceOf(vField.Type().Elem()), 0, 0))
+		}
+		if reflect.ValueOf(data).Kind() != reflect.Slice {
+			return errors.New(fmt.Sprintf("Type '%s' have not receive a slice.", vField.String()))
+		}
+		dataValue := reflect.ValueOf(data)
+		for i := 0; i < dataValue.Len(); i++ {
+			vField.Set(reflect.Append(vField, dataValue.Index(i)))
+		}
 		break
 	case reflect.Interface:
 		vField.Set(reflect.ValueOf(data))
@@ -352,6 +365,17 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 			return "", err
 		}
 		return float64(val), nil
+	case reflect.Slice:
+		finalField := reflect.MakeSlice(reflect.SliceOf(vField.Type().Elem()), 0, 0)
+		defValSlice := strings.Split(defVal, ",")
+		for _, aDefVal := range defValSlice {
+			finDefVal, err := convertStringValue(strings.TrimSpace(aDefVal), reflect.New(vField.Type().Elem()))
+			if err != nil {
+				return "", err
+			}
+			finalField = reflect.Append(finalField, reflect.ValueOf(finDefVal))
+		}
+		return finalField.Interface(), nil
 	case reflect.Ptr:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))

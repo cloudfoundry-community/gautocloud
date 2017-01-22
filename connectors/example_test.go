@@ -20,6 +20,8 @@ type ExampleSchema struct {
 	User     string `cloud:".*user.*,regex"`
 	// by passing `default=avalue` decoder will understand that if the key is not found it must fill the field with this value
 	Password string `cloud:".*user.*,regex,default=apassword"`
+	// you can also pass a slice
+	Aslice   []string `cloud:"aslice,default=value1,value2"`
 }
 type ExampleTypeOutput struct {
 	Host     string
