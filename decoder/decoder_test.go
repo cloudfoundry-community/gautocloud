@@ -216,5 +216,52 @@ var _ = Describe("Decoder", func() {
 		Expect(err.Error()).Should(ContainSubstring("Error on field 'MyStruct' when trying to convert value"))
 		Expect(err.Error()).Should(ContainSubstring("is not supported"))
 	})
-
+	It("should give corresponding value on a number if float is given", func() {
+		test := TestCompleteStruct{}
+		data := map[string]interface{}{
+			"uri": "srv://user:pass@host.com:12/data?options=1",
+			"myname": "myservice",
+			"nint": 1,
+			"nint8": float32(2),
+			"nint16": float32(3),
+			"nint32": float32(4),
+			"nint64": float32(5),
+			"nuint": float32(6),
+			"asubstruct": map[string]interface{}{"name": "name"},
+			"aslice": []string{"titi", "toto"},
+			"nuint8": float64(7),
+			"nuint16": float32(8),
+			"nuint32": float32(9),
+			"nuint64": float32(10),
+			"ainterface": "myinterface",
+			"abool": true,
+			"nfloat32": float32(1.1),
+			"nfloat64": float64(1.2),
+			"npint": 11,
+		}
+		expectedStruct.Uri = expectDefaultUri
+		expectedStruct.Name = "myservice"
+		expectedStruct.Nint = 1
+		expectedStruct.Nint8 = int8(2)
+		expectedStruct.Nint16 = int16(3)
+		expectedStruct.Nint32 = int32(4)
+		expectedStruct.Nint64 = int64(5)
+		expectedStruct.Asubstruct = SubStruct{
+			Name: "name",
+		}
+		expectedStruct.Aslice = []string{"titi", "toto"}
+		expectedStruct.Nuint = uint(6)
+		expectedStruct.Nuint8 = uint8(7)
+		expectedStruct.Nuint16 = uint16(8)
+		expectedStruct.Nuint32 = uint32(9)
+		expectedStruct.Nuint64 = uint64(10)
+		expectedStruct.Ainterface = "myinterface"
+		expectedStruct.Abool = true
+		expectedStruct.Nfloat32 = float32(1.1)
+		expectedStruct.Nfloat64 = float64(1.2)
+		expectedStruct.Npint = &pint
+		err := Unmarshal(data, &test)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(test).Should(BeEquivalentTo(expectedStruct))
+	})
 })
