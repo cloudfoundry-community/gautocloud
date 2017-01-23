@@ -85,7 +85,7 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 		if dataKind == reflect.String {
 			data, err = convertStringValue(data.(string), vField)
 			if err != nil {
-				return errors.New(fmt.Sprintf(
+				return NewErrDecode(fmt.Sprintf(
 					"Error on field '%s' when trying to convert value '%s' in '%s': %s",
 					tField.Name,
 					tag.DefaultValue,
@@ -96,7 +96,7 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 		}
 		err = affect(data, vField)
 		if err != nil {
-			return errors.New(fmt.Sprintf("Error on field '%s': %s", tField.Name, err.Error()))
+			return NewErrDecode(fmt.Sprintf("Error on field '%s': %s", tField.Name, err.Error()))
 		}
 	}
 	return nil
@@ -177,7 +177,7 @@ func affect(data interface{}, vField reflect.Value) error {
 	default:
 		servUriType := reflect.TypeOf(ServiceUri{})
 		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
-			return errors.New(fmt.Sprintf("Type '%s' is not supported", vField.Type().String()))
+			return NewErrTypeNotSupported(vField)
 		}
 		if reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
 			return UnmarshalToValue(data.(map[string]interface{}), vField)
@@ -390,9 +390,9 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 	default:
 		servUriType := reflect.TypeOf(ServiceUri{})
 		if vField.Type() != servUriType {
-			return "", errors.New(fmt.Sprintf("Type %s is not supported", vField.Type().String()))
+			return "", NewErrTypeNotSupported(vField)
 		}
 		return defVal, nil
 	}
-	return "", errors.New(fmt.Sprintf("Type %s is not supported", vField.Type().String()))
+	return "", NewErrTypeNotSupported(vField)
 }

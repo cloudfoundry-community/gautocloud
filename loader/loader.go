@@ -4,7 +4,6 @@
 package loader
 
 import (
-	"errors"
 	"reflect"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
@@ -165,14 +164,14 @@ func (l Loader) Inject(service interface{}) error {
 		return nil
 	}
 	if reflect.TypeOf(service).Kind() != reflect.Ptr {
-		return errors.New("You must pass a pointer.")
+		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()
 
 	if reflectType.Kind() == reflect.Slice {
 		reflectType = reflectType.Elem()
 	}
-	return errors.New("Service with the type " + reflectType.String() + " cannot be found. (perhaps no services match any connectors)")
+	return NewErrGiveService("Service with the type " + reflectType.String() + " cannot be found. (perhaps no services match any connectors)")
 }
 // Return the current cloud env detected
 func (l Loader) CurrentCloudEnv() cloudenv.CloudEnv {
@@ -186,10 +185,7 @@ func (l Loader) checkInCloudEnv() error {
 	if l.IsInACloudEnv() {
 		return nil
 	}
-	return errors.New(fmt.Sprintf(
-		"You are not in any cloud environments (available environments are: [ %s ]).",
-		strings.Join(l.getCloudEnvNames(), ", "),
-	))
+	return NewErrNotInCloud(l.getCloudEnvNames())
 }
 func (l Loader) getCloudEnvNames() []string {
 	names := make([]string, 0)
@@ -239,7 +235,7 @@ func (l Loader) InjectFromId(id string, service interface{}) error {
 		return err
 	}
 	if reflect.TypeOf(service).Kind() != reflect.Ptr {
-		return errors.New("You must pass a pointer.")
+		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()
 
@@ -257,7 +253,7 @@ func (l Loader) InjectFromId(id string, service interface{}) error {
 	}
 
 	if len(dataSlice) == 0 {
-		return errors.New(
+		return NewErrGiveService(
 			fmt.Sprintf(
 				"Connector with id '%s' doesn't give a service with the type '%s'. (perhaps no services match the connector)",
 				id,
@@ -302,13 +298,13 @@ func (l Loader) GetFirst(id string) (interface{}, error) {
 		return nil, err
 	}
 	if len(l.store[id]) == 0 {
-		return nil, errors.New("No content have been given by connector with id '" + id + "' (no services match the connector).")
+		return nil, NewErrGiveService("No content have been given by connector with id '" + id + "' (no services match the connector).")
 	}
 	return l.store[id][0].Data, nil
 }
 func (l Loader) checkConnectorIdExist(id string) error {
 	if _, ok := l.connectors[id]; !ok {
-		return errors.New("Connector with id '" + id + "' not found.")
+		return NewErrNoConnectorFound(id)
 	}
 	return nil
 }

@@ -204,6 +204,7 @@ var _ = Describe("Decoder", func() {
 		}
 		err := Unmarshal(data, &test)
 		Expect(err).Should(HaveOccurred())
+		Expect(err).Should(BeAssignableToTypeOf(ErrDecode{}))
 		Expect(err.Error()).Should(ContainSubstring("Error on field 'MyStruct'"))
 		Expect(err.Error()).Should(ContainSubstring("is not supported"))
 	})
