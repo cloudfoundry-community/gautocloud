@@ -106,40 +106,51 @@ func Unmarshal(serviceCredentials map[string]interface{}, obj interface{}) error
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps)
 }
+func parseFloat(data interface{}, vField reflect.Value) interface{} {
+	if reflect.ValueOf(data).Kind() != reflect.Float32 && reflect.ValueOf(data).Kind() != reflect.Float64 {
+		return data
+	}
+	if reflect.ValueOf(data).Kind() == reflect.Float32 {
+		val, _ := convertStringValue(fmt.Sprintf("%.0f", data.(float32)), vField)
+		return val
+	}
+	val, _ := convertStringValue(fmt.Sprintf("%.0f", data.(float64)), vField)
+	return val
+}
 func affect(data interface{}, vField reflect.Value) error {
 	switch vField.Kind() {
 	case reflect.String:
 		vField.SetString(data.(string))
 		break
 	case reflect.Int:
-		vField.SetInt(int64(data.(int)))
+		vField.SetInt(int64(parseFloat(data, vField).(int)))
 		break
 	case reflect.Int8:
-		vField.SetInt(int64(data.(int8)))
+		vField.SetInt(int64(parseFloat(data, vField).(int8)))
 		break
 	case reflect.Int16:
-		vField.SetInt(int64(data.(int16)))
+		vField.SetInt(int64(parseFloat(data, vField).(int16)))
 		break
 	case reflect.Int32:
-		vField.SetInt(int64(data.(int32)))
+		vField.SetInt(int64(parseFloat(data, vField).(int32)))
 		break
 	case reflect.Int64:
-		vField.SetInt(data.(int64))
+		vField.SetInt(parseFloat(data, vField).(int64))
 		break
 	case reflect.Uint:
-		vField.SetUint(uint64(data.(uint)))
+		vField.SetUint(uint64(parseFloat(data, vField).(uint)))
 		break
 	case reflect.Uint8:
-		vField.SetUint(uint64(data.(uint8)))
+		vField.SetUint(uint64(parseFloat(data, vField).(uint8)))
 		break
 	case reflect.Uint16:
-		vField.SetUint(uint64(data.(uint16)))
+		vField.SetUint(uint64(parseFloat(data, vField).(uint16)))
 		break
 	case reflect.Uint32:
-		vField.SetUint(uint64(data.(uint32)))
+		vField.SetUint(uint64(parseFloat(data, vField).(uint32)))
 		break
 	case reflect.Uint64:
-		vField.SetUint(data.(uint64))
+		vField.SetUint(parseFloat(data, vField).(uint64))
 		break
 	case reflect.Slice:
 		if vField.IsNil() {
