@@ -17,7 +17,7 @@ var _ = Describe("Client", func() {
 		Context("GetConnString", func() {
 			mysqlConnector := MysqlConnector{}
 			Context("When there is no password given", func() {
-				It("should return correct connection string", func() {
+				PIt("should return correct connection string", func() {
 					connString := mysqlConnector.GetConnString(dbtype.MysqlDatabase{
 						Host: "localhost",
 						Port: 3306,
@@ -52,7 +52,7 @@ var _ = Describe("Client", func() {
 				})
 			})
 			Context("When there is password and options given", func() {
-				It("should return correct connection string", func() {
+				PIt("should return correct connection string", func() {
 					connString := mysqlConnector.GetConnString(dbtype.MysqlDatabase{
 						Host: "localhost",
 						Port: 3306,
