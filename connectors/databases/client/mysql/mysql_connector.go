@@ -38,9 +38,10 @@ func (c MysqlConnector) GetConnString(schema dbtype.MysqlDatabase) string {
 		connString += ":" + schema.Password
 	}
 	connString += fmt.Sprintf("@tcp(%s:%d)/%s", schema.Host, schema.Port, schema.Database)
-	if schema.Options != "" {
-		connString += "?" + schema.Options
-	}
+	// FIXME: error from mysql with param ?reconnect=true Error 1193: Unknown system variable 'reconnect'
+	//if schema.Options != "" {
+	//	connString += "?" + schema.Options
+	//}
 	return connString
 }
 func (c MysqlConnector) Load(schema interface{}) (interface{}, error) {
