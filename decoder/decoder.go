@@ -159,9 +159,17 @@ func affect(data interface{}, vField reflect.Value) error {
 		if reflect.ValueOf(data).Kind() != reflect.Slice {
 			return errors.New(fmt.Sprintf("Type '%s' have not receive a slice.", vField.String()))
 		}
+
 		dataValue := reflect.ValueOf(data)
+		if dataValue.Type().Kind() == reflect.Interface {
+			dataValue = dataValue.Elem()
+		}
 		for i := 0; i < dataValue.Len(); i++ {
-			vField.Set(reflect.Append(vField, dataValue.Index(i)))
+			dataValueElem := dataValue.Index(i)
+			if dataValueElem.Type().Kind() == reflect.Interface {
+				dataValueElem = dataValueElem.Elem()
+			}
+			vField.Set(reflect.Append(vField, dataValueElem))
 		}
 		break
 	case reflect.Interface:
