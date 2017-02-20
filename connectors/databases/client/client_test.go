@@ -37,7 +37,7 @@ var _ = Describe("Client", func() {
 						Password: "pass",
 						Database: "db",
 					})
-					Expect(connString).Should(Equal("user:pass@tcp(localhost:3306)/db"))
+					Expect(connString).Should(ContainSubstring("user:pass@tcp(localhost:3306)/db"))
 				})
 			})
 			Context("When there is no password and no options given", func() {
