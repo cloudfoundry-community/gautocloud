@@ -46,18 +46,18 @@ func main() {
         var svc MySchema
         err = gautocloud.Inject(&svc)
         // or
-        err = gautocloud.InjectFromId("{{$connector.Id}}", &svc)
+        err = gautocloud.InjectFromId("id-my-connector", &svc)
         // or
-        data, err := gautocloud.GetFirst("{{$connector.Id}}")
+        data, err := gautocloud.GetFirst("id-my-connector")
         svc = data.(MySchema)
         // ----------------------
         // as slice of elements
         var svcSlice []MySchema
         err = gautocloud.Inject(&svcSlice)
         // or
-        err = gautocloud.InjectFromId("{{$connector.Id}}", &svcSlice)
+        err = gautocloud.InjectFromId("id-my-connector", &svcSlice)
         // or
-        data, err := gautocloud.GetAll("{{$connector.Id}}")
+        data, err := gautocloud.GetAll("id-my-connector")
         svcSlice = make([]MySchema,0)
         for _, elt := range data {
                 svcSlice = append(svcSlice, elt.(MySchema))
@@ -100,23 +100,10 @@ func main() {
         // As single element
         var svc MyConfig
         err = gautocloud.Inject(&svc)
-        // or
-        err = gautocloud.InjectFromId("{{$connector.Id}}", &svc)
-        // or
-        data, err := gautocloud.GetFirst("{{$connector.Id}}")
-        svc = data.(MyConfig)
         // ----------------------
         // as slice of elements
         var svcSlice []MyConfig
         err = gautocloud.Inject(&svcSlice)
-        // or
-        err = gautocloud.InjectFromId("{{$connector.Id}}", &svcSlice)
-        // or
-        data, err := gautocloud.GetAll("{{$connector.Id}}")
-        svcSlice = make([]MyConfig,0)
-        for _, elt := range data {
-                svcSlice = append(svcSlice, elt.(MyConfig))
-        }
 }
 ```
 
