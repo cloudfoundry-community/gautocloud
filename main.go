@@ -16,6 +16,11 @@ var defaultLoader *loader.Loader = loader.NewLoader(
 	},
 )
 
+// Return the loader used by the facade
+func Loader() *loader.Loader {
+	return defaultLoader
+}
+
 // Reload connectors to find services
 func ReloadConnectors() {
 	defaultLoader.ReloadConnectors()
