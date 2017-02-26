@@ -10,6 +10,11 @@ code="$?"
 if [ "$code" != "0" ]; then
     exit $code
 fi
+go test -v "./$BASEDIR/../test-mock" -tags gautocloud_mock -args -ginkgo.randomizeAllSpecs -ginkgo.trace
+code="$?"
+if [ "$code" != "0" ]; then
+    exit $code
+fi
 echo ""
 echo "--------------------------"
 echo ""
@@ -23,11 +28,13 @@ if [ "$?" == "1" ]; then
     echo "Integration not ran."
     exit 0
 fi
-HOST_SERVICES=""
-if [ -z ${DOCKER_HOST+x} ]; then
-    HOST_SERVICES="localhost"
-else
-    HOST_SERVICES=$(echo $DOCKER_HOST | sed 's/^.*:\/\///' | sed 's/:[0-9]*$//')
+if [ -z ${HOST_SERVICES+x} ]; then
+    HOST_SERVICES=""
+    if [ -z ${DOCKER_HOST+x} ]; then
+        HOST_SERVICES="localhost"
+    else
+        HOST_SERVICES=$(echo $DOCKER_HOST | sed 's/^.*:\/\///' | sed 's/:[0-9]*$//')
+    fi
 fi
 DYNO="true" GAUTOCLOUD_HOST_SERVICES="$HOST_SERVICES" go test -v "./$BASEDIR/../test-integration" -args -ginkgo.trace -ginkgo.randomizeAllSpecs
 code="$?"

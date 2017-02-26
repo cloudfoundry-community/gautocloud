@@ -8,16 +8,10 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/logger"
 )
 
-var defaultLoader *loader.Loader = loader.NewLoader(
-	[]cloudenv.CloudEnv{
-		cloudenv.NewCfCloudEnv(),
-		cloudenv.NewHerokuCloudEnv(),
-		cloudenv.NewLocalCloudEnv(),
-	},
-)
+
 
 // Return the loader used by the facade
-func Loader() *loader.Loader {
+func Loader() loader.Loader {
 	return defaultLoader
 }
 

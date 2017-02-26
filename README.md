@@ -25,6 +25,7 @@ This project can be assimilated to the [spring-cloud-connector](https://github.c
 - [Create your own connector](#create-your-own-connector)
 - [Create your own Cloud Environment](#create-your-own-cloud-environment)
 - [Use it without the facade](#use-it-without-the-facade)
+- [Use mocked facade for your test](#use-mocked-facade-for-your-test)
 - [Run tests](#run-tests)
 - [Contributing](#contributing)
 - [FAQ](#faq)
@@ -278,6 +279,16 @@ func main() {
         
 }
 ```
+
+## Use mocked facade for your test
+
+If you need to write your tests with a mocked gautocloud (and use the facade), you can ask to go compiler to get a mocked version.
+
+To perform this, simply run your test with the tags `gautocloud_mock` (e.g.: `go test -tags gautocloud_mock`).
+
+The facade will load a [gomock](https://github.com/golang/mock) version of the loader. 
+You can find, for example, how to perform injection with this mocked version here: 
+[/test-mock/test_mock_test.go](/test-mock/test_mock_test.go) (see also [gomock documentation](https://github.com/golang/mock) to learn more)
 
 ## Run tests
 

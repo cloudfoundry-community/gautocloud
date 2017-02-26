@@ -65,7 +65,7 @@ var srv2Expected FakeSchema = FakeSchema{
 }
 var _ = Describe("Loader", func() {
 	var fakeCloudEnv cloudenv.CloudEnv
-	var loader *Loader
+	var loader Loader
 	logBuf := new(bytes.Buffer)
 	logger := log.New(logBuf, "", log.Ldate | log.Ltime)
 	BeforeEach(func() {

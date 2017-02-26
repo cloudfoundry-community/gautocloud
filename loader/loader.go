@@ -15,7 +15,24 @@ import (
 	"encoding/json"
 )
 
-type Loader struct {
+type Loader interface {
+	ReloadConnectors()
+	RegisterConnector(connector connectors.Connector)
+	Inject(service interface{}) error
+	InjectFromId(id string, service interface{}) error
+	GetFirst(id string) (interface{}, error)
+	GetAll(id string) ([]interface{}, error)
+	CloudEnvs() []cloudenv.CloudEnv
+	Connectors() map[string]connectors.Connector
+	Store() map[string][]StoredService
+	CleanConnectors()
+	SetLogger(logger *log.Logger, lvl ldlogger.Level)
+	CurrentCloudEnv() cloudenv.CloudEnv
+	GetAppInfo() cloudenv.AppInfo
+	IsInACloudEnv() bool
+}
+
+type GautocloudLoader struct {
 	cloudEnvs  []cloudenv.CloudEnv
 	connectors map[string]connectors.Connector
 	logger     *ldlogger.LoggerLoader
@@ -27,8 +44,8 @@ type StoredService struct {
 }
 
 // Create a new loader with cloud environment given
-func NewLoader(cloudEnvs []cloudenv.CloudEnv) *Loader {
-	loader := &Loader{
+func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
+	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
 		logger: ldlogger.NewLoggerLoader(),
 	}
@@ -39,8 +56,8 @@ func NewLoader(cloudEnvs []cloudenv.CloudEnv) *Loader {
 }
 
 // Create a new loader with cloud environment given and a logger
-func NewLoaderWithLogger(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger, lvl ldlogger.Level) *Loader {
-	loader := &Loader{
+func NewLoaderWithLogger(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger, lvl ldlogger.Level) Loader {
+	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
 		logger: ldlogger.NewLoggerLoader(),
 	}
@@ -52,17 +69,17 @@ func NewLoaderWithLogger(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger, lvl 
 }
 
 // Return all cloud environments loaded
-func (l Loader) CloudEnvs() []cloudenv.CloudEnv {
+func (l GautocloudLoader) CloudEnvs() []cloudenv.CloudEnv {
 	return l.cloudEnvs
 }
 
 // Remove all registered connectors
-func (l *Loader) CleanConnectors() {
+func (l *GautocloudLoader) CleanConnectors() {
 	l.connectors = make(map[string]connectors.Connector)
 }
 
 // Return all services loaded
-func (l *Loader) Store() map[string][]StoredService {
+func (l *GautocloudLoader) Store() map[string][]StoredService {
 	return l.store
 }
 
@@ -75,14 +92,14 @@ func (l *Loader) Store() map[string][]StoredService {
 //  - logger.Lwarning
 //  - logger.Lerror
 //  - logger.Lsevere
-func (l *Loader) SetLogger(logger *log.Logger, lvl ldlogger.Level) {
+func (l *GautocloudLoader) SetLogger(logger *log.Logger, lvl ldlogger.Level) {
 	l.logger.SetLevel(lvl)
 	l.logger.SetLogger(logger)
 }
 
 // Register a connector in the loader
 // This is mainly use for connectors creators
-func (l *Loader) RegisterConnector(connector connectors.Connector) {
+func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	err := l.checkInCloudEnv()
 	if err != nil {
 		l.logger.Info("Skipping registering connector '%s': %s", connector.Id(), err.Error())
@@ -103,10 +120,10 @@ func (l *Loader) RegisterConnector(connector connectors.Connector) {
 }
 
 // Return all registered connectors
-func (l Loader) Connectors() map[string]connectors.Connector {
+func (l GautocloudLoader) Connectors() map[string]connectors.Connector {
 	return l.connectors
 }
-func (l Loader) LoadCloudEnvs() {
+func (l GautocloudLoader) LoadCloudEnvs() {
 	for _, cloudEnv := range l.cloudEnvs {
 		if !cloudEnv.IsInCloudEnv() {
 			l.logger.Debug("You are not in a '%s' environment", cloudEnv.Name())
@@ -125,7 +142,7 @@ func (l Loader) LoadCloudEnvs() {
 }
 
 // Reload connectors to find services
-func (l *Loader) ReloadConnectors() {
+func (l *GautocloudLoader) ReloadConnectors() {
 	l.LoadCloudEnvs()
 	err := l.checkInCloudEnv()
 	if err != nil {
@@ -148,7 +165,7 @@ func (l *Loader) ReloadConnectors() {
 // If service parameter is not a slice it will give the first service found
 // If you pass a slice of a type in service parameter, it will inject in the slice all services found with this type
 // It returns an error if parameter is not a pointer or if no service(s) can be found
-func (l Loader) Inject(service interface{}) error {
+func (l GautocloudLoader) Inject(service interface{}) error {
 	err := l.checkInCloudEnv()
 	if err != nil {
 		return err
@@ -174,20 +191,20 @@ func (l Loader) Inject(service interface{}) error {
 	return NewErrGiveService("Service with the type " + reflectType.String() + " cannot be found. (perhaps no services match any connectors)")
 }
 // Return the current cloud env detected
-func (l Loader) CurrentCloudEnv() cloudenv.CloudEnv {
+func (l GautocloudLoader) CurrentCloudEnv() cloudenv.CloudEnv {
 	return l.getFirstValidCloudEnv()
 }
 // Return informations about instance of the running application
-func (l Loader) GetAppInfo() cloudenv.AppInfo {
+func (l GautocloudLoader) GetAppInfo() cloudenv.AppInfo {
 	return l.getFirstValidCloudEnv().GetAppInfo()
 }
-func (l Loader) checkInCloudEnv() error {
+func (l GautocloudLoader) checkInCloudEnv() error {
 	if l.IsInACloudEnv() {
 		return nil
 	}
 	return NewErrNotInCloud(l.getCloudEnvNames())
 }
-func (l Loader) getCloudEnvNames() []string {
+func (l GautocloudLoader) getCloudEnvNames() []string {
 	names := make([]string, 0)
 	for _, cloudEnv := range l.cloudEnvs {
 		names = append(names, cloudEnv.Name())
@@ -195,7 +212,7 @@ func (l Loader) getCloudEnvNames() []string {
 	return names
 }
 // Return true if you are in a cloud environment
-func (l Loader) IsInACloudEnv() bool {
+func (l GautocloudLoader) IsInACloudEnv() bool {
 	for _, cloudEnv := range l.cloudEnvs {
 		if !cloudEnv.IsInCloudEnv() {
 			continue
@@ -204,7 +221,7 @@ func (l Loader) IsInACloudEnv() bool {
 	}
 	return false
 }
-func (l Loader) getFirstValidCloudEnv() cloudenv.CloudEnv {
+func (l GautocloudLoader) getFirstValidCloudEnv() cloudenv.CloudEnv {
 	var finalCloudEnv cloudenv.CloudEnv
 	for _, cloudEnv := range l.cloudEnvs {
 		finalCloudEnv = cloudEnv
@@ -225,7 +242,7 @@ func (l Loader) getFirstValidCloudEnv() cloudenv.CloudEnv {
 // If you pass a slice of a type in service parameter, it will inject in the slice all services found with this type
 // It returns an error if service parameter is not a pointer, if no service(s) can be found and if connector with given id doesn't exist
 
-func (l Loader) InjectFromId(id string, service interface{}) error {
+func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	err := l.checkInCloudEnv()
 	if err != nil {
 		return err
@@ -288,7 +305,7 @@ func (l Loader) InjectFromId(id string, service interface{}) error {
 //  data, err = gautocloud.GetFirst("mysql")
 //  svc = data.(*dbtype.MysqlDB)
 // It returns the first service found or an error if no service can be found or if the connector doesn't exists
-func (l Loader) GetFirst(id string) (interface{}, error) {
+func (l GautocloudLoader) GetFirst(id string) (interface{}, error) {
 	err := l.checkInCloudEnv()
 	if err != nil {
 		return nil, err
@@ -302,7 +319,7 @@ func (l Loader) GetFirst(id string) (interface{}, error) {
 	}
 	return l.store[id][0].Data, nil
 }
-func (l Loader) checkConnectorIdExist(id string) error {
+func (l GautocloudLoader) checkConnectorIdExist(id string) error {
 	if _, ok := l.connectors[id]; !ok {
 		return NewErrNoConnectorFound(id)
 	}
@@ -317,7 +334,7 @@ func (l Loader) checkConnectorIdExist(id string) error {
 //  svc = data[0].(*dbtype.MysqlDB)
 // warning: a connector may give you different types that's why GetAll return a slice of interface{}
 // It returns the first service found or an error if no service can be found or if the connector doesn't exists
-func (l Loader) GetAll(id string) ([]interface{}, error) {
+func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 	err := l.checkInCloudEnv()
 	if err != nil {
 		return nil, err
@@ -334,7 +351,7 @@ func (l Loader) GetAll(id string) ([]interface{}, error) {
 	return dataSlice, nil
 }
 
-func (l *Loader) load(connector connectors.Connector) []StoredService {
+func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService {
 	services := make([]cloudenv.Service, 0)
 	storedServices := make([]StoredService, 0)
 	cloudEnv := l.getFirstValidCloudEnv()
@@ -374,7 +391,7 @@ func (l *Loader) load(connector connectors.Connector) []StoredService {
 	l.logger.Info("Connector '%s' load %d service(s).", connector.Id(), len(storedServices))
 	return storedServices
 }
-func (l Loader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {
+func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {
 	for _, service := range toAdd {
 		if l.serviceAlreadyExists(services, service) {
 			continue
@@ -383,7 +400,7 @@ func (l Loader) addService(services []cloudenv.Service, toAdd ...cloudenv.Servic
 	}
 	return services
 }
-func (l Loader) serviceAlreadyExists(services []cloudenv.Service, toFind cloudenv.Service) bool {
+func (l GautocloudLoader) serviceAlreadyExists(services []cloudenv.Service, toFind cloudenv.Service) bool {
 	for _, service := range services {
 		if reflect.DeepEqual(service, toFind) {
 			return true
