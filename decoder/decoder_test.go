@@ -45,7 +45,8 @@ type TestCompleteStruct struct {
 	NpintDefault      *int `cloud:",default=11"`
 }
 type SubStruct struct {
-	Name string
+	Name        string
+	NameDefault string `cloud:",default=myname"`
 }
 type InvalidStruct struct{}
 type TestInvalidStruct struct {
@@ -82,6 +83,7 @@ var _ = Describe("Decoder", func() {
 			NuintDefault: uint(6),
 			Asubstruct: SubStruct{
 				Name: "name",
+				NameDefault: "myname",
 			},
 			Aslice: []string{"titi", "toto"},
 			Nuint8Default: uint8(7),
@@ -127,6 +129,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint64 = int64(5)
 		expectedStruct.Asubstruct = SubStruct{
 			Name: "name",
+			NameDefault: "myname",
 		}
 		expectedStruct.Aslice = []string{"titi", "toto"}
 		expectedStruct.Nuint = uint(6)
@@ -172,7 +175,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint16 = int16(3)
 		expectedStruct.Nint32 = int32(4)
 		expectedStruct.Nint64 = int64(5)
-		expectedStruct.Asubstruct = SubStruct{}
+		expectedStruct.Asubstruct = SubStruct{
+			NameDefault: "myname",
+		}
 		expectedStruct.Nuint = uint(6)
 		expectedStruct.Nuint8 = uint8(7)
 		expectedStruct.Aslice = []string{"titi", "toto"}
@@ -248,6 +253,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint64 = int64(5)
 		expectedStruct.Asubstruct = SubStruct{
 			Name: "name",
+			NameDefault: "myname",
 		}
 		expectedStruct.Aslice = []string{"titi", "toto"}
 		expectedStruct.Nuint = uint(6)
