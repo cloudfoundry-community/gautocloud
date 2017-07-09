@@ -27,33 +27,33 @@ type TestCompleteStruct struct {
 	Nfloat64          float64
 	Asubstruct        SubStruct
 	Npint             *int
-	UriDefault        ServiceUri `cloud:"uri_default,default=srv://user:pass@host.com:12/data?options=1"`
-	NintDefault       int `cloud:",default=1"`
-	Nint8Default      int8 `cloud:",default=2"`
-	Nint16Default     int16 `cloud:",default=3"`
-	Nint32Default     int32 `cloud:",default=4"`
-	Nint64Default     int64 `cloud:",default=5"`
-	NuintDefault      uint `cloud:",default=6"`
-	Nuint8Default     uint8 `cloud:",default=7"`
-	Nuint16Default    uint16 `cloud:",default=8"`
-	Nuint32Default    uint32 `cloud:",default=9"`
-	Nuint64Default    uint64 `cloud:",default=10"`
-	AinterfaceDefault interface{} `cloud:",default=myinterface"`
-	AboolDefault      bool `cloud:",default=true"`
-	Nfloat32Default   float32 `cloud:",default=1.1"`
-	Nfloat64Default   float64 `cloud:",default=1.2"`
-	NpintDefault      *int `cloud:",default=11"`
+	UriDefault        ServiceUri `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
+	NintDefault       int `cloud-default:"1"`
+	Nint8Default      int8 `cloud-default:"2"`
+	Nint16Default     int16 `cloud-default:"3"`
+	Nint32Default     int32 `cloud-default:"4"`
+	Nint64Default     int64 `cloud-default:"5"`
+	NuintDefault      uint `cloud-default:"6"`
+	Nuint8Default     uint8 `cloud-default:"7"`
+	Nuint16Default    uint16 `cloud-default:"8"`
+	Nuint32Default    uint32 `cloud-default:"9"`
+	Nuint64Default    uint64 `cloud-default:"10"`
+	AinterfaceDefault interface{} `cloud-default:"myinterface"`
+	AboolDefault      bool `cloud-default:"true"`
+	Nfloat32Default   float32 `cloud-default:"1.1"`
+	Nfloat64Default   float64 `cloud-default:"1.2"`
+	NpintDefault      *int `cloud-default:"11"`
 }
 type SubStruct struct {
 	Name        string
-	NameDefault string `cloud:",default=myname"`
+	NameDefault string `cloud-default:"myname"`
 }
 type InvalidStruct struct{}
 type TestInvalidStruct struct {
 	MyStruct InvalidStruct
 }
 type TestDefaultInvalidStruct struct {
-	MyStruct InvalidStruct `cloud:",default=1"`
+	MyStruct InvalidStruct `cloud-default:"1"`
 }
 
 var _ = Describe("Decoder", func() {

@@ -6,7 +6,7 @@
 //  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
 //  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
 //  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-//  	Password string `cloud:".*user.*,regex,default=apassword"` // by passing `default=avalue` decoder will understand that if the key is not found it must fill the field with this value
+//  	Password string `cloud:".*user.*,regex" cloud-default="apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
 //      Aslice   []string `cloud:"aslice,default=value1,value2"` // you can also pass a slice
 //  }
 package decoder
@@ -24,6 +24,7 @@ import (
 
 const (
 	identifier = "cloud"
+	identifier_default_value = "cloud-default"
 	regexTag = "regex"
 	defaultTag = "default"
 	skipTag = "-"
@@ -72,7 +73,10 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 		if tag.IsRegex {
 			key = getKeyFromRegex(serviceCredentials, tag.Name)
 		}
-
+		defaultValueFromTag := tField.Tag.Get(identifier_default_value)
+		if defaultValueFromTag != "" {
+			tag.DefaultValue = defaultValueFromTag
+		}
 		data := retrieveFinalData(vField.Kind(), serviceCredentials, key, tag.DefaultValue)
 		if data == nil {
 			continue

@@ -33,7 +33,7 @@ type Connector interface {
 	//  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
 	//  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
 	//  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-	//  	Password string `cloud:".*user.*,regex,default=apassword"` // by passing `default=avalue` decoder will understand that if the key is not found it must fill the field with this value
+	//  	Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
 	//  }
 	Schema() interface{}
 }
