@@ -21,9 +21,8 @@ func NewEnvVarCloudEnvEnvironment(environ []string) EnvVarCloudEnv {
 	cloudEnv := EnvVarCloudEnv{}
 	cloudEnv.InitEnv(environ)
 	return cloudEnv
-
 }
-func (c EnvVarCloudEnv) Load() error {
+func (c *EnvVarCloudEnv) Load() error {
 	c.InitEnv(os.Environ())
 	return nil
 }

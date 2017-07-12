@@ -18,7 +18,7 @@ func NewKubernetesCloudEnvEnvironment(environ []string) CloudEnv {
 	return &KubernetesCloudEnv{NewEnvVarCloudEnvEnvironment(environ)}
 }
 
-func (c KubernetesCloudEnv) Load() error {
+func (c *KubernetesCloudEnv) Load() error {
 	c.InitEnv(c.SanitizeEnvVars(os.Environ()))
 	return nil
 }

@@ -32,7 +32,6 @@ var _ = Describe("KubernetesCloudenv", func() {
 			"MONITORING_INFLUXDB_SERVICE_HOST=10.100.200.49",
 		}
 		cloudEnv = NewKubernetesCloudEnvEnvironment(KubernetesCloudEnv{}.SanitizeEnvVars(services))
-
 	})
 	Context("GetServicesFromTags", func() {
 		It("should give correct service(s)", func() {
