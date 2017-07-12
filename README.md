@@ -4,7 +4,7 @@
 Gautocloud provides a simple abstraction that golang based applications can use 
 to discover information about the cloud environment on which they are running, 
 to connect to services automatically with ease of use in mind. It provides out-of-the-box support 
-for discovering common services on Heroku and Cloud Foundry cloud platforms, 
+for discovering common services on Heroku, Cloud Foundry and kubernetes cloud platforms, 
 and it supports custom automatic connectors.
 
 This project can be assimilated to the [spring-cloud-connector](https://github.com/spring-cloud/spring-cloud-connectors) project
@@ -17,6 +17,7 @@ This project can be assimilated to the [spring-cloud-connector](https://github.c
 - [Cloud Environments](#cloud-environments)
   - [Cloud Foundry](#cloud-foundry)
   - [Heroku](#heroku)
+  - [Kubernetes](#kubernetes)
   - [Local](#local)
 - [Concept](#concept)
   - [Architecture](#architecture)
@@ -170,6 +171,35 @@ It returns a service with credentials:
   - `host`: (type: *string*) host of the app.
   - `port`: (type: *int*) port of the app.
 
+### Kubernetes
+
+- **Cloud Detection**: if the `KUBERNETES_PORT` env var exists
+- **Service detection by name**: Look all env var which contains the name required by a connector. Env var key are after parsed to create credentials.
+Example:
+```
+you have env var:
+- `MY_SVC_SERVICE_NAME=myname`
+- `MY_SVC_SERVICE_HOST=localhost`
+
+Connector required name `SVC`.
+CloudEnv remove `_SERVICE` from the key and decode `MY_SVC_NAME` to [MY, SVC, NAME] and [MY, SVC, VALUE] 
+and detect that there is SVC in those two env var.
+It returns a service with credentials:
+{
+  "name": "myname",
+  "host": "localhost"
+}
+```
+**Note**: if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
+
+- **Service detection by tags**: each tag work like by name.
+- **App information id**: id of the app given by the env var `HOSTNAME`
+- **App information name**: Name of the app given by the env var `HOSTNAME`
+- **App information properties**:
+  - `host`: (type: *string*) host of the app.
+  - `port`: (type: *int*) port of the app.
+  - All values starting by `KUBERNETES` in env vars key.
+  
 ### Local
 
 This is a special *CloudEnv* and can be considered as a fake one.
@@ -261,6 +291,7 @@ func main() {
                 cloudenv.NewCfCloudEnv(),
                 cloudenv.NewHerokuCloudEnv(),
                 cloudenv.NewLocalCloudEnv(),
+                cloudenv.NewKubernetesCloudEnv(),
             },
             log.New(os.Stdout, "", log.Ldate | log.Ltime), 
             logger.Linfo,
