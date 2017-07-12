@@ -290,8 +290,8 @@ func main() {
             []cloudenv.CloudEnv{
                 cloudenv.NewCfCloudEnv(),
                 cloudenv.NewHerokuCloudEnv(),
-                cloudenv.NewLocalCloudEnv(),
                 cloudenv.NewKubernetesCloudEnv(),
+                cloudenv.NewLocalCloudEnv(),
             },
             log.New(os.Stdout, "", log.Ldate | log.Ltime), 
             logger.Linfo,

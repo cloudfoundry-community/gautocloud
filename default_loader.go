@@ -11,7 +11,7 @@ var defaultLoader loader.Loader = loader.NewLoader(
 	[]cloudenv.CloudEnv{
 		cloudenv.NewCfCloudEnv(),
 		cloudenv.NewHerokuCloudEnv(),
-		cloudenv.NewLocalCloudEnv(),
 		cloudenv.NewKubernetesCloudEnv(),
+		cloudenv.NewLocalCloudEnv(),
 	},
 )
