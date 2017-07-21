@@ -166,6 +166,7 @@ It returns a service with credentials:
 - if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
 - If the value of an env var is in json it will be decode the json and pass content as credentials
 
+**Retrieves**:
 - **Service detection by tags**: each tag work like by name.
 - **App information id**: id of the app given by the env var `DYNO`
 - **App information name**: Set the env var `GAUTOCLOUD_APP_NAME` to give a name to your app instead it will be `<unknown>`
@@ -196,7 +197,7 @@ It returns a service with credentials:
 - if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
 - If the value of an env var is in json it will be decode the json and pass content as credentials
 
-
+**Retrieves**:
 - **Service detection by tags**: each tag work like by name.
 - **App information id**: id of the app given by the env var `HOSTNAME`
 - **App information name**: Name of the app given by the env var `HOSTNAME`
