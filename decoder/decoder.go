@@ -190,11 +190,18 @@ func affect(data interface{}, vField reflect.Value) error {
 			dataValue = dataValue.Elem()
 		}
 		for i := 0; i < dataValue.Len(); i++ {
+			var newElem reflect.Value
 			dataValueElem := dataValue.Index(i)
 			if dataValueElem.Type().Kind() == reflect.Interface {
 				dataValueElem = dataValueElem.Elem()
 			}
-			vField.Set(reflect.Append(vField, dataValueElem))
+			newElem = dataValueElem
+			if dataValueElem.Type() == reflect.TypeOf(make(map[string]interface{})) {
+				newElem = reflect.New(vField.Type().Elem())
+				UnmarshalToValue(dataValueElem.Interface().(map[string]interface{}), newElem)
+				newElem = newElem.Elem()
+			}
+			vField.Set(reflect.Append(vField, newElem))
 		}
 		break
 	case reflect.Interface:

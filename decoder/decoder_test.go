@@ -30,6 +30,7 @@ type TestCompleteStruct struct {
 	Nfloat32          float32
 	Nfloat64          float64
 	Asubstruct        SubStruct
+	Slicesubstruct    []SubStruct
 	Npint             *int
 	UriDefault        ServiceUri `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
 	NintDefault       int `cloud-default:"1"`
@@ -91,6 +92,12 @@ var _ = Describe("Decoder", func() {
 				Name: "name",
 				NameDefault: "myname",
 			},
+			Slicesubstruct: []SubStruct{
+				{
+					Name: "name",
+					NameDefault: "myname",
+				},
+			},
 			Amap: map[string]interface{}{
 				"name": "name",
 			},
@@ -119,6 +126,7 @@ var _ = Describe("Decoder", func() {
 			"nuint": uint(6),
 			"amap": map[string]interface{}{"name": "name"},
 			"asubstruct": map[string]interface{}{"name": "name"},
+			"slicesubstruct": []map[string]interface{}{map[string]interface{}{"name": "name"}},
 			"aslice": []string{"titi", "toto"},
 			"nuint8": uint8(7),
 			"nuint16": uint16(8),
@@ -170,6 +178,7 @@ var _ = Describe("Decoder", func() {
 			"nint64": "5",
 			"nuint": "6",
 			"amap": map[string]interface{}{"name": "name"},
+			"slicesubstruct": []map[string]interface{}{map[string]interface{}{"name": "name"}},
 			"float_json_number": json.Number("0.12e+1"),
 			"int_json_number": json.Number("2"),
 			"aslice": "titi, toto",
@@ -251,6 +260,7 @@ var _ = Describe("Decoder", func() {
 			"int_json_number": json.Number("2"),
 			"amap": map[string]interface{}{"name": "name"},
 			"asubstruct": map[string]interface{}{"name": "name"},
+			"slicesubstruct": []map[string]interface{}{map[string]interface{}{"name": "name"}},
 			"aslice": []string{"titi", "toto"},
 			"nuint8": float64(7),
 			"nuint16": float32(8),
