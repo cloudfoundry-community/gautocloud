@@ -3,6 +3,8 @@ package cloudenv
 import (
 	"os"
 	"strings"
+	"encoding/json"
+	"bytes"
 )
 
 type EnvVarCloudEnv struct {
@@ -32,7 +34,7 @@ func (c *EnvVarCloudEnv) InitEnv(environ []string) {
 		splitEnv := strings.Split(envVar, "=")
 		envVars = append(envVars, EnvVar{
 			Key: strings.ToLower(splitEnv[0]),
-			Value: strings.Join(splitEnv[1:], "="),
+			Value: strings.TrimSpace(strings.Join(splitEnv[1:], "=")),
 		})
 	}
 	c.envVars = envVars
@@ -68,10 +70,20 @@ func (c EnvVarCloudEnv) getServicesFromPrefix(prefix string) []Service {
 		if len(splitKey) == 1 {
 			services[name].Credentials[splitKey[0]] = c.extractCredValue(splitKey, envVar.Value)
 			services[name].Credentials["uri"] = c.extractCredValue(splitKey, envVar.Value)
+			jsonCreds := c.decodeJson(envVar.Value)
+			for key, value := range jsonCreds {
+				services[name].Credentials[key] = value
+			}
 			continue
 		}
-		services[name].Credentials[strings.Join(splitKey[toSplitPos:], "_")] = c.extractCredValue(splitKey[toSplitPos:], envVar.Value)
-
+		keyName := strings.Join(splitKey[toSplitPos:], "_")
+		if keyName != "" {
+			services[name].Credentials[keyName] = c.extractCredValue(splitKey[toSplitPos:], envVar.Value)
+		}
+		jsonCreds := c.decodeJson(envVar.Value)
+		for key, value := range jsonCreds {
+			services[name].Credentials[key] = value
+		}
 	}
 	sliceServices := make([]Service, 0)
 	for _, service := range services {
@@ -84,6 +96,19 @@ func (c EnvVarCloudEnv) extractCredValue(splitKey []string, value string) interf
 		return c.extractCredValue(splitKey[1:], value)
 	}
 	return value
+}
+func (c EnvVarCloudEnv) isJson(value string) bool {
+	return strings.HasPrefix(value, "{") || strings.HasPrefix(value, "[")
+}
+func (c EnvVarCloudEnv) decodeJson(value string) map[string]interface{} {
+	creds := make(map[string]interface{})
+	if !c.isJson(value) {
+		return creds
+	}
+	decoder := json.NewDecoder(bytes.NewReader([]byte(value)))
+	decoder.UseNumber()
+	decoder.Decode(&creds)
+	return creds
 }
 func (c EnvVarCloudEnv) EnvVars() []EnvVar {
 	return c.envVars

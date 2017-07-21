@@ -162,7 +162,9 @@ It returns a service with credentials:
   "host": "localhost"
 }
 ```
-**Note**: if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
+**Note**: 
+- if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
+- If the value of an env var is in json it will be decode the json and pass content as credentials
 
 - **Service detection by tags**: each tag work like by name.
 - **App information id**: id of the app given by the env var `DYNO`
@@ -190,7 +192,10 @@ It returns a service with credentials:
   "host": "localhost"
 }
 ```
-**Note**: if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
+**Note**:
+- if a env var key doesn't contains `_` (e.g.: `SVC=localhost`) it will give those credentials: `{"svc": "localhost", "uri": "localhost"}`.
+- If the value of an env var is in json it will be decode the json and pass content as credentials
+
 
 - **Service detection by tags**: each tag work like by name.
 - **App information id**: id of the app given by the env var `HOSTNAME`

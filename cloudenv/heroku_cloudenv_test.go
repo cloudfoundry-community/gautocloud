@@ -21,6 +21,7 @@ var _ = Describe("HerokuCloudenv", func() {
 			"MY_MYSQL_DATABASE_HOST=host.com",
 			"MY_MYSQL_DATABASE_USER=user",
 			"MY_MYSQL_DATABASE_PASSWORD=password",
+			`SVC_CONFIG={"foo": "bar"}`,
 		}
 		cloudEnv = NewHerokuCloudEnvEnvironment(services)
 	})
@@ -58,6 +59,15 @@ var _ = Describe("HerokuCloudenv", func() {
 			Expect(services[0].Credentials["s3"]).Should(Equal("s3://host.com/mys3"))
 			Expect(services[0].Credentials["uri"]).Should(Equal("s3://host.com/mys3"))
 		})
+		Context("Value is json encoded", func() {
+			It("should give correct service with json decoded when giving a tag which target an env var", func() {
+				services := cloudEnv.GetServicesFromTags([]string{"SVC_CONFIG"})
+				Expect(services).Should(HaveLen(1))
+				Expect(services[0].Credentials).Should(HaveLen(1))
+				Expect(services[0].Credentials["foo"]).Should(Equal("bar"))
+			})
+		})
+
 	})
 	Context("GetServicesFromName", func() {
 		It("should give correct service(s) for non alone identifier", func() {
@@ -85,6 +95,14 @@ var _ = Describe("HerokuCloudenv", func() {
 			Expect(servicesS3[0].Credentials).Should(HaveLen(2))
 			Expect(servicesS3[0].Credentials["s3"]).Should(Equal("s3://host.com/mys3"))
 			Expect(servicesS3[0].Credentials["uri"]).Should(Equal("s3://host.com/mys3"))
+		})
+		Context("Value is json encoded", func() {
+			It("should give correct service with json decoded", func() {
+				services := cloudEnv.GetServicesFromName(".*config")
+				Expect(services).Should(HaveLen(1))
+				Expect(services[0].Credentials).Should(HaveLen(1))
+				Expect(services[0].Credentials["foo"]).Should(Equal("bar"))
+			})
 		})
 	})
 	Context("GetAppInfo", func() {
