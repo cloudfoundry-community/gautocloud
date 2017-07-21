@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"errors"
 	"github.com/azer/snakecase"
+	"encoding/json"
 )
 
 const (
@@ -82,7 +83,7 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 			continue
 		}
 		dataKind := reflect.TypeOf(data).Kind()
-		if dataKind == reflect.String {
+		if dataKind == reflect.String && reflect.TypeOf(data) != reflect.TypeOf(json.Number("")) {
 			data, err = convertStringValue(data.(string), vField)
 			if err != nil {
 				return NewErrDecode(fmt.Sprintf(
@@ -106,9 +107,19 @@ func Unmarshal(serviceCredentials map[string]interface{}, obj interface{}) error
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps)
 }
-func parseFloat(data interface{}, vField reflect.Value) interface{} {
-	if reflect.ValueOf(data).Kind() != reflect.Float32 && reflect.ValueOf(data).Kind() != reflect.Float64 {
+func parseForInt(data interface{}, vField reflect.Value) interface{} {
+	if reflect.ValueOf(data).Kind() != reflect.Float32 &&
+		reflect.ValueOf(data).Kind() != reflect.Float64 &&
+		reflect.TypeOf(data) != reflect.TypeOf(json.Number("")) {
 		return data
+	}
+	if reflect.TypeOf(data) == reflect.TypeOf(json.Number("")) {
+		jsonInt, err := data.(json.Number).Int64()
+		if err != nil {
+			panic(err)
+		}
+		val, _ := convertStringValue(fmt.Sprintf("%d", jsonInt), vField)
+		return val
 	}
 	if reflect.ValueOf(data).Kind() == reflect.Float32 {
 		val, _ := convertStringValue(fmt.Sprintf("%.0f", data.(float32)), vField)
@@ -117,40 +128,54 @@ func parseFloat(data interface{}, vField reflect.Value) interface{} {
 	val, _ := convertStringValue(fmt.Sprintf("%.0f", data.(float64)), vField)
 	return val
 }
+func parseForFloat(data interface{}, vField reflect.Value) float64 {
+	if reflect.TypeOf(data) == reflect.TypeOf(json.Number("")) {
+		floatData, err := data.(json.Number).Float64()
+		if err != nil {
+			panic(err)
+		}
+		return floatData
+	}
+	if vField.Kind() == reflect.Float32 {
+		return float64(data.(float32))
+	}
+	return data.(float64)
+}
+
 func affect(data interface{}, vField reflect.Value) error {
 	switch vField.Kind() {
 	case reflect.String:
 		vField.SetString(data.(string))
 		break
 	case reflect.Int:
-		vField.SetInt(int64(parseFloat(data, vField).(int)))
+		vField.SetInt(int64(parseForInt(data, vField).(int)))
 		break
 	case reflect.Int8:
-		vField.SetInt(int64(parseFloat(data, vField).(int8)))
+		vField.SetInt(int64(parseForInt(data, vField).(int8)))
 		break
 	case reflect.Int16:
-		vField.SetInt(int64(parseFloat(data, vField).(int16)))
+		vField.SetInt(int64(parseForInt(data, vField).(int16)))
 		break
 	case reflect.Int32:
-		vField.SetInt(int64(parseFloat(data, vField).(int32)))
+		vField.SetInt(int64(parseForInt(data, vField).(int32)))
 		break
 	case reflect.Int64:
-		vField.SetInt(parseFloat(data, vField).(int64))
+		vField.SetInt(parseForInt(data, vField).(int64))
 		break
 	case reflect.Uint:
-		vField.SetUint(uint64(parseFloat(data, vField).(uint)))
+		vField.SetUint(uint64(parseForInt(data, vField).(uint)))
 		break
 	case reflect.Uint8:
-		vField.SetUint(uint64(parseFloat(data, vField).(uint8)))
+		vField.SetUint(uint64(parseForInt(data, vField).(uint8)))
 		break
 	case reflect.Uint16:
-		vField.SetUint(uint64(parseFloat(data, vField).(uint16)))
+		vField.SetUint(uint64(parseForInt(data, vField).(uint16)))
 		break
 	case reflect.Uint32:
-		vField.SetUint(uint64(parseFloat(data, vField).(uint32)))
+		vField.SetUint(uint64(parseForInt(data, vField).(uint32)))
 		break
 	case reflect.Uint64:
-		vField.SetUint(parseFloat(data, vField).(uint64))
+		vField.SetUint(parseForInt(data, vField).(uint64))
 		break
 	case reflect.Slice:
 		if vField.IsNil() {
@@ -179,10 +204,10 @@ func affect(data interface{}, vField reflect.Value) error {
 		vField.SetBool(data.(bool))
 		break
 	case reflect.Float32:
-		vField.SetFloat(float64(data.(float32)))
+		vField.SetFloat(parseForFloat(data, vField))
 		break
 	case reflect.Float64:
-		vField.SetFloat(data.(float64))
+		vField.SetFloat(parseForFloat(data, vField))
 		break
 	case reflect.Ptr:
 		if vField.IsNil() {
@@ -197,6 +222,11 @@ func affect(data interface{}, vField reflect.Value) error {
 		servUriType := reflect.TypeOf(ServiceUri{})
 		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
 			return NewErrTypeNotSupported(vField)
+		}
+		if vField.Type() == reflect.TypeOf(make(map[string]interface{})) &&
+			reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
+			vField.Set(reflect.ValueOf(data))
+			break
 		}
 		if reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
 			return UnmarshalToValue(data.(map[string]interface{}), vField)

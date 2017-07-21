@@ -5,6 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"encoding/json"
 )
 
 type TestCompleteStruct struct {
@@ -20,7 +21,10 @@ type TestCompleteStruct struct {
 	Nuint16           uint16
 	Nuint32           uint32
 	Nuint64           uint64
+	FloatJsonNumber   float64
+	IntJsonNumber     int
 	Ainterface        interface{}
+	Amap              map[string]interface{}
 	Aslice            []string
 	Abool             bool
 	Nfloat32          float32
@@ -81,9 +85,14 @@ var _ = Describe("Decoder", func() {
 			Nint32Default: int32(4),
 			Nint64Default: int64(5),
 			NuintDefault: uint(6),
+			FloatJsonNumber: float64(1.2),
+			IntJsonNumber: 2,
 			Asubstruct: SubStruct{
 				Name: "name",
 				NameDefault: "myname",
+			},
+			Amap: map[string]interface{}{
+				"name": "name",
 			},
 			Aslice: []string{"titi", "toto"},
 			Nuint8Default: uint8(7),
@@ -108,6 +117,7 @@ var _ = Describe("Decoder", func() {
 			"nint32": int32(4),
 			"nint64": int64(5),
 			"nuint": uint(6),
+			"amap": map[string]interface{}{"name": "name"},
 			"asubstruct": map[string]interface{}{"name": "name"},
 			"aslice": []string{"titi", "toto"},
 			"nuint8": uint8(7),
@@ -115,6 +125,8 @@ var _ = Describe("Decoder", func() {
 			"nuint32": uint32(9),
 			"nuint64": uint64(10),
 			"ainterface": "myinterface",
+			"float_json_number": json.Number("0.12e+1"),
+			"int_json_number": json.Number("2"),
 			"abool": true,
 			"nfloat32": float32(1.1),
 			"nfloat64": float64(1.2),
@@ -157,6 +169,9 @@ var _ = Describe("Decoder", func() {
 			"nint32": "4",
 			"nint64": "5",
 			"nuint": "6",
+			"amap": map[string]interface{}{"name": "name"},
+			"float_json_number": json.Number("0.12e+1"),
+			"int_json_number": json.Number("2"),
 			"aslice": "titi, toto",
 			"nuint8": "7",
 			"nuint16": "8",
@@ -232,6 +247,9 @@ var _ = Describe("Decoder", func() {
 			"nint32": float32(4),
 			"nint64": float32(5),
 			"nuint": float32(6),
+			"float_json_number": json.Number("0.12e+1"),
+			"int_json_number": json.Number("2"),
+			"amap": map[string]interface{}{"name": "name"},
 			"asubstruct": map[string]interface{}{"name": "name"},
 			"aslice": []string{"titi", "toto"},
 			"nuint8": float64(7),
