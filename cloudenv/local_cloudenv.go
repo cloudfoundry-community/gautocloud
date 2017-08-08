@@ -122,13 +122,21 @@ func (c LocalCloudEnv) convertSliceOfMap(toConvert map[string]interface{}) map[s
 }
 func (c LocalCloudEnv) convertMapInterface(toConvert interface{}) interface{} {
 	typeData := reflect.TypeOf(toConvert)
-	if typeData != reflect.TypeOf(make(map[interface{}]interface{})) {
+	if typeData != reflect.TypeOf(make(map[interface{}]interface{})) && typeData != reflect.TypeOf(make([]interface{}, 0)) {
 		return reflect.ValueOf(toConvert).Interface()
+	}
+	if typeData == reflect.TypeOf(make([]interface{}, 0)) {
+		dataSlice := toConvert.([]interface{})
+		for i, data := range dataSlice {
+			dataSlice[i] = c.convertMapInterface(data)
+		}
+		return dataSlice
 	}
 	converted := make(map[string]interface{})
 	for key, value := range toConvert.(map[interface{}]interface{}) {
 		converted[key.(string)] = c.convertMapInterface(value)
 	}
+
 	return converted
 }
 func (c *LocalCloudEnv) loadServices(v interface{}) {
