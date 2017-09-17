@@ -1,20 +1,20 @@
 package cloudenv
 
 import (
-	"os"
 	"fmt"
+	"os"
 
-	"github.com/spf13/viper"
 	"encoding/json"
-	"io"
-	"reflect"
-	"path/filepath"
 	"errors"
 	"github.com/satori/go.uuid"
+	"github.com/spf13/viper"
+	"io"
+	"path/filepath"
+	"reflect"
 )
 
 const (
-	LOCAL_ENV_KEY = "CLOUD_FILE"
+	LOCAL_ENV_KEY       = "CLOUD_FILE"
 	SERVICES_CONFIG_KEY = "services"
 )
 
@@ -42,7 +42,12 @@ func (c *LocalCloudEnv) Load() error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("Fatal error on reading cloud file: %s \n", err.Error()))
 	}
-	c.loadServices(viper.Get(SERVICES_CONFIG_KEY))
+	services := viper.Get(SERVICES_CONFIG_KEY)
+	if services != nil {
+		c.loadServices(viper.Get(SERVICES_CONFIG_KEY))
+	} else {
+		c.servicesLocal = make([]ServiceLocal, 0)
+	}
 	c.loadAppName()
 	return nil
 }
@@ -67,7 +72,7 @@ func (c *LocalCloudEnv) loadAppName() {
 func (c LocalCloudEnv) Name() string {
 	return "localcloud"
 }
-func (c LocalCloudEnv) GetServicesFromName(name string) ([]Service) {
+func (c LocalCloudEnv) GetServicesFromName(name string) []Service {
 	services := make([]Service, 0)
 	for _, serviceLocal := range c.servicesLocal {
 		if match(name, serviceLocal.Name) {
@@ -78,7 +83,7 @@ func (c LocalCloudEnv) GetServicesFromName(name string) ([]Service) {
 	}
 	return services
 }
-func (c LocalCloudEnv) GetServicesFromTags(tags []string) ([]Service) {
+func (c LocalCloudEnv) GetServicesFromTags(tags []string) []Service {
 	services := make([]Service, 0)
 	for _, tag := range tags {
 		services = append(services, c.getServicesWithTag(tag)...)
@@ -178,8 +183,8 @@ func (c *LocalCloudEnv) GetAppInfo() AppInfo {
 		c.id = id
 	}
 	return AppInfo{
-		Id: c.id,
-		Name: c.appName,
+		Id:         c.id,
+		Name:       c.appName,
 		Properties: make(map[string]interface{}),
 	}
 
