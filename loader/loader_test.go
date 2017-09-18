@@ -82,7 +82,7 @@ var _ = Describe("Loader", func() {
 			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
 			loader.RegisterConnector(fakecon.NewFakeConnector(FakeSchema{}))
 			Expect(logBuf.String()).Should(ContainSubstring("Skipping loading connector"))
-			Expect(loader.Connectors()).Should(HaveLen(0))
+			Expect(loader.Connectors()).Should(HaveLen(1))
 		})
 		It("should register and load connector if in a cloud environment", func() {
 			loader.RegisterConnector(fakecon.NewFakeConnector(FakeSchema{}))
