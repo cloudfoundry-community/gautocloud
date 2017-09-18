@@ -3,31 +3,31 @@ package loader_test
 import (
 	. "github.com/cloudfoundry-community/gautocloud/loader"
 
+	"bytes"
+	"github.com/cloudfoundry-community/gautocloud/cloudenv"
+	fakecloud "github.com/cloudfoundry-community/gautocloud/cloudenv/fake"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
+	fakecon "github.com/cloudfoundry-community/gautocloud/connectors/fake"
+	"github.com/cloudfoundry-community/gautocloud/decoder"
+	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
-	fakecon "github.com/cloudfoundry-community/gautocloud/connectors/fake"
-	fakecloud "github.com/cloudfoundry-community/gautocloud/cloudenv/fake"
-	"github.com/cloudfoundry-community/gautocloud/cloudenv"
-	"github.com/cloudfoundry-community/gautocloud/decoder"
-	"bytes"
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"reflect"
 	"log"
+	"reflect"
 )
 
 type FakeSchema struct {
 	Uri      decoder.ServiceUri `cloud:"ur(i|l),regex"`
-	Host     string `cloud:"host.*,regex"`
-	Username string `cloud:"user.*,regex"`
-	Password string `cloud:"pass.*,regex"`
+	Host     string             `cloud:"host.*,regex"`
+	Username string             `cloud:"user.*,regex"`
+	Password string             `cloud:"pass.*,regex"`
 	Port     int
 }
 type SecondFakeSchema struct {
 	Uri      decoder.ServiceUri `cloud:"ur(i|l),regex"`
-	Host     string `cloud:"host.*,regex"`
-	Username string `cloud:"user.*,regex"`
-	Password string `cloud:"pass.*,regex"`
+	Host     string             `cloud:"host.*,regex"`
+	Username string             `cloud:"user.*,regex"`
+	Password string             `cloud:"pass.*,regex"`
 	Port     int
 }
 
@@ -40,7 +40,7 @@ var defaultServices []cloudenv.Service = []cloudenv.Service{
 	{
 		Credentials: map[string]interface{}{
 			"hostname": "smtp.sendgrid.net",
-			"port": 25,
+			"port":     25,
 			"username": "QvsXMbJ3rK",
 			"password": "HCHMOYluTv",
 		},
@@ -48,18 +48,18 @@ var defaultServices []cloudenv.Service = []cloudenv.Service{
 }
 var srv1Expected FakeSchema = FakeSchema{
 	Uri: decoder.ServiceUri{
-		Scheme: "postgres",
+		Scheme:   "postgres",
 		Username: "seilbmbd",
 		Password: "PHxTPJSbkcDakfK4cYwXHiIX9Q8p5Bxn",
-		Host: "babar.elephantsql.com",
-		Port: 5432,
-		Query: make([]decoder.QueryUri, 0),
-		Name: "seilbmbd",
+		Host:     "babar.elephantsql.com",
+		Port:     5432,
+		Query:    make([]decoder.QueryUri, 0),
+		Name:     "seilbmbd",
 	},
 }
 var srv2Expected FakeSchema = FakeSchema{
-	Host: "smtp.sendgrid.net",
-	Port: 25,
+	Host:     "smtp.sendgrid.net",
+	Port:     25,
 	Username: "QvsXMbJ3rK",
 	Password: "HCHMOYluTv",
 }
@@ -67,7 +67,7 @@ var _ = Describe("Loader", func() {
 	var fakeCloudEnv cloudenv.CloudEnv
 	var loader Loader
 	logBuf := new(bytes.Buffer)
-	logger := log.New(logBuf, "", log.Ldate | log.Ltime)
+	logger := log.New(logBuf, "", log.Ldate|log.Ltime)
 	BeforeEach(func() {
 		fakeCloudEnv = fakecloud.NewFakeCloudEnv()
 		fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetServices(defaultServices)
@@ -78,13 +78,13 @@ var _ = Describe("Loader", func() {
 		logBuf.Reset()
 	})
 	Context("RegisterConnector", func() {
-		It("should log an info and not register connector if not in a cloud environment", func() {
+		It("should log an info and not load connector if not in a cloud environment", func() {
 			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
 			loader.RegisterConnector(fakecon.NewFakeConnector(FakeSchema{}))
-			Expect(logBuf.String()).Should(ContainSubstring("Skipping registering connector"))
+			Expect(logBuf.String()).Should(ContainSubstring("Skipping loading connector"))
 			Expect(loader.Connectors()).Should(HaveLen(0))
 		})
-		It("should register connector if in a cloud environment", func() {
+		It("should register and load connector if in a cloud environment", func() {
 			loader.RegisterConnector(fakecon.NewFakeConnector(FakeSchema{}))
 			Expect(loader.Connectors()).Should(HaveLen(1))
 		})
