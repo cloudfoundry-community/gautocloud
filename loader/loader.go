@@ -4,15 +4,15 @@
 package loader
 
 import (
-	"reflect"
-	"github.com/cloudfoundry-community/gautocloud/decoder"
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/cloudenv"
-	"strings"
+	"encoding/json"
 	"fmt"
+	"github.com/cloudfoundry-community/gautocloud/cloudenv"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/decoder"
 	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	"log"
-	"encoding/json"
+	"reflect"
+	"strings"
 )
 
 type Loader interface {
@@ -47,7 +47,7 @@ type StoredService struct {
 func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
-		logger: ldlogger.NewLoggerLoader(),
+		logger:    ldlogger.NewLoggerLoader(),
 	}
 	loader.connectors = make(map[string]connectors.Connector)
 	loader.store = make(map[string][]StoredService)
@@ -59,7 +59,7 @@ func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 func NewLoaderWithLogger(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger, lvl ldlogger.Level) Loader {
 	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
-		logger: ldlogger.NewLoggerLoader(),
+		logger:    ldlogger.NewLoggerLoader(),
 	}
 	loader.connectors = make(map[string]connectors.Connector)
 	loader.store = make(map[string][]StoredService)
@@ -100,11 +100,6 @@ func (l *GautocloudLoader) SetLogger(logger *log.Logger, lvl ldlogger.Level) {
 // Register a connector in the loader
 // This is mainly use for connectors creators
 func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
-	err := l.checkInCloudEnv()
-	if err != nil {
-		l.logger.Info("Skipping registering connector '%s': %s", connector.Id(), err.Error())
-		return
-	}
 	if _, ok := l.connectors[connector.Id()]; ok {
 		l.logger.Error("During registering connector: A connector with id '%s' already exists.", connector.Id())
 		return
@@ -112,6 +107,11 @@ func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	l.logger.Debug("Loading connector '%s' ...", connector.Id())
 	l.connectors[connector.Id()] = connector
 	storedServices := l.load(connector)
+	err := l.checkInCloudEnv()
+	if err != nil {
+		l.logger.Info("Skipping loading connector '%s': %s", connector.Id(), err.Error())
+		return
+	}
 	if len(storedServices) == 0 {
 		return
 	}
@@ -190,10 +190,12 @@ func (l GautocloudLoader) Inject(service interface{}) error {
 	}
 	return NewErrGiveService("Service with the type " + reflectType.String() + " cannot be found. (perhaps no services match any connectors)")
 }
+
 // Return the current cloud env detected
 func (l GautocloudLoader) CurrentCloudEnv() cloudenv.CloudEnv {
 	return l.getFirstValidCloudEnv()
 }
+
 // Return informations about instance of the running application
 func (l GautocloudLoader) GetAppInfo() cloudenv.AppInfo {
 	return l.getFirstValidCloudEnv().GetAppInfo()
@@ -211,6 +213,7 @@ func (l GautocloudLoader) getCloudEnvNames() []string {
 	}
 	return names
 }
+
 // Return true if you are in a cloud environment
 func (l GautocloudLoader) IsInACloudEnv() bool {
 	for _, cloudEnv := range l.cloudEnvs {
@@ -385,7 +388,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 		)
 		storedServices = append(storedServices, StoredService{
 			ReflectType: reflectType,
-			Data: loadedService,
+			Data:        loadedService,
 		})
 	}
 	l.logger.Info("Connector '%s' load %d service(s).", connector.Id(), len(storedServices))
@@ -408,4 +411,3 @@ func (l GautocloudLoader) serviceAlreadyExists(services []cloudenv.Service, toFi
 	}
 	return false
 }
-
