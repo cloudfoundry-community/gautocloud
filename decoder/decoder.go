@@ -6,29 +6,29 @@
 //  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
 //  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
 //  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-//  	Password string `cloud:".*user.*,regex" cloud-default="apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
-//      Aslice   []string `cloud:"aslice,default=value1,value2"` // you can also pass a slice
+//  	Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
+//      Aslice   []string `cloud:"aslice" cloud-default:"value1,value2"` // you can also pass a slice
 //  }
 package decoder
 
 import (
-	"reflect"
-	"strings"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/azer/snakecase"
+	"net/url"
+	"reflect"
 	"regexp"
 	"strconv"
-	"net/url"
-	"errors"
-	"github.com/azer/snakecase"
-	"encoding/json"
+	"strings"
 )
 
 const (
-	identifier = "cloud"
+	identifier               = "cloud"
 	identifier_default_value = "cloud-default"
-	regexTag = "regex"
-	defaultTag = "default"
-	skipTag = "-"
+	regexTag                 = "regex"
+	defaultTag               = "default"
+	skipTag                  = "-"
 )
 
 type Tag struct {
@@ -102,6 +102,7 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 	}
 	return nil
 }
+
 // Decode a map of credentials into a structure
 func Unmarshal(serviceCredentials map[string]interface{}, obj interface{}) error {
 	ps := reflect.ValueOf(obj)
@@ -266,9 +267,9 @@ func parseInTag(tag, fieldName string) Tag {
 	}
 
 	return Tag{
-		Name: name,
-		Skip: skipped,
-		IsRegex: hasRegexTag(splitedTag[1:]),
+		Name:         name,
+		Skip:         skipped,
+		IsRegex:      hasRegexTag(splitedTag[1:]),
 		DefaultValue: getDefaultTagValue(splitedTag[1:]),
 	}
 }
@@ -346,7 +347,7 @@ func urlToServiceUri(url *url.URL) ServiceUri {
 	queries := make([]QueryUri, 0)
 	for key, value := range url.Query() {
 		queries = append(queries, QueryUri{
-			Key: key,
+			Key:   key,
 			Value: value[0],
 		})
 	}
@@ -358,13 +359,13 @@ func urlToServiceUri(url *url.URL) ServiceUri {
 		port, _ = strconv.Atoi(splitedHost[1])
 	}
 	return ServiceUri{
-		Scheme: url.Scheme,
+		Scheme:   url.Scheme,
 		Username: username,
 		Password: password,
-		Host: host,
-		Port: port,
-		Name: strings.TrimPrefix(url.Path, "/"),
-		Query: queries,
+		Host:     host,
+		Port:     port,
+		Name:     strings.TrimPrefix(url.Path, "/"),
+		Query:    queries,
 		RawQuery: url.RawQuery,
 	}
 }

@@ -4,11 +4,13 @@ import (
 	. "github.com/cloudfoundry-community/gautocloud/loader"
 
 	"bytes"
+	"fmt"
 	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	fakecloud "github.com/cloudfoundry-community/gautocloud/cloudenv/fake"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	fakecon "github.com/cloudfoundry-community/gautocloud/connectors/fake"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
+	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -294,6 +296,61 @@ var _ = Describe("Loader", func() {
 				err := loader.InjectFromId(connector.Id(), &data)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(data).Should(BeEquivalentTo([]*FakeSchema{&srv1Expected, &srv2Expected}))
+			})
+		})
+		Context("connector implement intercepter interface", func() {
+			It("should inject content given by intercept function from interceptor", func() {
+				loader.CleanConnectors()
+				fakeInterceptor := fakecon.NewFakeInterceptor(
+					FakeSchema{},
+					interceptor.IntercepterFunc(func(current, old interface{}) (interface{}, error) {
+						return FakeSchema{
+							Host: "host.hijack.com",
+						}, nil
+					}),
+				)
+				loader.RegisterConnector(fakeInterceptor)
+
+				var data FakeSchema
+				err := loader.InjectFromId(connector.Id(), &data)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(data.Host).Should(Equal("host.hijack.com"))
+			})
+			It("should inject content given by intercept function from interceptor even for a slice", func() {
+				loader.CleanConnectors()
+				fakeInterceptor := fakecon.NewFakeInterceptor(
+					FakeSchema{},
+					interceptor.IntercepterFunc(func(current, old interface{}) (interface{}, error) {
+						return FakeSchema{
+							Host: "host.hijack.com",
+						}, nil
+					}),
+				)
+				loader.RegisterConnector(fakeInterceptor)
+
+				var data []FakeSchema
+				err := loader.InjectFromId(connector.Id(), &data)
+
+				Expect(err).ToNot(HaveOccurred())
+				Expect(data[0].Host).Should(Equal("host.hijack.com"))
+				Expect(data[1].Host).Should(Equal("host.hijack.com"))
+			})
+			It("should return an ErrGiveService error if intercept func give an error", func() {
+				loader.CleanConnectors()
+				fakeInterceptor := fakecon.NewFakeInterceptor(
+					FakeSchema{},
+					interceptor.IntercepterFunc(func(current, old interface{}) (interface{}, error) {
+						return nil, fmt.Errorf("Error from intercepter")
+					}),
+				)
+				loader.RegisterConnector(fakeInterceptor)
+
+				var data FakeSchema
+				err := loader.InjectFromId(connector.Id(), &data)
+
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).Should(ContainSubstring("Error from intercepter"))
 			})
 		})
 		It("should return an error if content to inject is not a pointer", func() {

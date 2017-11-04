@@ -22,12 +22,12 @@ func (c SmtpRawConnector) Tags() []string {
 }
 func (c SmtpRawConnector) Load(schema interface{}) (interface{}, error) {
 	fSchema := schema.(SmtpSchema)
-	if fSchema.Uri.Host == "" {
+	if fSchema.Host != "" {
 		return smtptype.Smtp{
-			User: fSchema.User,
+			User:     fSchema.User,
 			Password: fSchema.Password,
-			Host: fSchema.Host,
-			Port: fSchema.Port,
+			Host:     fSchema.Host,
+			Port:     fSchema.Port,
 		}, nil
 	}
 	port := fSchema.Uri.Port
@@ -35,13 +35,12 @@ func (c SmtpRawConnector) Load(schema interface{}) (interface{}, error) {
 		port = fSchema.Port
 	}
 	return smtptype.Smtp{
-		User: fSchema.Uri.Username,
+		User:     fSchema.Uri.Username,
 		Password: fSchema.Uri.Password,
-		Host: fSchema.Uri.Host,
-		Port: port,
+		Host:     fSchema.Uri.Host,
+		Port:     port,
 	}, nil
 }
 func (c SmtpRawConnector) Schema() interface{} {
 	return SmtpSchema{}
 }
-

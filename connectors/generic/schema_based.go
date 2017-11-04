@@ -2,6 +2,8 @@ package generic
 
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/interceptor"
+	"reflect"
 )
 
 type SchemaBasedGenericConnector struct {
@@ -14,9 +16,9 @@ type SchemaBasedGenericConnector struct {
 func NewSchemaBasedGenericConnector(id, name string, tags []string, schema interface{}) connectors.Connector {
 	return &SchemaBasedGenericConnector{
 		schema: schema,
-		id: id,
-		name: name,
-		tags: tags,
+		id:     id,
+		name:   name,
+		tags:   tags,
 	}
 }
 func (c SchemaBasedGenericConnector) Id() string {
@@ -35,3 +37,13 @@ func (c SchemaBasedGenericConnector) Schema() interface{} {
 	return c.schema
 }
 
+func (c SchemaBasedGenericConnector) Intercepter() interceptor.Intercepter {
+	if _, ok := c.schema.(interceptor.SchemaIntercepter); ok {
+		return interceptor.NewSchema()
+	}
+	schemaPtr := reflect.New(reflect.TypeOf(c.schema))
+	if _, ok := schemaPtr.Interface().(interceptor.SchemaIntercepter); ok {
+		return interceptor.NewSchema()
+	}
+	return nil
+}

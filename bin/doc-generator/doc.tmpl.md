@@ -1,5 +1,8 @@
 ## Connectors
 
+A connector can be also a connector intercepter. An interceptor work like a http middleware. 
+This permit to intercept data which will be given back by gautocloud and modified it before giving back to user.
+
 **Tip**: To load all default connectors import: `_ "github.com/cloudfoundry-community/gautocloud/connectors/all"`
 
 - [Generic](#generic)
@@ -19,6 +22,8 @@ One of usecase is to be able to retrieve configuration from services or simply a
 
 Add a straight forward connector which give back schema fed by loader.
 
+This connector is also connector intercepter, it use interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema).
+
 ##### Example
 
 ```go
@@ -31,6 +36,14 @@ import (
 type MySchema struct {
         MyData string
 }
+
+// this show how to intercept data which will be injected to modify it.
+// Here it will get interface found by gautocloud and add `intercepted`, after calling Inject, struct receive will have this modification.
+//  func (s *MySchema) Intercept(found interface{}) error{
+//      f := found.(MySchema)
+//      s.MyData = f.MyData + " intercepted"
+//      return nil
+//  }
 
 func init() {
         gautocloud.RegisterConnector(generic.NewSchemaBasedGenericConnector(
@@ -69,6 +82,11 @@ func main() {
 
 This is a schema based connectors but `id`, `name` and `tags` are already set (can be registered multiple times).
 
+This connector is also connector intercepter, it use 2 interceptors:
+- [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema)
+- [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite) 
+(this will be use if struc from user does not implement [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter))
+
 This generic connector responds on:
 - Regex name: `.*config.*`
 - Regex tags:
@@ -99,6 +117,9 @@ func main() {
         var err error
         // As single element
         var svc MyConfig
+        // you can set values before inject:
+        //  svc.ConfigParam = "my data"
+        // this is handle by overwrite interceptor
         err = gautocloud.Inject(&svc)
         // ----------------------
         // as slice of elements

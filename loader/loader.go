@@ -9,6 +9,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
+	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	"log"
 	"reflect"
@@ -41,6 +42,7 @@ type GautocloudLoader struct {
 type StoredService struct {
 	Data        interface{}
 	ReflectType reflect.Type
+	Interceptor interceptor.Intercepter
 }
 
 // Create a new loader with cloud environment given
@@ -244,7 +246,6 @@ func (l GautocloudLoader) getFirstValidCloudEnv() cloudenv.CloudEnv {
 // If service parameter is not a slice it will give the first service found
 // If you pass a slice of a type in service parameter, it will inject in the slice all services found with this type
 // It returns an error if service parameter is not a pointer, if no service(s) can be found and if connector with given id doesn't exist
-
 func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	err := l.checkInCloudEnv()
 	if err != nil {
@@ -267,9 +268,14 @@ func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	}
 	dataSlice := make([]interface{}, 0)
 	for _, store := range l.store[id] {
-		if store.ReflectType == reflectType {
-			dataSlice = append(dataSlice, store.Data)
+		if store.ReflectType != reflectType {
+			continue
 		}
+		data, err := l.getData(store, vService.Interface())
+		if err != nil {
+			return err
+		}
+		dataSlice = append(dataSlice, data)
 	}
 
 	if len(dataSlice) == 0 {
@@ -301,6 +307,24 @@ func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	return nil
 }
 
+func (l GautocloudLoader) getData(store StoredService, current interface{}) (interface{}, error) {
+	if store.Interceptor == nil {
+		return store.Data, nil
+	}
+	finalData, err := store.Interceptor.Intercept(current, store.Data)
+	if err != nil {
+		NewErrGiveService(
+			fmt.Sprintf(
+				"Error from intercepter given by connector for the type '%s': %s",
+				store.ReflectType.String(),
+				err.Error(),
+			),
+		)
+		return store.Data, err
+	}
+	return finalData, err
+}
+
 // Return the first service found by a connector
 // id is the id of a connector
 // Example:
@@ -320,7 +344,11 @@ func (l GautocloudLoader) GetFirst(id string) (interface{}, error) {
 	if len(l.store[id]) == 0 {
 		return nil, NewErrGiveService("No content have been given by connector with id '" + id + "' (no services match the connector).")
 	}
-	return l.store[id][0].Data, nil
+	data, err := l.getData(l.store[id][0], nil)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 func (l GautocloudLoader) checkConnectorIdExist(id string) error {
 	if _, ok := l.connectors[id]; !ok {
@@ -349,7 +377,11 @@ func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 
 	dataSlice := make([]interface{}, 0)
 	for _, store := range l.store[id] {
-		dataSlice = append(dataSlice, store.Data)
+		data, err := l.getData(store, nil)
+		if err != nil {
+			return nil, err
+		}
+		dataSlice = append(dataSlice, data)
 	}
 	return dataSlice, nil
 }
@@ -386,9 +418,14 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			reflectType.String(),
 			string(b),
 		)
+		var interceptor interceptor.Intercepter = nil
+		if connIntercepter, ok := connector.(connectors.ConnectorIntercepter); ok {
+			interceptor = connIntercepter.Intercepter()
+		}
 		storedServices = append(storedServices, StoredService{
 			ReflectType: reflectType,
 			Data:        loadedService,
+			Interceptor: interceptor,
 		})
 	}
 	l.logger.Info("Connector '%s' load %d service(s).", connector.Id(), len(storedServices))

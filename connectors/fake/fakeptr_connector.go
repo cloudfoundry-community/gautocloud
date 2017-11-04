@@ -10,10 +10,9 @@ type FakePtrConnector struct {
 }
 
 func NewFakePtrConnector(schema interface{}) connectors.Connector {
-	fake := &FakePtrConnector{
+	return &FakePtrConnector{
 		schema: schema,
 	}
-	return fake
 }
 func (f FakePtrConnector) Id() string {
 	return "fake"

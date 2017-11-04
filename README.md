@@ -264,9 +264,20 @@ This decoder can be used in other context. (see: [/decoder/decoder.go](/decoder/
 
 ## Create your own connector
 
-The best way is to look at an example here: [/connectors/example_test.go](/connectors/example_test.go).
+The best way is to look at an example here: [/connectors/connector_example_test.go](/connectors/connector_example_test.go).
 
-**Note**: Add your connector on the dedicated wiki page: https://github.com/cloudfoundry-community/gautocloud/wiki/Connectors
+You can also want to see how to create connector with interceptor here: [/connectors/intercepter_example_test.go](/connectors/intercepter_example_test.go).
+
+**Note**: 
+- An interceptor work like a http middleware. 
+This permit to intercept data which will be given back by gautocloud and modified it before giving back to user.
+Interceptor should be used in a connector, to do so, connector have to implement ConnectorIntercepter:
+```go
+type ConnectorIntercepter interface {
+    Intercepter() interceptor.Intercepter
+}
+```
+- Add your connector on the dedicated wiki page: https://github.com/cloudfoundry-community/gautocloud/wiki/Connectors
 
 ## Create your own Cloud Environment
 
