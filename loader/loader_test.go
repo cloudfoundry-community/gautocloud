@@ -11,10 +11,9 @@ import (
 	fakecon "github.com/cloudfoundry-community/gautocloud/connectors/fake"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
-	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"reflect"
 )
 
@@ -69,12 +68,12 @@ var _ = Describe("Loader", func() {
 	var fakeCloudEnv cloudenv.CloudEnv
 	var loader Loader
 	logBuf := new(bytes.Buffer)
-	logger := log.New(logBuf, "", log.Ldate|log.Ltime)
+	log.SetOutput(logBuf)
 	BeforeEach(func() {
 		fakeCloudEnv = fakecloud.NewFakeCloudEnv()
 		fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetServices(defaultServices)
 		loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv})
-		loader.SetLogger(logger, ldlogger.Lall)
+		log.SetLevel(log.DebugLevel)
 	})
 	AfterEach(func() {
 		logBuf.Reset()

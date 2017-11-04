@@ -10,8 +10,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
-	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"reflect"
 	"strings"
 )
@@ -27,7 +26,6 @@ type Loader interface {
 	Connectors() map[string]connectors.Connector
 	Store() map[string][]StoredService
 	CleanConnectors()
-	SetLogger(logger *log.Logger, lvl ldlogger.Level)
 	CurrentCloudEnv() cloudenv.CloudEnv
 	GetAppInfo() cloudenv.AppInfo
 	IsInACloudEnv() bool
@@ -36,7 +34,6 @@ type Loader interface {
 type GautocloudLoader struct {
 	cloudEnvs  []cloudenv.CloudEnv
 	connectors map[string]connectors.Connector
-	logger     *ldlogger.LoggerLoader
 	store      map[string][]StoredService
 }
 type StoredService struct {
@@ -47,25 +44,12 @@ type StoredService struct {
 
 // Create a new loader with cloud environment given
 func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
-	loader := &GautocloudLoader{
-		cloudEnvs: cloudEnvs,
-		logger:    ldlogger.NewLoggerLoader(),
-	}
-	loader.connectors = make(map[string]connectors.Connector)
-	loader.store = make(map[string][]StoredService)
-	loader.LoadCloudEnvs()
-	return loader
-}
 
-// Create a new loader with cloud environment given and a logger
-func NewLoaderWithLogger(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger, lvl ldlogger.Level) Loader {
 	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
-		logger:    ldlogger.NewLoggerLoader(),
 	}
 	loader.connectors = make(map[string]connectors.Connector)
 	loader.store = make(map[string][]StoredService)
-	loader.SetLogger(logger, lvl)
 	loader.LoadCloudEnvs()
 	return loader
 }
@@ -85,40 +69,31 @@ func (l *GautocloudLoader) Store() map[string][]StoredService {
 	return l.store
 }
 
-// Pass a logger to the loader to let you have the possibility to see logs
-// the parameter lvl is the level of verbosity which can be
-//  - logger.Lall
-//  - logger.Loff
-//  - logger.Ldebug
-//  - logger.Linfo
-//  - logger.Lwarning
-//  - logger.Lerror
-//  - logger.Lsevere
-func (l *GautocloudLoader) SetLogger(logger *log.Logger, lvl ldlogger.Level) {
-	l.logger.SetLevel(lvl)
-	l.logger.SetLogger(logger)
+func logMessage(message string) string {
+	return "gautocloud: " + message
 }
 
 // Register a connector in the loader
 // This is mainly use for connectors creators
 func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	if _, ok := l.connectors[connector.Id()]; ok {
-		l.logger.Error("During registering connector: A connector with id '%s' already exists.", connector.Id())
+		log.Errorf(logMessage("During registering connector: A connector with id '%s' already exists."), connector.Id())
 		return
 	}
-	l.logger.Debug("Loading connector '%s' ...", connector.Id())
+	entry := log.WithField("connector_id", connector.Id())
+	entry.Debug(logMessage("Loading connector ..."))
 	l.connectors[connector.Id()] = connector
 	storedServices := l.load(connector)
 	err := l.checkInCloudEnv()
 	if err != nil {
-		l.logger.Info("Skipping loading connector '%s': %s", connector.Id(), err.Error())
+		entry.Infof(logMessage("Skipping loading connector: %s"), err.Error())
 		return
 	}
 	if len(storedServices) == 0 {
 		return
 	}
 	l.store[connector.Id()] = storedServices
-	l.logger.Debug("Finished loading connector '%s' .", connector.Id())
+	entry.Debugf(logMessage("Finished loading connector."))
 }
 
 // Return all registered connectors
@@ -127,19 +102,19 @@ func (l GautocloudLoader) Connectors() map[string]connectors.Connector {
 }
 func (l GautocloudLoader) LoadCloudEnvs() {
 	for _, cloudEnv := range l.cloudEnvs {
+		entry := log.WithField("cloud_environment", cloudEnv.Name())
 		if !cloudEnv.IsInCloudEnv() {
-			l.logger.Debug("You are not in a '%s' environment", cloudEnv.Name())
+			entry.Debug(logMessage("You are not in a '%s' environment"))
 			continue
 		}
 		err := cloudEnv.Load()
 		if err != nil {
-			l.logger.Error(
-				"Error during loading cloud environment %s: %s",
-				cloudEnv.Name(),
+			entry.Errorf(
+				logMessage("Error during loading cloud environment: %s"),
 				err.Error(),
 			)
 		}
-		l.logger.Info("Environment '%s' detected and loaded.", cloudEnv.Name())
+		entry.Info(logMessage("Environment detected and loaded."))
 	}
 }
 
@@ -148,15 +123,15 @@ func (l *GautocloudLoader) ReloadConnectors() {
 	l.LoadCloudEnvs()
 	err := l.checkInCloudEnv()
 	if err != nil {
-		l.logger.Info("Skipping reloading connectors: " + err.Error())
+		log.Info(logMessage("Skipping reloading connectors: " + err.Error()))
 		return
 	}
-	l.logger.Info("Reloading connectors ...")
+	log.Info(logMessage("Reloading connectors ..."))
 	for _, connector := range l.connectors {
 		storedServices := l.load(connector)
 		l.store[connector.Id()] = storedServices
 	}
-	l.logger.Info("Finished reloading connectors ...")
+	log.Info(logMessage("Finished reloading connectors ..."))
 }
 
 // Inject service(s) found by connectors with given type
@@ -387,15 +362,15 @@ func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 }
 
 func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService {
+	entry := log.WithField("connector_id", connector.Id())
 	services := make([]cloudenv.Service, 0)
 	storedServices := make([]StoredService, 0)
 	cloudEnv := l.getFirstValidCloudEnv()
 	services = append(services, cloudEnv.GetServicesFromTags(connector.Tags())...)
 	services = l.addService(services, cloudEnv.GetServicesFromName(connector.Name())...)
 	if len(services) == 0 {
-		l.logger.Debug(
-			"No service found for connector '%s' \n\twith name: '%s' \n\tor tags: [ %s ]",
-			connector.Id(),
+		entry.Debugf(
+			logMessage("No service found for connector \n\twith name: '%s' \n\tor tags: [ %s ]"),
 			connector.Name(),
 			strings.Join(connector.Tags(), ", "),
 		)
@@ -408,13 +383,12 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 		eltInterface := element.Elem().Interface()
 		loadedService, err := connector.Load(eltInterface)
 		if err != nil {
-			l.logger.Error("Error occured during loading connector '%s': %s\n", connector.Id(), err.Error())
+			entry.Errorf(logMessage("Error occured during loading connector: %s\n"), err.Error())
 			continue
 		}
 		reflectType := reflect.TypeOf(loadedService)
 		b, _ := json.MarshalIndent(service.Credentials, "\t", "\t")
-		l.logger.Debug("Connector '%s' load a service which give type '%s' from credentials:\n\t%s\n",
-			connector.Id(),
+		entry.Debugf(logMessage("Connector load a service which give type '%s' from credentials:\n\t%s\n"),
 			reflectType.String(),
 			string(b),
 		)
@@ -428,7 +402,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			Interceptor: interceptor,
 		})
 	}
-	l.logger.Info("Connector '%s' load %d service(s).", connector.Id(), len(storedServices))
+	entry.Infof(logMessage("Connector load %d service(s)."), len(storedServices))
 	return storedServices
 }
 func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {

@@ -51,15 +51,14 @@ package main
 import (
         "fmt"
         "github.com/cloudfoundry-community/gautocloud"
-        "github.com/cloudfoundry-community/gautocloud/logger"
-        "log"
         "os"
+        log "github.com/sirupsen/logrus"
         _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql" // this register the connector mysql to gautocloud
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
-        // always attach a logger to see what happens
-        gautocloud.SetLogger(log.New(os.Stdout, "", log.Ldate | log.Ltime), logger.Linfo) // set to level Ldebug to see services found
+        // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+        log.SetLevel(log.DebugLevel)
         appInfo := gautocloud.GetAppInfo() // retrieve all informations about your application instance
         fmt.Println(appInfo.Name) // give the app name
         // by injection 
@@ -296,22 +295,21 @@ import (
         "fmt"
         "github.com/cloudfoundry-community/gautocloud/loader"
         "github.com/cloudfoundry-community/gautocloud/cloudenv"
-        "github.com/cloudfoundry-community/gautocloud/logger"
-        "log"
+        log "github.com/sirupsen/logrus"
         "os"
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql" // this register the connector mysql to gautocloud
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 func main() {
-        ld := loader.NewLoaderWithLogger(
+        // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+        log.SetLevel(log.DebugLevel)
+        ld := loader.NewLoader(
             []cloudenv.CloudEnv{
                 cloudenv.NewCfCloudEnv(),
                 cloudenv.NewHerokuCloudEnv(),
                 cloudenv.NewKubernetesCloudEnv(),
                 cloudenv.NewLocalCloudEnv(),
             },
-            log.New(os.Stdout, "", log.Ldate | log.Ltime), 
-            logger.Linfo,
         )
         ld.RegisterConnector(mysql.NewMysqlConnector()) // you need to manually register connectors
         

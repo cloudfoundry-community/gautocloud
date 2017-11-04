@@ -1,36 +1,35 @@
 package test_integration_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
 	"github.com/cloudfoundry-community/gautocloud"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	"github.com/jinzhu/gorm"
-	"os"
-	gmysql "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/mysql"
-	gpostgres "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/postgresql"
-	gmssql "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/mssql"
-	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
+	camqp "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
+	coauth2 "github.com/cloudfoundry-community/gautocloud/connectors/auth/config/oauth2"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mongodb"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mssql"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/postgresql"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mssql"
 	credis "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/redis"
-	camqp "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
-	csmtp "github.com/cloudfoundry-community/gautocloud/connectors/smtp/client"
-	cs3minio "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/minio"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
+	gmssql "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/mssql"
+	gmysql "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/mysql"
+	gpostgres "github.com/cloudfoundry-community/gautocloud/connectors/databases/gorm/postgresql"
 	cs3goamz "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/goamz"
-	coauth2 "github.com/cloudfoundry-community/gautocloud/connectors/auth/config/oauth2"
-	"gopkg.in/redis.v5"
-	"gopkg.in/mgo.v2"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mongodb"
-	"github.com/streadway/amqp"
-	"net/smtp"
-	ldlogger "github.com/cloudfoundry-community/gautocloud/logger"
-	"github.com/goamz/goamz/s3"
-	"log"
+	cs3minio "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/client/s3/minio"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
+	csmtp "github.com/cloudfoundry-community/gautocloud/connectors/smtp/client"
+	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	"github.com/goamz/goamz/s3"
+	"github.com/jinzhu/gorm"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	log "github.com/sirupsen/logrus"
+	"github.com/streadway/amqp"
 	"golang.org/x/oauth2"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/redis.v5"
+	"net/smtp"
+	"os"
 )
 
 var _ = Describe("Connectors integration", func() {
@@ -38,34 +37,33 @@ var _ = Describe("Connectors integration", func() {
 		return
 	}
 
-	logger := log.New(os.Stdout, "", log.Ldate | log.Ltime)
-	gautocloud.SetLogger(logger, ldlogger.Lall)
+	log.SetLevel(log.DebugLevel)
 	os.Unsetenv("MAIL") // travis set this env var which make connector detect it
 	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
-		Type: "mysql",
-		User: "user",
+		Type:     "mysql",
+		User:     "user",
 		Password: "password",
-		Port: 3406,
-		Target: "mydb",
+		Port:     3406,
+		Target:   "mydb",
 	}))
 	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
-		Type: "postgres",
-		User: "user",
+		Type:     "postgres",
+		User:     "user",
 		Password: "password",
-		Port: 5532,
-		Target: "mydb",
-		Options: "sslmode=disable",
+		Port:     5532,
+		Target:   "mydb",
+		Options:  "sslmode=disable",
 	}))
 	os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
-		Type: "sqlserver",
-		User: "sa",
+		Type:     "sqlserver",
+		User:     "sa",
 		Password: "password",
-		Port: 1433,
-		Target: "test",
+		Port:     1433,
+		Target:   "test",
 	}))
 	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
-		Type: "mongo",
-		Port: 27017,
+		Type:   "mongo",
+		Port:   27017,
 		Target: "test",
 	}))
 	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
@@ -76,27 +74,27 @@ var _ = Describe("Connectors integration", func() {
 	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
 	os.Setenv("SSO_SCOPES", "scope1,scope2")
 	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
-		Type: "redis",
-		User: "redis",
+		Type:     "redis",
+		User:     "redis",
 		Password: "redis",
-		Port: 6379,
+		Port:     6379,
 	}))
 	os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
-		Type: "amqp",
-		User: "user",
+		Type:     "amqp",
+		User:     "user",
 		Password: "password",
-		Port: 5672,
+		Port:     5672,
 	}))
 	os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
 	os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
-		Type: "http",
-		User: "accessKey1",
+		Type:     "http",
+		User:     "accessKey1",
 		Password: "verySecretKey1",
-		Port: 8090,
-		Target: "bucket",
+		Port:     8090,
+		Target:   "bucket",
 	}))
 	gautocloud.ReloadConnectors()
 
