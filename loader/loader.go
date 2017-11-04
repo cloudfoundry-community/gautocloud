@@ -104,7 +104,7 @@ func (l GautocloudLoader) LoadCloudEnvs() {
 	for _, cloudEnv := range l.cloudEnvs {
 		entry := log.WithField("cloud_environment", cloudEnv.Name())
 		if !cloudEnv.IsInCloudEnv() {
-			entry.Debug(logMessage("You are not in a '%s' environment"))
+			entry.Debug(logMessage("You are not in this cloud environment"))
 			continue
 		}
 		err := cloudEnv.Load()
