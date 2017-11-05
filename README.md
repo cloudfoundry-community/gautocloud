@@ -59,7 +59,10 @@ import (
 
 func init(){
     // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+    // When using facade, first log messages are emitted with default level from logrus (INFO) and debug message cannot be seen
+    // You must reload connectors in this case to see them all after changing log level.
     log.SetLevel(log.DebugLevel)
+    gautocloud.ReloadConnectors()
 }
 
 func main() {
@@ -313,12 +316,11 @@ import (
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql" // this register the connector mysql to gautocloud
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
-func init(){
-    // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
-    log.SetLevel(log.DebugLevel)
-}
 
 func main() {
+        // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+        // In this case reload connectors is not necessary to see logs.
+        log.SetLevel(log.DebugLevel)
         ld := loader.NewLoader(
             []cloudenv.CloudEnv{
                 cloudenv.NewCfCloudEnv(),

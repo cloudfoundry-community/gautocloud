@@ -392,14 +392,14 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			reflectType.String(),
 			string(b),
 		)
-		var interceptor interceptor.Intercepter = nil
+		var intercepter interceptor.Intercepter = nil
 		if connIntercepter, ok := connector.(connectors.ConnectorIntercepter); ok {
-			interceptor = connIntercepter.Intercepter()
+			intercepter = connIntercepter.Intercepter()
 		}
 		storedServices = append(storedServices, StoredService{
 			ReflectType: reflectType,
 			Data:        loadedService,
-			Interceptor: interceptor,
+			Interceptor: intercepter,
 		})
 	}
 	entry.Infof(logMessage("Connector load %d service(s)."), len(storedServices))
