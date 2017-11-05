@@ -23,7 +23,7 @@ type GautocloudHook struct {
 
 func NewGautocloudHook(buf *bytes.Buffer) *GautocloudHook {
 	return &GautocloudHook{
-		entries: make([]*logrus.Entry, BUF_SIZE),
+		entries: make([]*logrus.Entry, 0),
 		nbWrite: 0,
 		buf:     buf,
 	}
@@ -52,10 +52,10 @@ func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
 		return nil
 	}
 	if h.nbWrite == BUF_SIZE {
-		h.entries = make([]*logrus.Entry, BUF_SIZE)
+		h.entries = make([]*logrus.Entry, 0)
 		h.nbWrite = 0
 	}
-	h.entries[h.nbWrite] = entry
+	h.entries = append(h.entries, entry)
 	h.nbWrite++
 	return nil
 }
@@ -70,16 +70,19 @@ func (h GautocloudHook) checkIfTerminal(w io.Writer) bool {
 func (h GautocloudHook) Levels() []logrus.Level {
 	return logrus.AllLevels
 }
-func (h GautocloudHook) ShowPreviousLog() {
+func (h *GautocloudHook) ShowPreviousLog() {
+	newEntries := make([]*logrus.Entry, 0)
 	stdLogger := logrus.StandardLogger()
-	for i := h.nbWrite - 1; i >= 0; i-- {
+	for i := len(h.entries) - 1; i >= 0; i-- {
 		entry := h.entries[i]
 		if entry.Level > logrus.GetLevel() {
+			newEntries = append(newEntries, entry)
 			continue
 		}
 		entry.Logger.Out = stdLogger.Out
 		b, _ := stdLogger.Formatter.Format(entry)
 		fmt.Fprint(stdLogger.Out, string(b))
-
 	}
+	h.entries = newEntries
+	h.nbWrite = len(newEntries)
 }
