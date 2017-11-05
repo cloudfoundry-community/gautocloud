@@ -314,9 +314,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 	entry := l.logger.WithField("connector_id", store.ConnectorId).
 		WithField("type", store.ReflectType.String())
 
-	entry.Infof(logMessage("Data intercepting by interceptor given by connector..."),
-		store.ReflectType.String(),
-	)
+	entry.Info(logMessage("Data intercepting by interceptor given by connector..."))
 	finalData, err := store.Interceptor.Intercept(current, store.Data)
 	if err != nil {
 		NewErrGiveService(
@@ -328,9 +326,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 		)
 		return store.Data, err
 	}
-	entry.Debugf(logMessage("Finished data intercepting by interceptor given by connector."),
-		store.ReflectType.String(),
-	)
+	entry.Debug(logMessage("Finished data intercepting by interceptor given by connector."))
 	return finalData, err
 }
 
@@ -397,6 +393,7 @@ func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 
 func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService {
 	entry := l.logger.WithField("connector_id", connector.Id())
+	entry.Debug("Connector is loading services...")
 	services := make([]cloudenv.Service, 0)
 	storedServices := make([]StoredService, 0)
 	cloudEnv := l.getFirstValidCloudEnv()

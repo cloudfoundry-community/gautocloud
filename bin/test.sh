@@ -36,6 +36,7 @@ if [ -z ${HOST_SERVICES+x} ]; then
         HOST_SERVICES=$(echo $DOCKER_HOST | sed 's/^.*:\/\///' | sed 's/:[0-9]*$//')
     fi
 fi
+
 DYNO="true" GAUTOCLOUD_HOST_SERVICES="$HOST_SERVICES" go test -v "./$BASEDIR/../test-integration" -args -ginkgo.trace -ginkgo.randomizeAllSpecs
 code="$?"
 echo ""

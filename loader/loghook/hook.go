@@ -62,6 +62,16 @@ func (h GautocloudHook) Levels() []logrus.Level {
 func (h *GautocloudHook) ShowPreviousLog() {
 	newEntries := make([]*logrus.Entry, 0)
 	stdLogger := logrus.StandardLogger()
+	if len(h.entries) == 0 {
+		return
+	}
+	stdLogger.Warn("")
+	stdLogger.Warnf(
+		"%s: Show previous log was called, next logs was stored between '%s' and '%s'.",
+		LOG_MESSAGE_PREFIX,
+		h.entries[0].Time.Format("15:04:05.999999999"),
+		h.entries[len(h.entries)-1].Time.Format("15:04:05.999999999"),
+	)
 	for i := len(h.entries) - 1; i >= 0; i-- {
 		entry := h.entries[i]
 		if entry.Level > logrus.GetLevel() {
@@ -74,4 +84,9 @@ func (h *GautocloudHook) ShowPreviousLog() {
 	}
 	h.entries = newEntries
 	h.nbWrite = len(newEntries)
+	stdLogger.Warnf(
+		"%s: Finished to show previous logs.",
+		LOG_MESSAGE_PREFIX,
+	)
+	stdLogger.Warn("")
 }
