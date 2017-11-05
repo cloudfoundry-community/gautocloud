@@ -106,3 +106,8 @@ func GetAppInfo() cloudenv.AppInfo {
 func IsInACloudEnv() bool {
 	return defaultLoader.IsInACloudEnv()
 }
+
+// Show previous logs entries created at initialization
+func ShowPreviousLog() {
+	defaultLoader.ShowPreviousLog()
+}

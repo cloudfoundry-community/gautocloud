@@ -60,9 +60,9 @@ import (
 func init(){
     // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
     // When using facade, first log messages are emitted with default level from logrus (INFO) and debug message cannot be seen
-    // You must reload connectors in this case to see them all after changing log level.
+    // You must explicitely ask to see logs which couldn't be seen during initialization
     log.SetLevel(log.DebugLevel)
-    gautocloud.ReloadConnectors()
+    gautocloud.ShowPreviousLog()
 }
 
 func main() {
