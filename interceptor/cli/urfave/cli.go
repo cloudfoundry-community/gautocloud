@@ -35,7 +35,11 @@ func (i CliInterceptor) Intercept(current, found interface{}) (interface{}, erro
 		if value == nil {
 			value = i.context.GlobalGeneric(name)
 		}
-		mapFlags[key] = fmt.Sprint(value)
+		finalVal := fmt.Sprint(value)
+		if finalVal == "" {
+			continue
+		}
+		mapFlags[key] = fmt.Sprint(finalVal)
 	}
 	schemaPtr := interceptor.InterfaceAsPtr(schema)
 
