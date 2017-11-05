@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/crypto/ssh/terminal"
-	"io"
-	"os"
 	"strings"
 )
 
@@ -58,14 +55,6 @@ func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
 	h.entries = append(h.entries, entry)
 	h.nbWrite++
 	return nil
-}
-func (h GautocloudHook) checkIfTerminal(w io.Writer) bool {
-	switch v := w.(type) {
-	case *os.File:
-		return terminal.IsTerminal(int(v.Fd()))
-	default:
-		return false
-	}
 }
 func (h GautocloudHook) Levels() []logrus.Level {
 	return logrus.AllLevels

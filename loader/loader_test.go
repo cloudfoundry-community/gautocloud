@@ -390,13 +390,55 @@ var _ = Describe("Loader", func() {
 			Expect(fakeCloudEnv.(*fakecloud.FakeCloudEnv).CallLoad()).Should(Equal(1))
 		})
 	})
-	Context("IsInACloudEnv", func() {
-		It("should return true if one of CloudEnv detected its environment", func() {
+	Context("ShowPreviousLog", func() {
+		currentLvl := log.StandardLogger().Level
+		BeforeEach(func() {
+			logBuf.Reset()
+		})
+		AfterEach(func() {
+			log.SetLevel(currentLvl)
+		})
+		It("should show previous log if loader set for facade", func() {
+			log.SetLevel(log.WarnLevel)
 			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
 			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
+
+			loader = NewFacadeLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+
+			Expect(logBuf.String()).Should(BeEmpty())
+
+			log.SetLevel(log.DebugLevel)
+			loader.ShowPreviousLog()
+			Expect(logBuf.String()).Should(ContainSubstring("Environment detected and loaded"))
+		})
+		It("should never show previous log if normal loader", func() {
+			log.SetLevel(log.WarnLevel)
+			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
+
 			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+
+			Expect(logBuf.String()).Should(BeEmpty())
+
+			log.SetLevel(log.DebugLevel)
+			loader.ShowPreviousLog()
+			Expect(logBuf.String()).Should(BeEmpty())
+		})
+	})
+	Context("IsInACloudEnv", func() {
+		It("should return true if one of CloudEnv detected its environment", func() {
+
+			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
+			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
+
+			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+
 			Expect(loader.IsInACloudEnv()).Should(BeTrue())
 		})
 		It("should return false if no CloudEnv detected its environment", func() {
@@ -404,7 +446,9 @@ var _ = Describe("Loader", func() {
 			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
 			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
+
 			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
+
 			Expect(loader.IsInACloudEnv()).Should(BeFalse())
 		})
 	})
