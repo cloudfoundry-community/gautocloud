@@ -43,6 +43,7 @@ type GautocloudLoader struct {
 }
 type StoredService struct {
 	Data        interface{}
+	ConnectorId string
 	ReflectType reflect.Type
 	Interceptor interceptor.Intercepter
 }
@@ -310,7 +311,10 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 	if store.Interceptor == nil {
 		return store.Data, nil
 	}
-	l.logger.Debugf(logMessage("Data intercepting by interceptor given by connector for the type '%s'..."),
+	entry := l.logger.WithField("connector_id", store.ConnectorId).
+		WithField("type", store.ReflectType.String())
+
+	entry.Infof(logMessage("Data intercepting by interceptor given by connector..."),
 		store.ReflectType.String(),
 	)
 	finalData, err := store.Interceptor.Intercept(current, store.Data)
@@ -324,7 +328,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 		)
 		return store.Data, err
 	}
-	l.logger.Debugf(logMessage("Finished data intercepting by interceptor given by connector for the type '%s'."),
+	entry.Debugf(logMessage("Finished data intercepting by interceptor given by connector."),
 		store.ReflectType.String(),
 	)
 	return finalData, err
@@ -430,6 +434,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			ReflectType: reflectType,
 			Data:        loadedService,
 			Interceptor: intercepter,
+			ConnectorId: connector.Id(),
 		})
 	}
 	entry.Infof(logMessage("Connector load %d service(s)."), len(storedServices))
