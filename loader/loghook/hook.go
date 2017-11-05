@@ -12,7 +12,7 @@ import (
 
 const (
 	LOG_MESSAGE_PREFIX = "gautocloud"
-	BUF_SIZE           = 50
+	BUF_SIZE           = 100
 )
 
 type GautocloudHook struct {
