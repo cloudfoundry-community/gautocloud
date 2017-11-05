@@ -234,7 +234,7 @@ services:
 
 You can see how to follow the same pattern with other format here: [/cloudenv/local_cloudenv_test.go#L13-L86](/cloudenv/local_cloudenv_test.go#L13-L86).
 
-- **Cloud Detection**: if the `CLOUD_FILE` env var exists and not empty.
+- **Cloud Detection**: if the `CLOUD_FILE` env var exists and not empty or if `config file` can be found.
 - **Service detection by name**: Look if a service in the config file match the name required by a connector.
 - **Service detection by tags**: Look if a service in the config file match one of tag required by a connector.
 - **App information id**: random uuid
