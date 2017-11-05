@@ -38,7 +38,6 @@ type GautocloudLoader struct {
 	cloudEnvs  []cloudenv.CloudEnv
 	connectors map[string]connectors.Connector
 	store      map[string][]StoredService
-	logBuf     *bytes.Buffer
 	logger     *log.Logger
 	gHook      *loghook.GautocloudHook
 }
@@ -54,13 +53,12 @@ func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	loader := &GautocloudLoader{
 		cloudEnvs: cloudEnvs,
 	}
-	loader.gHook = loghook.NewGautocloudHook()
 	buf := new(bytes.Buffer)
-	loader.logBuf = buf
+	loader.gHook = loghook.NewGautocloudHook(buf)
 
 	logger := log.New()
 	logger.SetLevel(log.DebugLevel)
-	logger.Out = loader.logBuf
+	logger.Out = buf
 	logger.AddHook(loader.gHook)
 	loader.logger = logger
 
@@ -434,7 +432,6 @@ func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloud
 // Show previous logs entries created at initialization
 func (l GautocloudLoader) ShowPreviousLog() {
 	l.gHook.ShowPreviousLog()
-	l.logBuf.Reset()
 }
 
 func (l GautocloudLoader) serviceAlreadyExists(services []cloudenv.Service, toFind cloudenv.Service) bool {

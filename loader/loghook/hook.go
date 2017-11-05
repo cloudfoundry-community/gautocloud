@@ -1,6 +1,7 @@
 package loghook
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh/terminal"
@@ -17,16 +18,20 @@ const (
 type GautocloudHook struct {
 	entries []*logrus.Entry
 	nbWrite int
+	buf     *bytes.Buffer
 }
 
-func NewGautocloudHook() *GautocloudHook {
+func NewGautocloudHook(buf *bytes.Buffer) *GautocloudHook {
 	return &GautocloudHook{
 		entries: make([]*logrus.Entry, BUF_SIZE),
 		nbWrite: 0,
+		buf:     buf,
 	}
 }
 
 func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
+	defer h.buf.Reset()
+
 	stdLogger := logrus.StandardLogger()
 	currentOut := entry.Logger.Out
 	entry.Logger.Out = stdLogger.Out
