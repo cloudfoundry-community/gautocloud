@@ -56,9 +56,13 @@ import (
         _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql" // this register the connector mysql to gautocloud
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
+
+func init(){
+    // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+    log.SetLevel(log.DebugLevel)
+}
+
 func main() {
-        // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
-        log.SetLevel(log.DebugLevel)
         appInfo := gautocloud.GetAppInfo() // retrieve all informations about your application instance
         fmt.Println(appInfo.Name) // give the app name
         // by injection 
@@ -309,9 +313,12 @@ import (
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql" // this register the connector mysql to gautocloud
         "github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
+func init(){
+    // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
+    log.SetLevel(log.DebugLevel)
+}
+
 func main() {
-        // Gautocloud use logrus as logger, see: https://github.com/sirupsen/logrus
-        log.SetLevel(log.DebugLevel)
         ld := loader.NewLoader(
             []cloudenv.CloudEnv{
                 cloudenv.NewCfCloudEnv(),
