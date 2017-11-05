@@ -207,11 +207,20 @@ It returns a service with credentials:
   
 ### Local
 
-This is a special *CloudEnv* and can be considered as a fake one.
+This is a special *CloudEnv* and can be considered as a fake one. 
+You can also use it to be able to use a config file directly without pain (but it's not 12 factors).
 
-You need to set the env var `CLOUD_FILE` which contains the path of a configuration files containing services. 
-This config file can be a `yml`, `json`, `toml` or `hcl` file. It only requires to follow this pattern (example in yml):
+You have 2 possibilities to trigger this cloud env (they can be used in same time):
+- You can set the env var `CLOUD_FILE` which contains the path of a configuration files containing services.
+- You can create a `config file` called `config.yml` in your current working directory or set the env var `CONFIG_FILE` 
+which contains the path of your config file. 
 
+A `config file` or a `cloud file` can be a `yml`, `json`, `toml` or `hcl` file.
+
+A `config file` can contains anything you wants, this will register by itself a service named `config` with tag `config` 
+which contains you configuration from the file.
+
+A `cloud file` must follow this pattern (example in yml):
 ```yml
 app_name: "myapp" # set the app name you want (it can be not set)
 services:

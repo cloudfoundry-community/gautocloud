@@ -1,0 +1,4 @@
+foo: bar
+config:
+  key: value
+  slice: [value1, value2]
