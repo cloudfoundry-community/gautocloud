@@ -47,25 +47,35 @@ type StoredService struct {
 	Interceptor interceptor.Intercepter
 }
 
+func newLoader(cloudEnvs []cloudenv.CloudEnv, gHook *loghook.GautocloudHook, logger *log.Logger) Loader {
+	loader := &GautocloudLoader{
+		cloudEnvs:  cloudEnvs,
+		connectors: make(map[string]connectors.Connector),
+		store:      make(map[string][]StoredService),
+		gHook:      gHook,
+		logger:     logger,
+	}
+	loader.LoadCloudEnvs()
+	return loader
+}
+
 // Create a new loader with cloud environment given
 func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
+	return newLoader(cloudEnvs, nil, log.StandardLogger())
+}
 
-	loader := &GautocloudLoader{
-		cloudEnvs: cloudEnvs,
-	}
+// Create a new loader with cloud environment given and it adds a logger and a gautcloud logrus hook to be able to retrieve
+// previous log.
+func NewFacadeLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	buf := new(bytes.Buffer)
-	loader.gHook = loghook.NewGautocloudHook(buf)
+	gHook := loghook.NewGautocloudHook(buf)
 
 	logger := log.New()
 	logger.SetLevel(log.DebugLevel)
 	logger.Out = buf
-	logger.AddHook(loader.gHook)
-	loader.logger = logger
+	logger.AddHook(gHook)
 
-	loader.connectors = make(map[string]connectors.Connector)
-	loader.store = make(map[string][]StoredService)
-	loader.LoadCloudEnvs()
-	return loader
+	return newLoader(cloudEnvs, gHook, logger)
 }
 
 // Return all cloud environments loaded
@@ -431,6 +441,9 @@ func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloud
 
 // Show previous logs entries created at initialization
 func (l GautocloudLoader) ShowPreviousLog() {
+	if l.gHook == nil {
+		return
+	}
 	l.gHook.ShowPreviousLog()
 }
 
