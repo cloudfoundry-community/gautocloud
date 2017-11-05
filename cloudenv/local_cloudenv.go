@@ -71,15 +71,16 @@ func (c *LocalCloudEnv) loadConfigFile() error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("Fatal error on reading config file: %s \n", err.Error()))
 	}
-	var creds map[string]interface{}
+	var creds map[interface{}]interface{}
 	err = viper.Unmarshal(&creds)
 	if err != nil {
 		return errors.New(fmt.Sprintf("Fatal error when unmarshaling config file: %s \n", err.Error()))
 	}
+	finalCreds := c.convertMapInterface(creds).(map[string]interface{})
 	c.servicesLocal = append(c.servicesLocal, ServiceLocal{
 		"config",
 		[]string{"config"},
-		creds,
+		finalCreds,
 	})
 	return nil
 }
