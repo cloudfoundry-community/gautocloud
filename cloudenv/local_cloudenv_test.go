@@ -256,7 +256,8 @@ var _ = Describe("LocalCloudenv", func() {
 
 			Expect(cloudEnv.IsInCloudEnv()).Should(BeTrue())
 		})
-		It("should return true when config file set but can't be found", func() {
+		It("should return false when config file set but can't be found", func() {
+			os.Setenv(LOCAL_ENV_KEY, "")
 			err := os.Setenv(LOCAL_CONFIG_ENV_KEY, "myconfig.yml")
 			Expect(err).NotTo(HaveOccurred())
 
