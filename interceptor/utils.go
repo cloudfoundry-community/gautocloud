@@ -1,6 +1,8 @@
 package interceptor
 
-import "reflect"
+import (
+	"reflect"
+)
 
 func InterfaceAsPtr(i interface{}) interface{} {
 	iType := reflect.TypeOf(i)
