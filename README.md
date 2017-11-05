@@ -368,7 +368,7 @@ Don't be shy to send a PR to add another cloud environment as a builtin one.
 
 **Why do I need to import a connector even if it's a builtin one ?**
 
-You need to import it because if you didn't have to it will requires to load all default connectors with 
+You need to import it because if you didn't have to it, it will requires to load all default connectors with 
 associated dependencies to the connector which can make a huge binary. 
 
 In our case, it will compile only what you need by importing the connector.
