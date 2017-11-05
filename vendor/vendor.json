@@ -1,6 +1,6 @@
 {
 	"comment": "",
-	"ignore": "test github.com/streadway/amqp/ gopkg.in/mgo.v2/ github.com/denisenkom/go-mssqldb/ github.com/go-sql-driver/mysql/ github.com/lib/pq/ gopkg.in/redis.v5/ github.com/jinzhu/gorm/ github.com/goamz/goamz/ github.com/minio/minio-go/ github.com/onsi/gomega/ github.com/onsi/ginkgo/ golang.org/x/sys golang.org/x/oauth2 github.com/sirupsen/logrus",
+	"ignore": "test github.com/streadway/amqp/ gopkg.in/mgo.v2/ github.com/denisenkom/go-mssqldb/ github.com/go-sql-driver/mysql/ github.com/lib/pq/ gopkg.in/redis.v5/ github.com/jinzhu/gorm/ github.com/goamz/goamz/ github.com/minio/minio-go/ github.com/onsi/gomega/ github.com/onsi/ginkgo/ golang.org/x/sys golang.org/x/oauth2 github.com/sirupsen/logrus github.com/alexflint/go-arg github.com/urfave/cli",
 	"package": [
 		{
 			"checksumSHA1": "xlE6mwC9lTeJrnoif0e5exvaFpk=",

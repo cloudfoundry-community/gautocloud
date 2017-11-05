@@ -120,6 +120,15 @@ var _ = Describe("Interceptor", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(finalStruct.(SchemaFake).Foo).To(Equal("decoded"))
 		})
+		It("should be agnostic to pointer if pointer to schema is given", func() {
+
+			finalStruct, err := NewOverwrite().Intercept(&SchemaFake{
+				Foo: "overwrite",
+			}, &SchemaFake{})
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(finalStruct.(*SchemaFake).Foo).To(Equal("overwrite"))
+		})
 		Context("value is a primitive type", func() {
 			It("should return a final interface with values from interface given by user", func() {
 

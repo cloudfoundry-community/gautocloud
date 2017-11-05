@@ -19,7 +19,15 @@ func overwrite(current, found interface{}) (interface{}, error) {
 	}
 	cVal := reflect.ValueOf(current)
 	fVal := reflect.ValueOf(found)
-	toReturn := reflect.New(reflect.TypeOf(found)).Elem()
+	isPointer := false
+	if cVal.Kind() == reflect.Ptr {
+		cVal = cVal.Elem()
+		fVal = fVal.Elem()
+		isPointer = true
+	}
+	toReturnParent := reflect.New(fVal.Type())
+	toReturn := toReturnParent.Elem()
+
 	for index := 0; index < cVal.NumField(); index++ {
 		vField := cVal.Field(index)
 		if isZero(vField.Interface()) {
@@ -27,6 +35,9 @@ func overwrite(current, found interface{}) (interface{}, error) {
 		} else {
 			toReturn.Field(index).Set(vField)
 		}
+	}
+	if isPointer {
+		return toReturnParent.Interface(), nil
 	}
 	return toReturn.Interface(), nil
 }

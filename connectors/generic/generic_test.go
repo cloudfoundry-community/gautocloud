@@ -4,6 +4,7 @@ import (
 	. "github.com/cloudfoundry-community/gautocloud/connectors/generic"
 
 	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -33,6 +34,35 @@ var _ = Describe("Generic", func() {
 				finalStruct, err := interceptor.Intercept(SchemaWithIntercepter{}, SchemaWithIntercepter{})
 				Expect(err).ToNot(HaveOccurred())
 				Expect(finalStruct.(SchemaWithIntercepter).Foo).To(Equal("hijack"))
+			})
+			It("should return an intercept function and run one by one interceptors if user set interceptors to connector", func() {
+				alterFunc := interceptor.IntercepterFunc(func(current, found interface{}) (interface{}, error) {
+					return SchemaFake{
+						Foo: "altered",
+					}, nil
+				})
+				addFunc := interceptor.IntercepterFunc(func(current, found interface{}) (interface{}, error) {
+					c := current.(SchemaFake)
+					return SchemaFake{
+						Foo: c.Foo + "added",
+					}, nil
+				})
+				conn := NewSchemaBasedGenericConnector(
+					"id",
+					"name",
+					[]string{"tag"},
+					SchemaFake{},
+					alterFunc,
+					addFunc,
+				)
+				intercepter := conn.(connectors.ConnectorIntercepter)
+
+				interceptor := intercepter.Intercepter()
+
+				Expect(interceptor).ToNot(BeNil())
+				finalStruct, err := interceptor.Intercept(SchemaFake{}, SchemaFake{})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(finalStruct.(SchemaFake).Foo).To(Equal("alteredadded"))
 			})
 			It("should return nil if schema does not implement intercepter", func() {
 				conn := NewSchemaBasedGenericConnector("id", "name", []string{"tag"}, SchemaFake{})

@@ -52,7 +52,12 @@ One of usecase is to be able to retrieve configuration from services or simply a
 
 Add a straight forward connector which give back schema fed by loader.
 
-This connector is also connector intercepter, it use interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema).
+This connector is also connector intercepter, it use interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema) 
+as default interceptor. 
+
+You can also set your interceptors to connector, they will be used only if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter).
+
+You can find interceptors already created at https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor .
 
 ##### Example
 
@@ -81,6 +86,9 @@ func init() {
         ".*my_connector.*",
         []string{"my_connector.*"},
         MySchema{},
+        // MyFirstInterceptor,
+        // MySecondInterceptor,
+        // ....
         ))
 }
 func main() {
@@ -112,10 +120,11 @@ func main() {
 
 This is a schema based connectors but `id`, `name` and `tags` are already set (can be registered multiple times).
 
-This connector is also connector intercepter, it use 2 interceptors:
-- [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema)
-- [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite) 
-(this will be use if struc from user does not implement [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter))
+This connector is a connector intercepter, it use the default interceptor [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite)  
+which only be used if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter) 
+and if no interceptors has been given to connector.
+
+You can find interceptors already created at https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor .
 
 This generic connector responds on:
 - Regex name: `.*config.*`
@@ -141,7 +150,14 @@ type MySecondConfig struct {
 
 func init() {
         gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MyConfig{}))
-        gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MySecondConfig{}))
+        gautocloud.RegisterConnector(
+            generic.NewConfigGenericConnector(
+            MySecondConfig{},
+            // MyFirstInterceptor,
+            // MySecondInterceptor,
+            // ....
+            ),
+        )
 }
 func main() {
         var err error
