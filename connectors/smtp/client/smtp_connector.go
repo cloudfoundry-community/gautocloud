@@ -1,15 +1,16 @@
 package client
 
 import (
-	"net/smtp"
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/raw"
-	"strconv"
 	"crypto/tls"
-	"net"
 	"errors"
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/raw"
 	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/smtptype"
+	"net"
+	"net/smtp"
+	"strconv"
+	"time"
 )
 
 func init() {
@@ -35,7 +36,7 @@ func (c SmtpConnector) Tags() []string {
 	return c.wrapConn.Tags()
 }
 func (c SmtpConnector) GetAuth(schema smtptype.Smtp) smtp.Auth {
-	return smtp.PlainAuth("", schema.User, schema.Password, schema.Host + ":" + strconv.Itoa(schema.Port))
+	return smtp.PlainAuth("", schema.User, schema.Password, schema.Host+":"+strconv.Itoa(schema.Port))
 }
 func (c SmtpConnector) GetSmtp(schema smtptype.Smtp, withAuth bool, isTls bool, startTls bool) (*smtp.Client, error) {
 	var conn net.Conn
@@ -53,11 +54,13 @@ func (c SmtpConnector) GetSmtp(schema smtptype.Smtp, withAuth bool, isTls bool, 
 	if err != nil {
 		return nil, err
 	}
+	conn.SetDeadline(time.Now().Add(time.Millisecond * 1500))
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
 		conn.Close()
 		return client, err
 	}
+
 	if isTls && startTls && withAuth {
 		err = client.StartTLS(tlsconfig)
 		if err != nil {
