@@ -11,7 +11,7 @@ import (
 const (
 	LOG_MESSAGE_PREFIX = "gautocloud"
 	DEBUG_MODE_ENV_VAR = "GAUTOCLOUD_DEBUG"
-	BUF_SIZE           = 100
+	BUF_SIZE           = 35
 )
 
 type GautocloudHook struct {
