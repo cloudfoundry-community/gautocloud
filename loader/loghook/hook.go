@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"os"
 	"strings"
 )
 
 const (
 	LOG_MESSAGE_PREFIX = "gautocloud"
+	DEBUG_MODE_ENV_VAR = "GAUTOCLOUD_DEBUG"
 	BUF_SIZE           = 100
 )
 
@@ -25,10 +27,26 @@ func NewGautocloudHook(buf *bytes.Buffer) *GautocloudHook {
 		buf:     buf,
 	}
 }
-
+func (h GautocloudHook) IsDebugMode() bool {
+	return os.Getenv(DEBUG_MODE_ENV_VAR) != ""
+}
+func (h GautocloudHook) TraceDebugMode(entry *logrus.Entry) {
+	stdLogger := logrus.StandardLogger()
+	currentLvl := stdLogger.Level
+	stdLogger.Level = logrus.DebugLevel
+	h.Trace(entry)
+	stdLogger.Level = currentLvl
+}
+func (h GautocloudHook) Trace(entry *logrus.Entry) {
+	stdLogger := logrus.StandardLogger()
+	currentOut := entry.Logger.Out
+	entry.Logger.Out = stdLogger.Out
+	b, _ := stdLogger.Formatter.Format(entry)
+	fmt.Fprint(stdLogger.Out, string(b))
+	entry.Logger.Out = currentOut
+}
 func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
 	defer h.buf.Reset()
-
 	stdLogger := logrus.StandardLogger()
 	currentOut := entry.Logger.Out
 	entry.Logger.Out = stdLogger.Out
@@ -48,6 +66,11 @@ func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
 		fmt.Fprint(stdLogger.Out, line)
 		return nil
 	}
+	if h.IsDebugMode() {
+		h.TraceDebugMode(entry)
+		return nil
+	}
+
 	if h.nbWrite == BUF_SIZE {
 		h.entries = make([]*logrus.Entry, 0)
 		h.nbWrite = 0
@@ -78,9 +101,7 @@ func (h *GautocloudHook) ShowPreviousLog() {
 			newEntries = append(newEntries, entry)
 			continue
 		}
-		entry.Logger.Out = stdLogger.Out
-		b, _ := stdLogger.Formatter.Format(entry)
-		fmt.Fprint(stdLogger.Out, string(b))
+		h.Trace(entry)
 	}
 	h.entries = newEntries
 	h.nbWrite = len(newEntries)

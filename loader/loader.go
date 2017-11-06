@@ -448,6 +448,8 @@ func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloud
 }
 
 // Show previous logs entries created at initialization
+// Prefer set a GAUTOCLOUD_DEBUG env var to true to see debug message at load too
+// In some situation, this can be useful.
 func (l GautocloudLoader) ShowPreviousLog() {
 	if l.gHook == nil {
 		return
