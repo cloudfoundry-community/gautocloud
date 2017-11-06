@@ -46,21 +46,18 @@ func (c SmtpConnector) GetSmtp(schema smtptype.Smtp, withAuth bool, isTls bool, 
 		ServerName:         schema.Host,
 	}
 	host := schema.Host + ":" + strconv.Itoa(schema.Port)
-	if isTls {
-		conn, err = tls.Dial("tcp", host, tlsconfig)
-	} else {
-		conn, err = net.Dial("tcp", host)
-	}
+	conn, err = net.DialTimeout("tcp", host, time.Millisecond*500)
 	if err != nil {
 		return nil, err
 	}
-	conn.SetDeadline(time.Now().Add(time.Millisecond * 1500))
+	if isTls {
+		conn = tls.Client(conn, tlsconfig)
+	}
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
 		conn.Close()
 		return client, err
 	}
-
 	if isTls && startTls && withAuth {
 		err = client.StartTLS(tlsconfig)
 		if err != nil {
