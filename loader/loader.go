@@ -5,7 +5,6 @@ package loader
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
@@ -14,7 +13,6 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/loader/loghook"
 	log "github.com/sirupsen/logrus"
 	"reflect"
-	"strings"
 )
 
 type Loader interface {
@@ -392,19 +390,17 @@ func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 }
 
 func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService {
-	entry := l.logger.WithField("connector_id", connector.Id())
-	entry.Debug("Connector is loading services...")
+	entry := l.logger.WithField("connector_id", connector.Id()).
+		WithField("name", connector.Name()).
+		WithField("tags", connector.Tags())
+	entry.Debug(logMessage("Connector is loading services..."))
 	services := make([]cloudenv.Service, 0)
 	storedServices := make([]StoredService, 0)
 	cloudEnv := l.getFirstValidCloudEnv()
 	services = append(services, cloudEnv.GetServicesFromTags(connector.Tags())...)
 	services = l.addService(services, cloudEnv.GetServicesFromName(connector.Name())...)
 	if len(services) == 0 {
-		entry.Debugf(
-			logMessage("No service found for connector \n\twith name: '%s' \n\tor tags: [ %s ]"),
-			connector.Name(),
-			strings.Join(connector.Tags(), ", "),
-		)
+		entry.Debugf(logMessage("No service found for connector."))
 		return storedServices
 	}
 	serviceType := reflect.TypeOf(connector.Schema())
@@ -418,11 +414,10 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			continue
 		}
 		reflectType := reflect.TypeOf(loadedService)
-		b, _ := json.MarshalIndent(service.Credentials, "\t", "\t")
-		entry.Debugf(logMessage("Connector load a service which give type '%s' from credentials:\n\t%s\n"),
-			reflectType.String(),
-			string(b),
-		)
+		entry.WithField("type", reflectType.String()).
+			WithField("credentials", service.Credentials).
+			Debugf(logMessage("Connector load a service."))
+
 		var intercepter interceptor.Intercepter = nil
 		if connIntercepter, ok := connector.(connectors.ConnectorIntercepter); ok {
 			intercepter = connIntercepter.Intercepter()
@@ -447,8 +442,8 @@ func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloud
 	return services
 }
 
-// Show previous logs entries created at initialization
-// Prefer set a GAUTOCLOUD_DEBUG env var to true to see debug message at load too
+// Show previous logs entries created at initialization.
+// Prefer set a GAUTOCLOUD_DEBUG env var to true (or `json` to see logs as json) to see debug message at load too
 // In some situation, this can be useful.
 func (l GautocloudLoader) ShowPreviousLog() {
 	if l.gHook == nil {

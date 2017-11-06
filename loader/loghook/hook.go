@@ -11,63 +11,77 @@ import (
 const (
 	LOG_MESSAGE_PREFIX = "gautocloud"
 	DEBUG_MODE_ENV_VAR = "GAUTOCLOUD_DEBUG"
+	DEBUG_MODE_JSON    = "json"
 	BUF_SIZE           = 35
 )
 
 type GautocloudHook struct {
-	entries []*logrus.Entry
-	nbWrite int
-	buf     *bytes.Buffer
+	entries       []*logrus.Entry
+	nbWrite       int
+	buf           *bytes.Buffer
+	jsonFormatter *logrus.JSONFormatter
 }
 
 func NewGautocloudHook(buf *bytes.Buffer) *GautocloudHook {
 	return &GautocloudHook{
-		entries: make([]*logrus.Entry, 0),
-		nbWrite: 0,
-		buf:     buf,
+		entries:       make([]*logrus.Entry, 0),
+		nbWrite:       0,
+		buf:           buf,
+		jsonFormatter: &logrus.JSONFormatter{},
 	}
+}
+func (h GautocloudHook) IsDebugModeJson() bool {
+	return os.Getenv(DEBUG_MODE_ENV_VAR) == DEBUG_MODE_JSON
 }
 func (h GautocloudHook) IsDebugMode() bool {
 	return os.Getenv(DEBUG_MODE_ENV_VAR) != ""
 }
-func (h GautocloudHook) TraceDebugMode(entry *logrus.Entry) {
+func (h GautocloudHook) traceDebugMode(entry *logrus.Entry) {
 	stdLogger := logrus.StandardLogger()
 	currentLvl := stdLogger.Level
 	stdLogger.Level = logrus.DebugLevel
-	h.Trace(entry)
+	if h.IsDebugModeJson() {
+		h.trace(entry, h.jsonFormatter)
+	} else {
+		h.trace(entry)
+	}
 	stdLogger.Level = currentLvl
 }
-func (h GautocloudHook) Trace(entry *logrus.Entry) {
+func (h GautocloudHook) toLine(entry *logrus.Entry, formatters ...logrus.Formatter) string {
 	stdLogger := logrus.StandardLogger()
 	currentOut := entry.Logger.Out
 	entry.Logger.Out = stdLogger.Out
-	b, _ := stdLogger.Formatter.Format(entry)
-	fmt.Fprint(stdLogger.Out, string(b))
+	formatter := stdLogger.Formatter
+	if len(formatters) > 0 {
+		formatter = formatters[0]
+	}
+	b, _ := formatter.Format(entry)
+	line := string(b)
 	entry.Logger.Out = currentOut
+	return line
+}
+func (h GautocloudHook) trace(entry *logrus.Entry, formatters ...logrus.Formatter) {
+	stdLogger := logrus.StandardLogger()
+	fmt.Fprint(stdLogger.Out, h.toLine(entry, formatters...))
 }
 func (h *GautocloudHook) Fire(entry *logrus.Entry) error {
 	defer h.buf.Reset()
-	stdLogger := logrus.StandardLogger()
-	currentOut := entry.Logger.Out
-	entry.Logger.Out = stdLogger.Out
-	b, err := stdLogger.Formatter.Format(entry)
-	if err != nil {
-		return err
-	}
-	entry.Logger.Out = currentOut
-	line := string(b)
+
 	if !strings.HasPrefix(entry.Message, LOG_MESSAGE_PREFIX) {
-		fmt.Fprint(stdLogger.Out, line)
+		if entry.Level > logrus.GetLevel() {
+			return nil
+		}
+		h.trace(entry)
 		return nil
 	}
 
 	currentLvl := logrus.GetLevel()
 	if entry.Level <= currentLvl {
-		fmt.Fprint(stdLogger.Out, line)
+		h.trace(entry)
 		return nil
 	}
 	if h.IsDebugMode() {
-		h.TraceDebugMode(entry)
+		h.traceDebugMode(entry)
 		return nil
 	}
 
@@ -101,7 +115,7 @@ func (h *GautocloudHook) ShowPreviousLog() {
 			newEntries = append(newEntries, entry)
 			continue
 		}
-		h.Trace(entry)
+		h.trace(entry)
 	}
 	h.entries = newEntries
 	h.nbWrite = len(newEntries)
