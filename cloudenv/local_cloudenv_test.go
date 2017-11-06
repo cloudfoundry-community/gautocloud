@@ -236,44 +236,5 @@ var _ = Describe("LocalCloudenv", func() {
 		})
 
 	})
-	Context("IsInCloudEnv", func() {
-		var cloudEnv CloudEnv
-		BeforeEach(func() {
-			cloudEnv = NewLocalCloudEnvFromReader(bytes.NewBuffer(formatServices[0].Content), formatServices[0].Type)
-		})
-		It("should return false when have "+LOCAL_ENV_KEY+" and no config file env var empty", func() {
-			err := os.Setenv(LOCAL_ENV_KEY, "")
-			Expect(err).NotTo(HaveOccurred())
-
-			err = os.Setenv(LOCAL_CONFIG_ENV_KEY, "")
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(cloudEnv.IsInCloudEnv()).Should(BeFalse())
-		})
-		It("should return true when have "+LOCAL_ENV_KEY+" env var not empty", func() {
-			err := os.Setenv(LOCAL_ENV_KEY, "data")
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(cloudEnv.IsInCloudEnv()).Should(BeTrue())
-		})
-		It("should return false when config file set but can't be found", func() {
-			os.Setenv(LOCAL_ENV_KEY, "")
-			err := os.Setenv(LOCAL_CONFIG_ENV_KEY, "myconfig.yml")
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(cloudEnv.IsInCloudEnv()).Should(BeFalse())
-		})
-		It("should return true when config file exists", func() {
-			dir, err := os.Getwd()
-			Expect(err).NotTo(HaveOccurred())
-
-			fixturePath := path.Join(dir, "test-fixtures")
-			configPath := path.Join(fixturePath, "config.yaml")
-			err = os.Setenv(LOCAL_CONFIG_ENV_KEY, configPath)
-			Expect(err).NotTo(HaveOccurred())
-
-			Expect(cloudEnv.IsInCloudEnv()).Should(BeTrue())
-		})
-	})
 
 })

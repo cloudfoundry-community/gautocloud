@@ -52,9 +52,9 @@ func (c SchemaBasedGenericConnector) Intercepter() interceptor.Intercepter {
 	}
 	return interceptor.IntercepterFunc(func(current, found interface{}) (interface{}, error) {
 		var err error
-		data := current
+		data := found
 		for _, i := range c.interceptors {
-			data, err = i.Intercept(data, found)
+			data, err = i.Intercept(current, data)
 			if err != nil {
 				return nil, err
 			}

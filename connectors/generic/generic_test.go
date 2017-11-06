@@ -42,9 +42,9 @@ var _ = Describe("Generic", func() {
 					}, nil
 				})
 				addFunc := interceptor.IntercepterFunc(func(current, found interface{}) (interface{}, error) {
-					c := current.(SchemaFake)
+					f := found.(SchemaFake)
 					return SchemaFake{
-						Foo: c.Foo + "added",
+						Foo: f.Foo + "added",
 					}, nil
 				})
 				conn := NewSchemaBasedGenericConnector(

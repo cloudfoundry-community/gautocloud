@@ -54,20 +54,28 @@ func (c *LocalCloudEnv) Load() error {
 			return err
 		}
 	}
-	if c.hasConfigFile() {
-		err := c.loadConfigFile()
-		if err != nil {
-			return err
-		}
+	err := c.loadConfigFile()
+	if err != nil {
+		return err
 	}
+
 	c.loadAppName()
 	return nil
 }
 func (c *LocalCloudEnv) loadConfigFile() error {
 	confPath := c.configPath()
+	_, err := os.Stat(confPath)
+	if err != nil {
+		c.servicesLocal = append(c.servicesLocal, ServiceLocal{
+			"config",
+			[]string{"config"},
+			make(map[string]interface{}),
+		})
+		return nil
+	}
 	viper.SetConfigType(filepath.Ext(confPath)[1:])
 	viper.SetConfigFile(confPath)
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		return errors.New(fmt.Sprintf("Fatal error on reading config file: %s \n", err.Error()))
 	}
@@ -218,18 +226,13 @@ func (c LocalCloudEnv) configPath() string {
 }
 
 func (c LocalCloudEnv) hasConfigFile() bool {
-	confPath := c.configPath()
-	_, err := os.Stat(confPath)
-	if err != nil {
-		return false
-	}
-	return true
+	return os.Getenv(LOCAL_CONFIG_ENV_KEY) != ""
 }
 func (c LocalCloudEnv) hasCloudFile() bool {
 	return os.Getenv(LOCAL_ENV_KEY) != ""
 }
 func (c LocalCloudEnv) IsInCloudEnv() bool {
-	return c.hasCloudFile() || c.hasConfigFile()
+	return true
 }
 func (c *LocalCloudEnv) GetAppInfo() AppInfo {
 	id := c.id

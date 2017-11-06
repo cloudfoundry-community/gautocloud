@@ -214,13 +214,15 @@ It returns a service with credentials:
   
 ### Local
 
-This is a special *CloudEnv* and can be considered as a fake one. 
+This is a special *CloudEnv* and can be considered as a fake one. This is cloud env is always triggered if none cloud env was found.
+
 You can also use it to be able to use a config file directly without pain (but it's not 12 factors).
 
-You have 2 possibilities to trigger this cloud env (they can be used in same time):
-- You can set the env var `CLOUD_FILE` which contains the path of a configuration files containing services.
-- You can create a `config file` called `config.yml` in your current working directory or set the env var `CONFIG_FILE` 
-which contains the path of your config file. 
+You can set the env var `CLOUD_FILE` which contains the path of a configuration files containing services.
+
+You can create a `config file` called `config.yml` in your current working directory or set the env var `CONFIG_FILE` 
+which contains the path of your config file. It can contains anything you wants, this will register by itself a service 
+named `config` with tag `config` which contains you configuration from the file.
 
 A `config file` or a `cloud file` can be a `yml`, `json`, `toml` or `hcl` file.
 
@@ -241,12 +243,15 @@ services:
 
 You can see how to follow the same pattern with other format here: [/cloudenv/local_cloudenv_test.go#L13-L86](/cloudenv/local_cloudenv_test.go#L13-L86).
 
-- **Cloud Detection**: if the `CLOUD_FILE` env var exists and not empty or if `config file` can be found.
+- **Cloud Detection**: Always detected, used as fallback when no cloud env found.
 - **Service detection by name**: Look if a service in the config file match the name required by a connector.
 - **Service detection by tags**: Look if a service in the config file match one of tag required by a connector.
 - **App information id**: random uuid
 - **App information name**: The name given in the config file, if not set it will be `<unknown>`
 - **App information properties**: *None*
+
+**NOTE**: A `config` service is always created which permit to use [ConfigFileInterceptor](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor/configfile#ConfigFileInterceptor) 
+this is a great interceptor to use with a [generic config connector](https://github.com/cloudfoundry-community/gautocloud/blob/master/docs/connectors.md#config).
 
 ## Concept
 
