@@ -243,6 +243,7 @@ func (c *LocalCloudEnv) GetAppInfo() AppInfo {
 	return AppInfo{
 		Id:         c.id,
 		Name:       c.appName,
+		Port:       0,
 		Properties: make(map[string]interface{}),
 	}
 

@@ -230,6 +230,7 @@ var _ = Describe("LocalCloudenv", func() {
 			It("should return informations about instance of the running application", func() {
 				appInfo := cloudEnv.GetAppInfo()
 				Expect(appInfo.Id).ShouldNot(BeEmpty())
+				Expect(appInfo.Port).Should(Equal(0))
 				Expect(appInfo.Name).Should(Or(Equal("myapp"), Equal("<unknown>")))
 				Expect(appInfo.Properties).Should(HaveLen(0))
 			})

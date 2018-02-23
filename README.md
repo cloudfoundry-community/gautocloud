@@ -138,7 +138,6 @@ You can see connectors made by the community on the dedicated wiki page: https:/
   - `home`: (type: *string*) root folder for the deployed app.
   - `index`: (type: *int*) index of the app.
   - `memory_limit`: (type: *string*) maximum amount of memory that each instance of the application can consume.
-  - `port`: (type: *int*) port of the app.
   - `space_id`: (type: *string*) id of the space.
   - `space_name_id`: (type: *string*) name of the space.
   - `temp_dir`: (type: *string*) directory location where temporary and staging files are stored.
@@ -178,7 +177,6 @@ It returns a service with credentials:
 - **App information name**: Set the env var `GAUTOCLOUD_APP_NAME` to give a name to your app instead it will be `<unknown>`
 - **App information properties**:
   - `host`: (type: *string*) host of the app.
-  - `port`: (type: *int*) port of the app.
 
 ### Kubernetes
 
@@ -209,7 +207,6 @@ It returns a service with credentials:
 - **App information name**: Name of the app given by the env var `HOSTNAME`
 - **App information properties**:
   - `host`: (type: *string*) host of the app.
-  - `port`: (type: *int*) port of the app.
   - All values starting by `KUBERNETES` in env vars key.
   
 ### Local
@@ -338,6 +335,7 @@ func main() {
         
         appInfo := ld.GetAppInfo() // retrieve all informations about your application instance
         fmt.Println(appInfo.Name) // give the app name
+        fmt.Println(appInfo.Port) // give the port to listen to
         // by injection 
         var c *dbtype.MysqlDB // this is just a wrapper of *net/sql.DB you can use as normal sql.DB client
         err := ld.Inject(&c) // you can also use gautocloud.InjectFromId("mysql", &c) where "mysql" is the id of the connector to use

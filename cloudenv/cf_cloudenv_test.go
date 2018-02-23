@@ -3,9 +3,9 @@ package cloudenv_test
 import (
 	. "github.com/cloudfoundry-community/gautocloud/cloudenv"
 
+	"github.com/cloudfoundry-community/go-cfenv"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry-community/go-cfenv"
 	"os"
 )
 
@@ -67,19 +67,20 @@ var _ = Describe("CfCloudenv", func() {
 			appInfo := cloudEnv.GetAppInfo()
 			Expect(appInfo.Id).Should(Equal("451f045fd16427bb99c895a2649b7b2a"))
 			Expect(appInfo.Name).Should(Equal("styx-james"))
+			Expect(appInfo.Port).Should(Equal(61857))
 			Expect(appInfo.Properties).Should(BeEquivalentTo(map[string]interface{}{
-				"uris": []string{"styx-james.a1-app.cf-app.com"},
-				"host": "0.0.0.0",
-				"home": "/home/vcap/app",
-				"index": 0,
+				"uris":         []string{"styx-james.a1-app.cf-app.com"},
+				"host":         "0.0.0.0",
+				"home":         "/home/vcap/app",
+				"index":        0,
 				"memory_limit": "512m",
-				"port": 61857,
-				"space_id": "3e0c28c5-6d9c-436b-b9ee-1f4326e54d05",
-				"space_name": "jdk",
-				"temp_dir": "/home/vcap/tmp",
-				"user": "vcap",
-				"version": "c1063c1c-40b9-434e-a797-db240b587d32",
-				"working_dir": "/home/vcap",
+				"port":         61857,
+				"space_id":     "3e0c28c5-6d9c-436b-b9ee-1f4326e54d05",
+				"space_name":   "jdk",
+				"temp_dir":     "/home/vcap/tmp",
+				"user":         "vcap",
+				"version":      "c1063c1c-40b9-434e-a797-db240b587d32",
+				"working_dir":  "/home/vcap",
 			}))
 		})
 	})

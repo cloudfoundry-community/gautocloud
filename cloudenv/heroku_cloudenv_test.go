@@ -110,6 +110,7 @@ var _ = Describe("HerokuCloudenv", func() {
 			appInfo := cloudEnv.GetAppInfo()
 			Expect(appInfo.Id).Should(Equal("id1"))
 			Expect(appInfo.Name).Should(Equal("myapp"))
+			Expect(appInfo.Port).Should(Equal(6001))
 			Expect(appInfo.Properties["port"]).Should(Equal(6001))
 		})
 	})

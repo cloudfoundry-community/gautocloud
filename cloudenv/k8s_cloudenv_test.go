@@ -95,6 +95,7 @@ var _ = Describe("KubernetesCloudenv", func() {
 			appInfo := cloudEnv.GetAppInfo()
 			Expect(appInfo.Id).Should(Equal("kube-dns-3917200835-0m5h5"))
 			Expect(appInfo.Name).Should(Equal("kube-dns-3917200835-0m5h5"))
+			Expect(appInfo.Port).Should(Equal(443))
 			Expect(appInfo.Properties["host"]).Should(Equal("10.100.200.1"))
 			Expect(appInfo.Properties["port"]).Should(Equal(443))
 		})
