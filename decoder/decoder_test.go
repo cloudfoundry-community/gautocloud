@@ -307,4 +307,42 @@ var _ = Describe("Decoder", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test.Default).Should(BeEmpty())
 	})
+	It("should decode map inside sub struct", func() {
+		test := struct {
+			SubStructs []struct {
+				Amap        map[string]string
+				AComplexMap map[string]struct {
+					Toto string
+				}
+				AComplexPtrMap map[string]*struct {
+					Titi string
+				}
+			}
+		}{}
+		data := map[string]interface{}{
+			"sub_structs": []map[string]interface{}{
+				{
+					"amap": map[string]interface{}{
+						"name": "name",
+					},
+					"a_complex_map": map[string]interface{}{
+						"avalue": map[string]interface{}{"toto": "toto"},
+					},
+					"a_complex_ptr_map": map[string]interface{}{
+						"avalue": map[string]interface{}{"titi": "titi"},
+					},
+				},
+			},
+		}
+		err := Unmarshal(data, &test)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(test.SubStructs[0].Amap).Should(HaveKey("name"))
+		Expect(test.SubStructs[0].Amap["name"]).Should(Equal("name"))
+
+		Expect(test.SubStructs[0].AComplexMap).Should(HaveKey("avalue"))
+		Expect(test.SubStructs[0].AComplexMap["avalue"].Toto).Should(Equal("toto"))
+
+		Expect(test.SubStructs[0].AComplexPtrMap).Should(HaveKey("avalue"))
+		Expect(test.SubStructs[0].AComplexPtrMap["avalue"].Titi).Should(Equal("titi"))
+	})
 })

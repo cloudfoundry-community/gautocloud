@@ -241,10 +241,9 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
 			return NewErrTypeNotSupported(vField)
 		}
-		if vField.Type() == reflect.TypeOf(make(map[string]interface{})) &&
+		if vField.Kind() == reflect.Map &&
 			reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
-			vField.Set(reflect.ValueOf(data))
-			break
+			return unmarshalUntypedMap(data.(map[string]interface{}), vField, noDefaultVal)
 		}
 		if reflect.TypeOf(data) == reflect.TypeOf(make(map[string]interface{})) {
 			return UnmarshalToValue(data.(map[string]interface{}), vField, noDefaultVal)
@@ -256,6 +255,31 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		serviceUri := urlToServiceUri(serviceUrl)
 		vField.Set(reflect.ValueOf(serviceUri))
 		break
+	}
+	return nil
+}
+func unmarshalUntypedMap(data map[string]interface{}, vField reflect.Value, noDefaultVal bool) error {
+	if vField.IsNil() {
+		vField.Set(reflect.MakeMap(vField.Type()))
+	}
+	for name, val := range data {
+		if reflect.TypeOf(val) != reflect.TypeOf(make(map[string]interface{})) {
+			vField.SetMapIndex(reflect.ValueOf(name), reflect.ValueOf(val))
+			continue
+		}
+		typeElem := vField.Type().Elem()
+		if typeElem.Kind() == reflect.Ptr {
+			typeElem = typeElem.Elem()
+		}
+		newElem := reflect.New(typeElem)
+		err := UnmarshalToValue(val.(map[string]interface{}), newElem, noDefaultVal)
+		if err != nil {
+			return err
+		}
+		if vField.Type().Elem().Kind() != reflect.Ptr {
+			newElem = newElem.Elem()
+		}
+		vField.SetMapIndex(reflect.ValueOf(name), newElem)
 	}
 	return nil
 }
