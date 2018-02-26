@@ -259,6 +259,10 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 	return nil
 }
 func unmarshalUntypedMap(data map[string]interface{}, vField reflect.Value, noDefaultVal bool) error {
+	if vField.Type() == reflect.TypeOf(make(map[string]interface{})) {
+		vField.Set(reflect.ValueOf(data))
+		return nil
+	}
 	if vField.IsNil() {
 		vField.Set(reflect.MakeMap(vField.Type()))
 	}
