@@ -344,7 +344,7 @@ func retrieveFinalData(kind reflect.Kind, serviceCredentials map[string]interfac
 		return defaultValue
 	}
 	if !valueExists && kind == reflect.Struct {
-		return make(map[string]interface{})
+		return serviceCredentials
 	}
 	return nil
 }

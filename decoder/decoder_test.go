@@ -10,7 +10,7 @@ import (
 
 type TestCompleteStruct struct {
 	Uri               ServiceUri
-	Name              string `cloud:".*name.*,regex"`
+	Name              string      `cloud:".*name.*,regex"`
 	Nint              int
 	Nint8             int8
 	Nint16            int16
@@ -49,11 +49,19 @@ type TestCompleteStruct struct {
 	Nfloat64Default   float64     `cloud-default:"1.2"`
 	NpintDefault      *int        `cloud-default:"11"`
 }
+
 type SubStruct struct {
 	Name        string
 	NameDefault string `cloud-default:"myname"`
 }
+
+type WrapStruct struct {
+	Nint int
+	SubStruct
+}
+
 type InvalidStruct struct{}
+
 type TestInvalidStruct struct {
 	MyStruct InvalidStruct
 }
@@ -310,7 +318,7 @@ var _ = Describe("Decoder", func() {
 	It("should decode map inside sub struct", func() {
 		test := struct {
 			SubStructs []struct {
-				Amap        map[string]string
+				Amap map[string]string
 				AComplexMap map[string]struct {
 					Toto string
 				}
@@ -344,5 +352,17 @@ var _ = Describe("Decoder", func() {
 
 		Expect(test.SubStructs[0].AComplexPtrMap).Should(HaveKey("avalue"))
 		Expect(test.SubStructs[0].AComplexPtrMap["avalue"].Titi).Should(Equal("titi"))
+	})
+	It("should decode wrapped struct", func() {
+		test := WrapStruct{}
+		data := map[string]interface{}{
+			"name": "wrapname",
+			"nint": 1,
+		}
+
+		err := Unmarshal(data, &test)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(test.Name).Should(Equal("wrapname"))
+		Expect(test.Nint).Should(Equal(1))
 	})
 })
