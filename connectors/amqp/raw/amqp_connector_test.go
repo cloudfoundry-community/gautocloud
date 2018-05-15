@@ -40,8 +40,8 @@ var _ = Describe("AmqpConnector", func() {
 				Username: "user",
 				Password: "pass",
 				Port:     5672,
+				Name:     "foo",
 			},
-			Vhost: "foo",
 		})
 		Expect(err).NotTo(HaveOccurred())
 		Expect(data).Should(BeEquivalentTo(

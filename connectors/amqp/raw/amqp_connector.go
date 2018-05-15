@@ -39,7 +39,7 @@ func (c AmqpRawConnector) Load(schema interface{}) (interface{}, error) {
 		User:     fSchema.Uri.Username,
 		Password: fSchema.Uri.Password,
 		Host:     fSchema.Uri.Host,
-		Vhost:    fSchema.Vhost,
+		Vhost:    fSchema.Uri.Name,
 		Port:     port,
 	}, nil
 }
