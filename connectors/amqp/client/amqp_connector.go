@@ -1,12 +1,12 @@
 package client
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
-	"github.com/streadway/amqp"
 	"fmt"
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/amqptype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
+	"github.com/streadway/amqp"
 )
 
 func init() {
@@ -36,7 +36,7 @@ func (c AmqpConnector) GetConnString(schema amqptype.Amqp) string {
 	if schema.Password != "" {
 		connString += ":" + schema.Password
 	}
-	connString += fmt.Sprintf("@%s:%d/", schema.Host, schema.Port)
+	connString += fmt.Sprintf("@%s:%d/%s", schema.Host, schema.Port, schema.Vhost)
 	return connString
 }
 func (c AmqpConnector) Load(schema interface{}) (interface{}, error) {
@@ -49,6 +49,3 @@ func (c AmqpConnector) Load(schema interface{}) (interface{}, error) {
 func (c AmqpConnector) Schema() interface{} {
 	return c.rawConn.Schema()
 }
-
-
-
