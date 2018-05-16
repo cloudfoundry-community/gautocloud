@@ -97,7 +97,7 @@ var _ = Describe("Decoder", func() {
 			FloatJsonNumber: float64(1.2),
 			IntJsonNumber:   2,
 			Asubstruct: SubStruct{
-				Name:        "name",
+				Name:        "subname",
 				NameDefault: "myname",
 			},
 			Slicesubstruct: []SubStruct{
@@ -133,7 +133,7 @@ var _ = Describe("Decoder", func() {
 			"nint64":            int64(5),
 			"nuint":             uint(6),
 			"amap":              map[string]interface{}{"name": "name"},
-			"asubstruct":        map[string]interface{}{"name": "name"},
+			"asubstruct":        map[string]interface{}{"name": "subname"},
 			"slicesubstruct":    []map[string]interface{}{map[string]interface{}{"name": "name"}},
 			"aslice":            []string{"titi", "toto"},
 			"nuint8":            uint8(7),
@@ -156,7 +156,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint32 = int32(4)
 		expectedStruct.Nint64 = int64(5)
 		expectedStruct.Asubstruct = SubStruct{
-			Name:        "name",
+			Name:        "subname",
 			NameDefault: "myname",
 		}
 		expectedStruct.Aslice = []string{"titi", "toto"}
@@ -267,7 +267,7 @@ var _ = Describe("Decoder", func() {
 			"float_json_number": json.Number("0.12e+1"),
 			"int_json_number":   json.Number("2"),
 			"amap":              map[string]interface{}{"name": "name"},
-			"asubstruct":        map[string]interface{}{"name": "name"},
+			"asubstruct":        map[string]interface{}{"name": "subname"},
 			"slicesubstruct":    []map[string]interface{}{map[string]interface{}{"name": "name"}},
 			"aslice":            []string{"titi", "toto"},
 			"nuint8":            float64(7),
@@ -288,7 +288,7 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nint32 = int32(4)
 		expectedStruct.Nint64 = int64(5)
 		expectedStruct.Asubstruct = SubStruct{
-			Name:        "name",
+			Name:        "subname",
 			NameDefault: "myname",
 		}
 		expectedStruct.Aslice = []string{"titi", "toto"}
