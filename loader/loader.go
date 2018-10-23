@@ -63,7 +63,7 @@ func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	return newLoader(cloudEnvs, nil, log.StandardLogger())
 }
 
-// Create a new loader with cloud environment given and it adds a logger and a gautcloud logrus hook to be able to retrieve
+// Create a new loader with cloud environment given and it adds a logger and a gautocloud logrus hook to be able to retrieve
 // previous log.
 func NewFacadeLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	buf := new(bytes.Buffer)
@@ -109,7 +109,7 @@ func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	storedServices := l.load(connector)
 	err := l.checkInCloudEnv()
 	if err != nil {
-		entry.Infof(logMessage("Skipping loading connector: %s"), err.Error())
+		entry.Debugf(logMessage("Skipping loading connector: %s"), err.Error())
 		return
 	}
 	if len(storedServices) == 0 {
@@ -137,7 +137,7 @@ func (l GautocloudLoader) LoadCloudEnvs() {
 				err.Error(),
 			)
 		}
-		entry.Info(logMessage("Environment detected and loaded."))
+		entry.Debug(logMessage("Environment detected and loaded."))
 	}
 }
 
@@ -312,7 +312,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 	entry := l.logger.WithField("connector_id", store.ConnectorId).
 		WithField("type", store.ReflectType.String())
 
-	entry.Info(logMessage("Data intercepting by interceptor given by connector..."))
+	entry.Debug(logMessage("Data intercepting by interceptor given by connector..."))
 	finalData, err := store.Interceptor.Intercept(current, store.Data)
 	if err != nil {
 		NewErrGiveService(
@@ -429,7 +429,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 			ConnectorId: connector.Id(),
 		})
 	}
-	entry.Infof(logMessage("Connector load %d service(s)."), len(storedServices))
+	entry.Debugf(logMessage("Connector load %d service(s)."), len(storedServices))
 	return storedServices
 }
 func (l GautocloudLoader) addService(services []cloudenv.Service, toAdd ...cloudenv.Service) []cloudenv.Service {

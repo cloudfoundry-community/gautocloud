@@ -111,6 +111,7 @@ func (i ArgInterceptor) parse(schema, found interface{}) (interface{}, error) {
 	}
 	return interceptor.NewOverwrite().Intercept(schema, found)
 }
+
 func (i ArgInterceptor) flags() []string {
 	if len(i.args) == 0 { // os.Args could be empty
 		return nil

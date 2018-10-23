@@ -318,7 +318,7 @@ var _ = Describe("Decoder", func() {
 	It("should decode map inside sub struct", func() {
 		test := struct {
 			SubStructs []struct {
-				Amap map[string]string
+				Amap        map[string]string
 				AComplexMap map[string]struct {
 					Toto string
 				}
