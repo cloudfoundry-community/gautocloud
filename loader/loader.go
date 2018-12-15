@@ -20,6 +20,7 @@ const (
 )
 
 type Loader interface {
+	Reload()
 	ReloadConnectors()
 	RegisterConnector(connector connectors.Connector)
 	Inject(service interface{}) error
@@ -113,6 +114,13 @@ func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 func (l GautocloudLoader) Connectors() map[string]connectors.Connector {
 	return l.connectors
 }
+
+// Reload environment and connectors
+func (l GautocloudLoader) Reload() {
+	l.LoadCloudEnvs()
+	l.ReloadConnectors()
+}
+
 func (l GautocloudLoader) LoadCloudEnvs() {
 	for _, cloudEnv := range l.cloudEnvs {
 		entry := l.logger.WithField("cloud_environment", cloudEnv.Name())

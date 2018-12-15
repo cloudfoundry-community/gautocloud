@@ -106,3 +106,8 @@ func GetAppInfo() cloudenv.AppInfo {
 func IsInACloudEnv() bool {
 	return defaultLoader.IsInACloudEnv()
 }
+
+// Reload environment and connectors
+func Reload() {
+	defaultLoader.Reload()
+}
