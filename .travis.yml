@@ -1,14 +1,14 @@
 sudo: required
 language: go
 go:
-- 1.9
+  - "1.11"
 
 services:
-- docker
+  - docker
 
 install:
-- go get github.com/onsi/ginkgo/ginkgo
-- go get github.com/onsi/gomega
-- bin/get_deps.sh
-- cd $GOPATH/src/github.com/cloudfoundry-community/gautocloud
+  - go get github.com/onsi/ginkgo/ginkgo
+  - go get github.com/onsi/gomega
+  - bin/get_deps.sh
+  - cd $GOPATH/src/github.com/cloudfoundry-community/gautocloud
 script: bin/test.sh

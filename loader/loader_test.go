@@ -2,6 +2,7 @@ package loader_test
 
 import (
 	. "github.com/cloudfoundry-community/gautocloud/loader"
+	"os"
 
 	"bytes"
 	"fmt"
@@ -390,43 +391,26 @@ var _ = Describe("Loader", func() {
 			Expect(fakeCloudEnv.(*fakecloud.FakeCloudEnv).CallLoad()).Should(Equal(1))
 		})
 	})
-	Context("ShowPreviousLog", func() {
+	Context("debug log", func() {
 		currentLvl := log.StandardLogger().Level
 		BeforeEach(func() {
 			logBuf.Reset()
 		})
 		AfterEach(func() {
 			log.SetLevel(currentLvl)
+			os.Unsetenv(DEBUG_MODE_ENV_VAR)
 		})
-		It("should show previous log if loader set for facade", func() {
+		It("should show debug log if env var set", func() {
 			log.SetLevel(log.WarnLevel)
 			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
 			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
 
-			loader = NewFacadeLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
-
-			Expect(logBuf.String()).Should(BeEmpty())
-
-			log.SetLevel(log.DebugLevel)
-			loader.ShowPreviousLog()
-			Expect(logBuf.String()).Should(ContainSubstring("Environment detected and loaded"))
-		})
-		It("should never show previous log if normal loader", func() {
-			log.SetLevel(log.WarnLevel)
-			fakeCloudEnv = fakecloud.NewFakeCloudEnv()
-			fakeCloudEnv.(*fakecloud.FakeCloudEnv).SetInCloudEnv(false)
-			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
-			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
-
+			os.Setenv(DEBUG_MODE_ENV_VAR, "1")
 			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
 
-			Expect(logBuf.String()).Should(BeEmpty())
-
-			log.SetLevel(log.DebugLevel)
-			loader.ShowPreviousLog()
-			Expect(logBuf.String()).Should(BeEmpty())
+			Expect(logBuf.String()).Should(ContainSubstring("Environment detected and loaded"))
 		})
 	})
 	Context("IsInACloudEnv", func() {

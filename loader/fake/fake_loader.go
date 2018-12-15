@@ -159,10 +159,6 @@ func (_m *MockLoader) ShowPreviousLog() {
 	_m.ctrl.Call(_m, "ShowPreviousLog")
 }
 
-func (_mr *_MockLoaderRecorder) ShowPreviousLog() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "ShowPreviousLog")
-}
-
 func (_m *MockLoader) Store() map[string][]loader.StoredService {
 	ret := _m.ctrl.Call(_m, "Store")
 	ret0, _ := ret[0].(map[string][]loader.StoredService)
