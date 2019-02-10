@@ -52,6 +52,15 @@ type QueryUri struct {
 	Value string
 }
 
+// The Unmarshaler interface may be implemented by types to customize their
+// behavior when being unmarshaled from a Map cloud. The UnmarshalCloud
+// method receives a function that may be called to unmarshal the original
+// value into a field or variable. It is safe to call the unmarshal
+// function parameter more than once if necessary.
+type Unmarshaler interface {
+	UnmarshalCloud(data interface{}) error
+}
+
 // Decode a map of credentials into a reflected Value
 func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Value, noDefaultVal bool) error {
 	v := ps
@@ -118,6 +127,19 @@ func UnmarshalNoDefault(serviceCredentials map[string]interface{}, obj interface
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps, true)
 }
+
+func isUnmarshaler(vField reflect.Value) bool {
+	if vField.Type().Kind() != reflect.Ptr {
+		return false
+	}
+	ptrVal := vField
+	if vField.IsNil() {
+		ptrVal = reflect.New(vField.Type().Elem())
+	}
+	_, ok := ptrVal.Interface().(Unmarshaler)
+	return ok
+}
+
 func parseForInt(data interface{}, vField reflect.Value) interface{} {
 	if reflect.ValueOf(data).Kind() != reflect.Float32 &&
 		reflect.ValueOf(data).Kind() != reflect.Float64 &&
@@ -209,7 +231,10 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 			newElem = dataValueElem
 			if dataValueElem.Type() == reflect.TypeOf(make(map[string]interface{})) {
 				newElem = reflect.New(vField.Type().Elem())
-				UnmarshalToValue(dataValueElem.Interface().(map[string]interface{}), newElem, noDefaultVal)
+				err := UnmarshalToValue(dataValueElem.Interface().(map[string]interface{}), newElem, noDefaultVal)
+				if err != nil {
+					return err
+				}
 				newElem = newElem.Elem()
 			}
 			vField.Set(reflect.Append(vField, newElem))
@@ -230,6 +255,13 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 	case reflect.Ptr:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
+		}
+		if isUnmarshaler(vField) {
+			err := vField.Interface().(Unmarshaler).UnmarshalCloud(data)
+			if err != nil {
+				return err
+			}
+			break
 		}
 		err := affect(data, vField.Elem(), noDefaultVal)
 		if err != nil {
@@ -501,6 +533,9 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 	case reflect.Ptr:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
+		}
+		if isUnmarshaler(vField) {
+			return defVal, nil
 		}
 		return convertStringValue(defVal, vField.Elem())
 	default:

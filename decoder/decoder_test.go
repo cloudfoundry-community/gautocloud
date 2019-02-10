@@ -10,7 +10,7 @@ import (
 
 type TestCompleteStruct struct {
 	Uri               ServiceUri
-	Name              string      `cloud:".*name.*,regex"`
+	Name              string `cloud:".*name.*,regex"`
 	Nint              int
 	Nint8             int8
 	Nint16            int16
@@ -32,22 +32,32 @@ type TestCompleteStruct struct {
 	Asubstruct        SubStruct
 	Slicesubstruct    []SubStruct
 	Npint             *int
-	UriDefault        ServiceUri  `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
-	NintDefault       int         `cloud-default:"1"`
-	Nint8Default      int8        `cloud-default:"2"`
-	Nint16Default     int16       `cloud-default:"3"`
-	Nint32Default     int32       `cloud-default:"4"`
-	Nint64Default     int64       `cloud-default:"5"`
-	NuintDefault      uint        `cloud-default:"6"`
-	Nuint8Default     uint8       `cloud-default:"7"`
-	Nuint16Default    uint16      `cloud-default:"8"`
-	Nuint32Default    uint32      `cloud-default:"9"`
-	Nuint64Default    uint64      `cloud-default:"10"`
-	AinterfaceDefault interface{} `cloud-default:"myinterface"`
-	AboolDefault      bool        `cloud-default:"true"`
-	Nfloat32Default   float32     `cloud-default:"1.1"`
-	Nfloat64Default   float64     `cloud-default:"1.2"`
-	NpintDefault      *int        `cloud-default:"11"`
+	UriDefault        ServiceUri    `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
+	NintDefault       int           `cloud-default:"1"`
+	Nint8Default      int8          `cloud-default:"2"`
+	Nint16Default     int16         `cloud-default:"3"`
+	Nint32Default     int32         `cloud-default:"4"`
+	Nint64Default     int64         `cloud-default:"5"`
+	NuintDefault      uint          `cloud-default:"6"`
+	Nuint8Default     uint8         `cloud-default:"7"`
+	Nuint16Default    uint16        `cloud-default:"8"`
+	Nuint32Default    uint32        `cloud-default:"9"`
+	Nuint64Default    uint64        `cloud-default:"10"`
+	AinterfaceDefault interface{}   `cloud-default:"myinterface"`
+	AboolDefault      bool          `cloud-default:"true"`
+	Nfloat32Default   float32       `cloud-default:"1.1"`
+	Nfloat64Default   float64       `cloud-default:"1.2"`
+	NpintDefault      *int          `cloud-default:"11"`
+	PtrAsString       *SubStructPtr `cloud-default:"foo"`
+}
+
+type SubStructPtr struct {
+	Name string
+}
+
+func (p *SubStructPtr) UnmarshalCloud(data interface{}) error {
+	p.Name = data.(string)
+	return nil
 }
 
 type SubStruct struct {
@@ -119,6 +129,9 @@ var _ = Describe("Decoder", func() {
 			Nfloat32Default:   float32(1.1),
 			Nfloat64Default:   float64(1.2),
 			NpintDefault:      &pint,
+			PtrAsString: &SubStructPtr{
+				Name: "subname",
+			},
 		}
 	})
 	It("should decode struct if credentials map type match structure type", func() {
@@ -147,6 +160,7 @@ var _ = Describe("Decoder", func() {
 			"nfloat32":          float32(1.1),
 			"nfloat64":          float64(1.2),
 			"npint":             11,
+			"ptr_as_string":     "subname",
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -170,6 +184,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nfloat32 = float32(1.1)
 		expectedStruct.Nfloat64 = float64(1.2)
 		expectedStruct.Npint = &pint
+		expectedStruct.PtrAsString = &SubStructPtr{
+			Name: "subname",
+		}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
@@ -199,6 +216,7 @@ var _ = Describe("Decoder", func() {
 			"nfloat32":          "1.1",
 			"nfloat64":          "1.2",
 			"npint":             "11",
+			"ptr_as_string":     "subname",
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -221,6 +239,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nfloat32 = float32(1.1)
 		expectedStruct.Nfloat64 = float64(1.2)
 		expectedStruct.Npint = &pint
+		expectedStruct.PtrAsString = &SubStructPtr{
+			Name: "subname",
+		}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
@@ -279,6 +300,7 @@ var _ = Describe("Decoder", func() {
 			"nfloat32":          float32(1.1),
 			"nfloat64":          float64(1.2),
 			"npint":             11,
+			"ptr_as_string":     "subname",
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -302,6 +324,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.Nfloat32 = float32(1.1)
 		expectedStruct.Nfloat64 = float64(1.2)
 		expectedStruct.Npint = &pint
+		expectedStruct.PtrAsString = &SubStructPtr{
+			Name: "subname",
+		}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
