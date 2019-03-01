@@ -405,11 +405,13 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 	for _, service := range services {
 		element := reflect.New(serviceType)
 		err := decoder.UnmarshalToValue(service.Credentials, element, false)
-		entry.Error("Error when loading service: %s", err.Error())
+		if err != nil {
+			entry.Errorf(logMessage("Error occurred during loading connector: %s\n"), err.Error())
+		}
 		eltInterface := element.Elem().Interface()
 		loadedService, err := connector.Load(eltInterface)
 		if err != nil {
-			entry.Errorf(logMessage("Error occured during loading connector: %s\n"), err.Error())
+			entry.Errorf(logMessage("Error occurred during loading connector: %s\n"), err.Error())
 			continue
 		}
 		reflectType := reflect.TypeOf(loadedService)
