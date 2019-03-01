@@ -229,7 +229,21 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 				dataValueElem = dataValueElem.Elem()
 			}
 			newElem = dataValueElem
-			if dataValueElem.Type() == reflect.TypeOf(make(map[string]interface{})) {
+			if vField.Type().Elem().Kind() == reflect.Ptr {
+				fmt.Println(vField.Type().Elem())
+				newElem = reflect.New(vField.Type().Elem().Elem())
+				if isUnmarshaler(newElem) {
+					err := newElem.Interface().(Unmarshaler).UnmarshalCloud(dataValueElem.Interface())
+					if err != nil {
+						return err
+					}
+				} else {
+					err := affect(dataValueElem.Interface(), newElem.Elem(), noDefaultVal)
+					if err != nil {
+						return err
+					}
+				}
+			} else if dataValueElem.Type() == reflect.TypeOf(make(map[string]interface{})) {
 				newElem = reflect.New(vField.Type().Elem())
 				err := UnmarshalToValue(dataValueElem.Interface().(map[string]interface{}), newElem, noDefaultVal)
 				if err != nil {

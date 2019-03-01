@@ -32,23 +32,24 @@ type TestCompleteStruct struct {
 	Asubstruct        SubStruct
 	Slicesubstruct    []SubStruct
 	Npint             *int
-	UriDefault        ServiceUri    `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
-	NintDefault       int           `cloud-default:"1"`
-	Nint8Default      int8          `cloud-default:"2"`
-	Nint16Default     int16         `cloud-default:"3"`
-	Nint32Default     int32         `cloud-default:"4"`
-	Nint64Default     int64         `cloud-default:"5"`
-	NuintDefault      uint          `cloud-default:"6"`
-	Nuint8Default     uint8         `cloud-default:"7"`
-	Nuint16Default    uint16        `cloud-default:"8"`
-	Nuint32Default    uint32        `cloud-default:"9"`
-	Nuint64Default    uint64        `cloud-default:"10"`
-	AinterfaceDefault interface{}   `cloud-default:"myinterface"`
-	AboolDefault      bool          `cloud-default:"true"`
-	Nfloat32Default   float32       `cloud-default:"1.1"`
-	Nfloat64Default   float64       `cloud-default:"1.2"`
-	NpintDefault      *int          `cloud-default:"11"`
-	PtrAsString       *SubStructPtr `cloud-default:"foo"`
+	UriDefault        ServiceUri      `cloud:"uri_default" cloud-default:"srv://user:pass@host.com:12/data?options=1"`
+	NintDefault       int             `cloud-default:"1"`
+	Nint8Default      int8            `cloud-default:"2"`
+	Nint16Default     int16           `cloud-default:"3"`
+	Nint32Default     int32           `cloud-default:"4"`
+	Nint64Default     int64           `cloud-default:"5"`
+	NuintDefault      uint            `cloud-default:"6"`
+	Nuint8Default     uint8           `cloud-default:"7"`
+	Nuint16Default    uint16          `cloud-default:"8"`
+	Nuint32Default    uint32          `cloud-default:"9"`
+	Nuint64Default    uint64          `cloud-default:"10"`
+	AinterfaceDefault interface{}     `cloud-default:"myinterface"`
+	AboolDefault      bool            `cloud-default:"true"`
+	Nfloat32Default   float32         `cloud-default:"1.1"`
+	Nfloat64Default   float64         `cloud-default:"1.2"`
+	NpintDefault      *int            `cloud-default:"11"`
+	PtrAsString       *SubStructPtr   `cloud-default:"foo"`
+	SlicePtrAsString  []*SubStructPtr `cloud-default:"foo"`
 }
 
 type SubStructPtr struct {
@@ -132,35 +133,39 @@ var _ = Describe("Decoder", func() {
 			PtrAsString: &SubStructPtr{
 				Name: "subname",
 			},
+			SlicePtrAsString: []*SubStructPtr{{
+				Name: "subname",
+			}},
 		}
 	})
 	It("should decode struct if credentials map type match structure type", func() {
 		test := TestCompleteStruct{}
 		data := map[string]interface{}{
-			"uri":               "srv://user:pass@host.com:12/data?options=1",
-			"myname":            "myservice",
-			"nint":              1,
-			"nint8":             int8(2),
-			"nint16":            int16(3),
-			"nint32":            int32(4),
-			"nint64":            int64(5),
-			"nuint":             uint(6),
-			"amap":              map[string]interface{}{"name": "name"},
-			"asubstruct":        map[string]interface{}{"name": "subname"},
-			"slicesubstruct":    []map[string]interface{}{map[string]interface{}{"name": "name"}},
-			"aslice":            []string{"titi", "toto"},
-			"nuint8":            uint8(7),
-			"nuint16":           uint16(8),
-			"nuint32":           uint32(9),
-			"nuint64":           uint64(10),
-			"ainterface":        "myinterface",
-			"float_json_number": json.Number("0.12e+1"),
-			"int_json_number":   json.Number("2"),
-			"abool":             true,
-			"nfloat32":          float32(1.1),
-			"nfloat64":          float64(1.2),
-			"npint":             11,
-			"ptr_as_string":     "subname",
+			"uri":                 "srv://user:pass@host.com:12/data?options=1",
+			"myname":              "myservice",
+			"nint":                1,
+			"nint8":               int8(2),
+			"nint16":              int16(3),
+			"nint32":              int32(4),
+			"nint64":              int64(5),
+			"nuint":               uint(6),
+			"amap":                map[string]interface{}{"name": "name"},
+			"asubstruct":          map[string]interface{}{"name": "subname"},
+			"slicesubstruct":      []map[string]interface{}{map[string]interface{}{"name": "name"}},
+			"aslice":              []string{"titi", "toto"},
+			"nuint8":              uint8(7),
+			"nuint16":             uint16(8),
+			"nuint32":             uint32(9),
+			"nuint64":             uint64(10),
+			"ainterface":          "myinterface",
+			"float_json_number":   json.Number("0.12e+1"),
+			"int_json_number":     json.Number("2"),
+			"abool":               true,
+			"nfloat32":            float32(1.1),
+			"nfloat64":            float64(1.2),
+			"npint":               11,
+			"ptr_as_string":       "subname",
+			"slice_ptr_as_string": []string{"subname"},
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -187,6 +192,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.PtrAsString = &SubStructPtr{
 			Name: "subname",
 		}
+		expectedStruct.SlicePtrAsString = []*SubStructPtr{{
+			Name: "subname",
+		}}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
@@ -194,29 +202,30 @@ var _ = Describe("Decoder", func() {
 	It("should decode even if credential value is a string but structure expect other type", func() {
 		test := TestCompleteStruct{}
 		data := map[string]interface{}{
-			"uri":               "srv://user:pass@host.com:12/data?options=1",
-			"myname":            "myservice",
-			"nint":              "1",
-			"nint8":             "2",
-			"nint16":            "3",
-			"nint32":            "4",
-			"nint64":            "5",
-			"nuint":             "6",
-			"amap":              map[string]interface{}{"name": "name"},
-			"slicesubstruct":    []map[string]interface{}{map[string]interface{}{"name": "name"}},
-			"float_json_number": json.Number("0.12e+1"),
-			"int_json_number":   json.Number("2"),
-			"aslice":            "titi, toto",
-			"nuint8":            "7",
-			"nuint16":           "8",
-			"nuint32":           "9",
-			"nuint64":           "10",
-			"ainterface":        "myinterface",
-			"abool":             "true",
-			"nfloat32":          "1.1",
-			"nfloat64":          "1.2",
-			"npint":             "11",
-			"ptr_as_string":     "subname",
+			"uri":                 "srv://user:pass@host.com:12/data?options=1",
+			"myname":              "myservice",
+			"nint":                "1",
+			"nint8":               "2",
+			"nint16":              "3",
+			"nint32":              "4",
+			"nint64":              "5",
+			"nuint":               "6",
+			"amap":                map[string]interface{}{"name": "name"},
+			"slicesubstruct":      []map[string]interface{}{map[string]interface{}{"name": "name"}},
+			"float_json_number":   json.Number("0.12e+1"),
+			"int_json_number":     json.Number("2"),
+			"aslice":              "titi, toto",
+			"nuint8":              "7",
+			"nuint16":             "8",
+			"nuint32":             "9",
+			"nuint64":             "10",
+			"ainterface":          "myinterface",
+			"abool":               "true",
+			"nfloat32":            "1.1",
+			"nfloat64":            "1.2",
+			"npint":               "11",
+			"ptr_as_string":       "subname",
+			"slice_ptr_as_string": []string{"subname"},
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -242,6 +251,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.PtrAsString = &SubStructPtr{
 			Name: "subname",
 		}
+		expectedStruct.SlicePtrAsString = []*SubStructPtr{{
+			Name: "subname",
+		}}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
@@ -277,30 +289,31 @@ var _ = Describe("Decoder", func() {
 	It("should give corresponding value on a number if float is given", func() {
 		test := TestCompleteStruct{}
 		data := map[string]interface{}{
-			"uri":               "srv://user:pass@host.com:12/data?options=1",
-			"myname":            "myservice",
-			"nint":              1,
-			"nint8":             float32(2),
-			"nint16":            float32(3),
-			"nint32":            float32(4),
-			"nint64":            float32(5),
-			"nuint":             float32(6),
-			"float_json_number": json.Number("0.12e+1"),
-			"int_json_number":   json.Number("2"),
-			"amap":              map[string]interface{}{"name": "name"},
-			"asubstruct":        map[string]interface{}{"name": "subname"},
-			"slicesubstruct":    []map[string]interface{}{map[string]interface{}{"name": "name"}},
-			"aslice":            []string{"titi", "toto"},
-			"nuint8":            float64(7),
-			"nuint16":           float32(8),
-			"nuint32":           float32(9),
-			"nuint64":           float32(10),
-			"ainterface":        "myinterface",
-			"abool":             true,
-			"nfloat32":          float32(1.1),
-			"nfloat64":          float64(1.2),
-			"npint":             11,
-			"ptr_as_string":     "subname",
+			"uri":                 "srv://user:pass@host.com:12/data?options=1",
+			"myname":              "myservice",
+			"nint":                1,
+			"nint8":               float32(2),
+			"nint16":              float32(3),
+			"nint32":              float32(4),
+			"nint64":              float32(5),
+			"nuint":               float32(6),
+			"float_json_number":   json.Number("0.12e+1"),
+			"int_json_number":     json.Number("2"),
+			"amap":                map[string]interface{}{"name": "name"},
+			"asubstruct":          map[string]interface{}{"name": "subname"},
+			"slicesubstruct":      []map[string]interface{}{map[string]interface{}{"name": "name"}},
+			"aslice":              []string{"titi", "toto"},
+			"nuint8":              float64(7),
+			"nuint16":             float32(8),
+			"nuint32":             float32(9),
+			"nuint64":             float32(10),
+			"ainterface":          "myinterface",
+			"abool":               true,
+			"nfloat32":            float32(1.1),
+			"nfloat64":            float64(1.2),
+			"npint":               11,
+			"ptr_as_string":       "subname",
+			"slice_ptr_as_string": []string{"subname"},
 		}
 		expectedStruct.Uri = expectDefaultUri
 		expectedStruct.Name = "myservice"
@@ -327,6 +340,9 @@ var _ = Describe("Decoder", func() {
 		expectedStruct.PtrAsString = &SubStructPtr{
 			Name: "subname",
 		}
+		expectedStruct.SlicePtrAsString = []*SubStructPtr{{
+			Name: "subname",
+		}}
 		err := Unmarshal(data, &test)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(test).Should(BeEquivalentTo(expectedStruct))
