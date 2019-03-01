@@ -230,7 +230,6 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 			}
 			newElem = dataValueElem
 			if vField.Type().Elem().Kind() == reflect.Ptr {
-				fmt.Println(vField.Type().Elem())
 				newElem = reflect.New(vField.Type().Elem().Elem())
 				if isUnmarshaler(newElem) {
 					err := newElem.Interface().(Unmarshaler).UnmarshalCloud(dataValueElem.Interface())
