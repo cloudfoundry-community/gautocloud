@@ -1,6 +1,9 @@
 package test_integration_test
 
 import (
+	"net/smtp"
+	"os"
+
 	"github.com/cloudfoundry-community/gautocloud"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
 	camqp "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
@@ -19,6 +22,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
 	csmtp "github.com/cloudfoundry-community/gautocloud/connectors/smtp/client"
 	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	"github.com/go-redis/redis/v7"
 	"github.com/goamz/goamz/s3"
 	"github.com/jinzhu/gorm"
 	. "github.com/onsi/ginkgo"
@@ -27,9 +31,6 @@ import (
 	"github.com/streadway/amqp"
 	"golang.org/x/oauth2"
 	"gopkg.in/mgo.v2"
-	"gopkg.in/redis.v5"
-	"net/smtp"
-	"os"
 )
 
 var _ = Describe("Connectors integration", func() {
