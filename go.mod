@@ -28,7 +28,7 @@ require (
 	github.com/onsi/ginkgo v1.10.1
 	github.com/onsi/gomega v1.7.0
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.3.0
+	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/spf13/viper v1.3.1
@@ -38,5 +38,4 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1
 	gopkg.in/ini.v1 v1.41.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce
-	gopkg.in/redis.v5 v5.2.9
 )
