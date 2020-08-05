@@ -1074,9 +1074,9 @@ All of these connectors responds on:
 **Tip**: You can load all based *Databases Client* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/databases/client"`
 
 ##### Type documentation
-The type `*redis.Client` can be found in package: `gopkg.in/redis.v5`.
+The type `*redis.Client` can be found in package: `github.com/go-redis/redis/v7`.
 
-You can find documentation related to package `gopkg.in/redis.v5` here: [https://gopkg.in/redis.v5](https://gopkg.in/redis.v5).
+You can find documentation related to package `github.com/go-redis/redis/v7` here: [https://pkg.go.dev/github.com/go-redis/redis?tab=doc](https://pkg.go.dev/github.com/go-redis/redis?tab=doc).
 
 
 ##### Example
@@ -1085,7 +1085,7 @@ package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
         _ "github.com/cloudfoundry-community/gautocloud/connectors/databases/client/redis"
-        "gopkg.in/redis.v5"
+        "github.com/go-redis/redis/v7"
 )
 func main() {
         var err error

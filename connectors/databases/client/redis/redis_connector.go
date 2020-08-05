@@ -3,7 +3,7 @@ package redis
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
-	"gopkg.in/redis.v5"
+	"github.com/go-redis/redis/v7"
 	"github.com/cloudfoundry-community/gautocloud"
 	"strconv"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
