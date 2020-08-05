@@ -1,5 +1,7 @@
 module github.com/cloudfoundry-community/gautocloud
 
+go 1.14
+
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/alexflint/go-arg v1.0.0
