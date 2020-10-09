@@ -1,17 +1,25 @@
 package mysql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
-	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
 	"fmt"
+	"net/url"
+
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func init() {
 	gautocloud.RegisterConnector(NewMysqlConnector())
+}
+
+var allowedParams = []string{
+	"allowAllFiles", "allowCleartextPasswords", "allowNativePasswords", "allowOldPasswords", "charset", "checkConnLiveness", "collation",
+	"clientFoundRows", "columnsWithAlias", "interpolateParams", "loc", "maxAllowedPacket", "multiStatements", "parseTime", "readTimeout",
+	"rejectReadOnly", "serverPubKey", "timeout", "tls", "writeTimeout",
 }
 
 type MysqlConnector struct {
@@ -38,13 +46,31 @@ func (c MysqlConnector) GetConnString(schema dbtype.MysqlDatabase) string {
 		connString += ":" + schema.Password
 	}
 	connString += fmt.Sprintf("@tcp(%s:%d)/%s", schema.Host, schema.Port, schema.Database)
-	// FIXME: error from mysql with param ?reconnect=true Error 1193: Unknown system variable 'reconnect'
-	schema.Options = "parseTime=true"
-	if schema.Options != "" {
-		connString += "?" + schema.Options
+	if schema.Options == "" {
+		schema.Options = "parseTime=true"
+	} else {
+		schema.Options += "&parseTime=true"
 	}
+	values, _ := url.ParseQuery(schema.Options)
+	finalValues := make(url.Values)
+	for k, v := range values {
+		if c.isAllowedParams(k) {
+			finalValues[k] = v
+		}
+	}
+	connString += "?" + finalValues.Encode()
 	return connString
 }
+
+func (c MysqlConnector) isAllowedParams(param string) bool {
+	for _, allowed := range allowedParams {
+		if param == allowed {
+			return true
+		}
+	}
+	return false
+}
+
 func (c MysqlConnector) Load(schema interface{}) (interface{}, error) {
 	schema, err := c.mysqlRawConn.Load(schema)
 	if err != nil {
