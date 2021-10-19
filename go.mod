@@ -12,7 +12,7 @@ require (
 	github.com/goamz/goamz v0.0.0-20180131231218-8b901b531db8
 	github.com/golang/mock v1.6.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/lib/pq v1.10.2
+	github.com/lib/pq v1.10.3
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.14.0
