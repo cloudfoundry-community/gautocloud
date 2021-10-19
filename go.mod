@@ -7,7 +7,7 @@ require (
 	github.com/azer/snakecase v1.0.0
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/denisenkom/go-mssqldb v0.10.0
-	github.com/go-redis/redis/v7 v7.4.0
+	github.com/go-redis/redis/v7 v7.4.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/goamz/goamz v0.0.0-20180131231218-8b901b531db8
 	github.com/golang/mock v1.6.0
