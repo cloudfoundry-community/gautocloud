@@ -4,6 +4,7 @@
 package arg
 
 import (
+	"errors"
 	"fmt"
 	"github.com/alexflint/go-arg"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
@@ -88,18 +89,18 @@ func (i ArgInterceptor) parse(schema, found interface{}) (interface{}, error) {
 		return nil, err
 	}
 	err = p.Parse(i.flags())
-	if err == arg.ErrHelp {
+	if errors.Is(err, arg.ErrHelp) {
 		p.WriteHelp(i.writer)
 		if !i.exit {
 			return schema, nil
 		}
 		os.Exit(0)
 	}
-	version := "dev"
+	version := "n/a"
 	if dest, ok := schema.(arg.Versioned); ok {
 		version = dest.Version()
 	}
-	if err == arg.ErrVersion {
+	if errors.Is(err, arg.ErrVersion) {
 		fmt.Fprintln(i.writer, version)
 		if !i.exit {
 			return schema, nil
