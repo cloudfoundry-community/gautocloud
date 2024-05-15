@@ -4,6 +4,8 @@ import (
 	"github.com/cloudfoundry-community/gautocloud"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
 	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"html/template"
 	"os"
 	"path"
@@ -171,7 +173,7 @@ func getDocMap() map[string]Doc {
 		rootId := rootIdSplit[len(rootIdSplit)-1]
 		if _, ok := docs[rootId]; !ok {
 			docs[rootId] = Doc{
-				Name:        strings.Title(rootId),
+				Name:        cases.Title(language.Und, cases.NoLower).String(rootId),
 				RespondName: conn.Name(),
 				RespondTags: conn.Tags(),
 				Connectors:  make([]DocConnector, 0),
@@ -223,7 +225,7 @@ func getDocMap() map[string]Doc {
 			globalType = pkgSplit[4]
 		}
 		connDoc := DocConnector{
-			Name:        strings.Title(rootId + " - " + connName),
+			Name:        cases.Title(language.Und, cases.NoLower).String(rootId + " - " + connName),
 			Id:          conn.Id(),
 			Pkg:         pkgConn,
 			TypeName:    givenType.String(),
@@ -231,8 +233,8 @@ func getDocMap() map[string]Doc {
 			TypeWrapped: typeWrapped,
 			DocUrl:      docUrl,
 			Tip:         tip,
-			GlobalType:  strings.Title(globalType),
-			SimpleName:  strings.Title(connName),
+			GlobalType:  cases.Title(language.Und, cases.NoLower).String(globalType),
+			SimpleName:  cases.Title(language.Und, cases.NoLower).String(connName),
 			StructGiven: generateDocStruct(givenData),
 			Closeable:   isCloseable(givenData),
 		}
