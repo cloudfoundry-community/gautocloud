@@ -180,37 +180,26 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 	switch vField.Kind() {
 	case reflect.String:
 		vField.SetString(data.(string))
-		break
 	case reflect.Int:
 		vField.SetInt(int64(parseForInt(data, vField).(int)))
-		break
 	case reflect.Int8:
 		vField.SetInt(int64(parseForInt(data, vField).(int8)))
-		break
 	case reflect.Int16:
 		vField.SetInt(int64(parseForInt(data, vField).(int16)))
-		break
 	case reflect.Int32:
 		vField.SetInt(int64(parseForInt(data, vField).(int32)))
-		break
 	case reflect.Int64:
 		vField.SetInt(parseForInt(data, vField).(int64))
-		break
 	case reflect.Uint:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint)))
-		break
 	case reflect.Uint8:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint8)))
-		break
 	case reflect.Uint16:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint16)))
-		break
 	case reflect.Uint32:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint32)))
-		break
 	case reflect.Uint64:
 		vField.SetUint(parseForInt(data, vField).(uint64))
-		break
 	case reflect.Slice:
 		if vField.IsNil() {
 			vField.Set(reflect.MakeSlice(reflect.SliceOf(vField.Type().Elem()), 0, 0))
@@ -253,19 +242,14 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 			}
 			vField.Set(reflect.Append(vField, newElem))
 		}
-		break
 	case reflect.Interface:
 		vField.Set(reflect.ValueOf(data))
-		break
 	case reflect.Bool:
 		vField.SetBool(data.(bool))
-		break
 	case reflect.Float32:
 		vField.SetFloat(parseForFloat(data, vField))
-		break
 	case reflect.Float64:
 		vField.SetFloat(parseForFloat(data, vField))
-		break
 	case reflect.Ptr:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
@@ -281,7 +265,6 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		if err != nil {
 			return err
 		}
-		break
 	default:
 		servUriType := reflect.TypeOf(ServiceUri{})
 		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
@@ -300,7 +283,6 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		}
 		serviceUri := urlToServiceUri(serviceUrl)
 		vField.Set(reflect.ValueOf(serviceUri))
-		break
 	}
 	return nil
 }
