@@ -225,6 +225,7 @@ func (c LocalCloudEnv) configPath() string {
 	return confPath
 }
 
+// nolint:unused
 func (c LocalCloudEnv) hasConfigFile() bool {
 	return os.Getenv(LOCAL_CONFIG_ENV_KEY) != ""
 }

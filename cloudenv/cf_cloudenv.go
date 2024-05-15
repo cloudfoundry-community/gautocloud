@@ -44,6 +44,8 @@ func (c CfCloudEnv) convertCfServices(cfServices []cfenv.Service) []Service {
 	}
 	return services
 }
+
+// nolint:unused
 func (c CfCloudEnv) initAppEnv() error {
 	if !c.IsInCloudEnv() {
 		return nil
