@@ -1,12 +1,12 @@
 package aws_sdk
 
 import (
+	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
-	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/raw"
-	"github.com/goamz/goamz/s3"
 	"github.com/goamz/goamz/aws"
+	"github.com/goamz/goamz/s3"
 	"strconv"
 )
 
@@ -59,4 +59,3 @@ func (c AmzS3Connector) Load(schema interface{}) (interface{}, error) {
 func (c AmzS3Connector) Schema() interface{} {
 	return c.wrapConn.Schema()
 }
-

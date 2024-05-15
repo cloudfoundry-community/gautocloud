@@ -1,13 +1,13 @@
 package mssql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mssql"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mssql"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mssql"
 )
 
 func init() {
@@ -21,7 +21,7 @@ type GormMssqlConnector struct {
 
 func NewGormMssqlConnector() connectors.Connector {
 	return &GormMssqlConnector{
-		wrapConn: mssql.NewMssqlConnector(),
+		wrapConn:    mssql.NewMssqlConnector(),
 		wrapRawConn: raw.NewMssqlRawConnector(),
 	}
 }
@@ -49,4 +49,3 @@ func (c GormMssqlConnector) Load(schema interface{}) (interface{}, error) {
 func (c GormMssqlConnector) Schema() interface{} {
 	return c.wrapConn.Schema()
 }
-

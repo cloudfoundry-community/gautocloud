@@ -1,6 +1,6 @@
 ## Connectors
 
-A connector can be also a connector intercepter. An interceptor work like a http middleware. 
+A connector can be also a connector intercepter. An interceptor work like a http middleware.
 This permit to intercept data which will be given back by gautocloud and modified it before giving back to user.
 
 **Tip**: To load all default connectors import: `_ "github.com/cloudfoundry-community/gautocloud/connectors/all"`
@@ -46,14 +46,14 @@ This permit to intercept data which will be given back by gautocloud and modifie
 
 These connectors are specials connectors that final users need to register manually when needed.
 
-One of usecase is to be able to retrieve configuration from services or simply add your own connector easily.
+One of use-case is to be able to retrieve configuration from services or simply add your own connector easily.
 
 #### Schema based
 
 Add a straight forward connector which give back schema fed by loader.
 
-This connector is also connector intercepter, it use interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema) 
-as default interceptor. 
+This connector is also connector intercepter, it uses interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema)
+as default interceptor.
 
 You can also set your interceptors to connector, they will be used only if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter).
 
@@ -120,8 +120,8 @@ func main() {
 
 This is a schema based connectors but `id`, `name` and `tags` are already set (can be registered multiple times).
 
-This connector is a connector intercepter, it use the default interceptor [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite)  
-which only be used if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter) 
+This connector is a connector intercepter, it uses the default interceptor [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite)
+which only be used if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter)
 and if no interceptors has been given to connector.
 
 You can find interceptors already created at https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor .
@@ -191,9 +191,8 @@ All of these connectors responds on:
 **Tip**: You can load all based *Amqp Client* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/amqp"`
 
 ##### Type documentation
-The type `*amqp.Connection` can be found in package: `github.com/streadway/amqp`.
-
-You can find documentation related to package `github.com/streadway/amqp` here: [https://github.com/streadway/amqp](https://github.com/streadway/amqp).
+The type `*amqp.Connection` can be found in package: `github.com/rabbitmq/amqp091-go`;
+you can find it's documentation at: https://pkg.go.dev/github.com/rabbitmq/amqp091-go.
 
 
 ##### Example
@@ -202,7 +201,7 @@ package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
         _ "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
-        "github.com/streadway/amqp"
+        amqp "github.com/rabbitmq/amqp091-go"
 )
 func main() {
         var err error
@@ -242,11 +241,11 @@ The type `amqptype.Amqp` can be found in package: `github.com/cloudfoundry-commu
 
 This type refers to this structure:
 ```go
-type Amqp struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
+type Amqp struct {
+        User string
+        Password string
+        Host string
+        Port int
 }
 ```
 
@@ -352,13 +351,13 @@ The type `dbtype.MongodbDatabase` can be found in package: `github.com/cloudfoun
 
 This type refers to this structure:
 ```go
-type MongodbDatabase struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
-        Database string 
-        Options string 
+type MongodbDatabase struct {
+        User string
+        Password string
+        Host string
+        Port int
+        Database string
+        Options string
 }
 ```
 
@@ -416,8 +415,8 @@ All of these connectors responds on:
 ##### Type documentation
 The type `*dbtype.MssqlDB` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype`.
 
-The type `*dbtype.MssqlDB` is a wrapper on the real package `*sql.DB`, 
-you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql). 
+The type `*dbtype.MssqlDB` is a wrapper on the real package `*sql.DB`,
+you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql).
 
 
 ##### Example
@@ -513,13 +512,13 @@ The type `dbtype.MssqlDatabase` can be found in package: `github.com/cloudfoundr
 
 This type refers to this structure:
 ```go
-type MssqlDatabase struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
-        Database string 
-        Options string 
+type MssqlDatabase struct {
+        User string
+        Password string
+        Host string
+        Port int
+        Database string
+        Options string
 }
 ```
 
@@ -577,8 +576,8 @@ All of these connectors responds on:
 ##### Type documentation
 The type `*dbtype.MysqlDB` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype`.
 
-The type `*dbtype.MysqlDB` is a wrapper on the real package `*sql.DB`, 
-you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql). 
+The type `*dbtype.MysqlDB` is a wrapper on the real package `*sql.DB`,
+you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql).
 
 
 ##### Example
@@ -674,13 +673,13 @@ The type `dbtype.MysqlDatabase` can be found in package: `github.com/cloudfoundr
 
 This type refers to this structure:
 ```go
-type MysqlDatabase struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
-        Database string 
-        Options string 
+type MysqlDatabase struct {
+        User string
+        Password string
+        Host string
+        Port int
+        Database string
+        Options string
 }
 ```
 
@@ -786,14 +785,14 @@ The type `schema.Oauth2Schema` can be found in package: `github.com/cloudfoundry
 
 This type refers to this structure:
 ```go
-type Oauth2Schema struct { 
-        AuthorizationUri string 
-        UserInfoUri string 
-        TokenUri string 
-        ClientId string 
-        ClientSecret string 
-        GrantTypes []string 
-        Scopes []string 
+type Oauth2Schema struct {
+        AuthorizationUri string
+        UserInfoUri string
+        TokenUri string
+        ClientId string
+        ClientSecret string
+        GrantTypes []string
+        Scopes []string
 }
 ```
 
@@ -853,13 +852,13 @@ The type `dbtype.OracleDatabase` can be found in package: `github.com/cloudfound
 
 This type refers to this structure:
 ```go
-type OracleDatabase struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
-        Database string 
-        Options string 
+type OracleDatabase struct {
+        User string
+        Password string
+        Host string
+        Port int
+        Database string
+        Options string
 }
 ```
 
@@ -916,8 +915,8 @@ All of these connectors responds on:
 ##### Type documentation
 The type `*dbtype.PostgresqlDB` can be found in package: `github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype`.
 
-The type `*dbtype.PostgresqlDB` is a wrapper on the real package `*sql.DB`, 
-you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql). 
+The type `*dbtype.PostgresqlDB` is a wrapper on the real package `*sql.DB`,
+you can find doc on real type here: [https://golang.org/pkg/database/sql](https://golang.org/pkg/database/sql).
 
 
 ##### Example
@@ -1013,13 +1012,13 @@ The type `dbtype.PostgresqlDatabase` can be found in package: `github.com/cloudf
 
 This type refers to this structure:
 ```go
-type PostgresqlDatabase struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
-        Database string 
-        Options string 
+type PostgresqlDatabase struct {
+        User string
+        Password string
+        Host string
+        Port int
+        Database string
+        Options string
 }
 ```
 
@@ -1125,10 +1124,10 @@ The type `dbtype.RedisDatabase` can be found in package: `github.com/cloudfoundr
 
 This type refers to this structure:
 ```go
-type RedisDatabase struct { 
-        Password string 
-        Host string 
-        Port int 
+type RedisDatabase struct {
+        Password string
+        Host string
+        Port int
 }
 ```
 
@@ -1234,9 +1233,9 @@ The type `*miniotype.MinioClient` can be found in package: `github.com/cloudfoun
 
 This type refers to this structure:
 ```go
-type MinioClient struct { 
+type MinioClient struct {
         Client *minio.Client // See doc: https://github.com/minio/minio-go
-        Bucket string 
+        Bucket string
 }
 ```
 
@@ -1286,13 +1285,13 @@ The type `objstoretype.S3` can be found in package: `github.com/cloudfoundry-com
 
 This type refers to this structure:
 ```go
-type S3 struct { 
-        Host string 
-        AccessKeyID string 
-        SecretAccessKey string 
-        Bucket string 
-        Port int 
-        UseSsl bool 
+type S3 struct {
+        Host string
+        AccessKeyID string
+        SecretAccessKey string
+        Bucket string
+        Port int
+        UseSsl bool
 }
 ```
 
@@ -1399,11 +1398,11 @@ The type `smtptype.Smtp` can be found in package: `github.com/cloudfoundry-commu
 
 This type refers to this structure:
 ```go
-type Smtp struct { 
-        User string 
-        Password string 
-        Host string 
-        Port int 
+type Smtp struct {
+        User string
+        Password string
+        Host string
+        Port int
 }
 ```
 

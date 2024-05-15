@@ -1,13 +1,13 @@
 package postgresql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
-	_ "github.com/lib/pq"
 	"database/sql"
 	"fmt"
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	_ "github.com/lib/pq"
 )
 
 func init() {
@@ -52,7 +52,7 @@ func (c PostgresqlConnector) Load(schema interface{}) (interface{}, error) {
 	if err != nil {
 		return db, err
 	}
-	return &dbtype.PostgresqlDB{db}, nil
+	return &dbtype.PostgresqlDB{DB: db}, nil
 }
 func (c PostgresqlConnector) Schema() interface{} {
 	return c.rawConn.Schema()

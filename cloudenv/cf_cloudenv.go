@@ -44,6 +44,8 @@ func (c CfCloudEnv) convertCfServices(cfServices []cfenv.Service) []Service {
 	}
 	return services
 }
+
+// nolint:unused
 func (c CfCloudEnv) initAppEnv() error {
 	if !c.IsInCloudEnv() {
 		return nil
@@ -77,10 +79,7 @@ func (c CfCloudEnv) GetServicesFromName(name string) []Service {
 	return c.convertCfServices(servicesFound)
 }
 func (c CfCloudEnv) IsInCloudEnv() bool {
-	if os.Getenv("VCAP_APPLICATION") != "" {
-		return true
-	}
-	return false
+	return os.Getenv("VCAP_APPLICATION") != ""
 }
 func (c CfCloudEnv) GetAppInfo() AppInfo {
 	return AppInfo{

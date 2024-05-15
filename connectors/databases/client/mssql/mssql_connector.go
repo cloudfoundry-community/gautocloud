@@ -1,13 +1,13 @@
 package mssql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
-	_ "github.com/denisenkom/go-mssqldb"
 	"database/sql"
 	"fmt"
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
 func init() {
@@ -52,9 +52,8 @@ func (c MssqlConnector) Load(schema interface{}) (interface{}, error) {
 	if err != nil {
 		return db, err
 	}
-	return &dbtype.MssqlDB{db}, nil
+	return &dbtype.MssqlDB{DB: db}, nil
 }
 func (c MssqlConnector) Schema() interface{} {
 	return c.rawConn.Schema()
 }
-

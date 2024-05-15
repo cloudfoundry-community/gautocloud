@@ -2,8 +2,8 @@ package amqp
 
 import (
 	"github.com/cloudfoundry-community/gautocloud"
-	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
+	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
 )
 
 func init() {

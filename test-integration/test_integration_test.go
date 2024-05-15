@@ -27,8 +27,8 @@ import (
 	"github.com/jinzhu/gorm"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	amqp "github.com/rabbitmq/amqp091-go"
 	log "github.com/sirupsen/logrus"
-	"github.com/streadway/amqp"
 	"golang.org/x/oauth2"
 	"gopkg.in/mgo.v2"
 )
@@ -636,7 +636,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
@@ -650,7 +650,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
@@ -662,7 +662,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
@@ -676,7 +676,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
@@ -691,7 +691,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())
@@ -705,7 +705,7 @@ var _ = Describe("Connectors integration", func() {
 					Expect(svc).ShouldNot(BeNil())
 					err = svc.Put("myfile.txt", []byte("data"), "", s3.PublicRead, s3.Options{})
 					Expect(err).ToNot(HaveOccurred())
-					b, err := svc.Get("myfile.txt")
+					b, _ := svc.Get("myfile.txt")
 					Expect(string(b)).Should(Equal("data"))
 					err = svc.Del("myfile.txt")
 					Expect(err).ToNot(HaveOccurred())

@@ -25,4 +25,3 @@ func (c Oauth2RawConnector) Load(schema interface{}) (interface{}, error) {
 func (c Oauth2RawConnector) Schema() interface{} {
 	return Oauth2Schema{}
 }
-

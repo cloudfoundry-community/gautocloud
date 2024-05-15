@@ -90,7 +90,7 @@ var _ = Describe("Arg", func() {
 		Expect(buf.String()).Should(ContainSubstring("--foo2"))
 		Expect(buf.String()).Should(ContainSubstring("--foo"))
 	})
-	It("should return version if flag --version is given", func() {
+	It("should fail when flag --version is given and schema does not provide a Version", func() {
 		i := NewArg(Writer(buf), Exit(false), Args([]string{
 			"app",
 			`--version`,
@@ -100,8 +100,7 @@ var _ = Describe("Arg", func() {
 			Foo:  "orig",
 			Foo2: "bar",
 		})
-		Expect(err).ToNot(HaveOccurred())
-		Expect(strings.TrimSpace(buf.String())).Should(Equal("dev"))
+		Expect(err).To(HaveOccurred())
 	})
 	It("should return version given by schema if flag --version is given and schema implement Versionned", func() {
 		i := NewArg(Writer(buf), Exit(false), Args([]string{

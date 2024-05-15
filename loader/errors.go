@@ -1,17 +1,15 @@
 package loader
 
 import (
-	"strings"
 	"fmt"
+	"strings"
 )
 
 type ErrPtrNotGiven struct {
 }
 
 func NewErrPtrNotGiven() error {
-	return ErrPtrNotGiven{
-
-	}
+	return ErrPtrNotGiven{}
 }
 func (e ErrPtrNotGiven) Error() string {
 	return "You must pass a pointer."

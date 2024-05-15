@@ -1,8 +1,8 @@
 package test_utils
 
 import (
-	"strconv"
 	"os"
+	"strconv"
 )
 
 type ServiceUrl struct {

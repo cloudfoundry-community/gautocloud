@@ -32,7 +32,7 @@ func Example() {
 		// We pass context to interceptor, this is mandatory
 		cliInterceptor.SetContext(c)
 
-		// We asking to retrieve a config schema through injection
+		// We are asking to retrieve a config schema through injection
 		err := gautocloud.Inject(&config)
 		if err != nil {
 			panic(err)

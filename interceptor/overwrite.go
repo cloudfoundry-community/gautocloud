@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// This interceptor function let the user pre filled values inside is config structure to be used instead of use values
+// NewOverwrite This interceptor function let the user pre-filled values inside is config structure to be used instead of use values
 // found by gautocloud.
 // This is useful for schema used in connector generic Config to let user write some values from config
 // before fill the rest by gautocloud.

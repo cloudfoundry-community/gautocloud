@@ -1,8 +1,8 @@
 package decoder
 
 import (
-	"reflect"
 	"fmt"
+	"reflect"
 )
 
 type ErrTypeNotSupported struct {

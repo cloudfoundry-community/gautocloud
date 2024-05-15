@@ -3,11 +3,11 @@ package minio
 import (
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/raw"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/raw"
 	"github.com/minio/minio-go"
 	"strconv"
-	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype/miniotype"
 )
 
 func init() {
@@ -42,7 +42,7 @@ func (c MinioConnector) Load(schema interface{}) (interface{}, error) {
 	if fSchema.Port != 0 {
 		port += ":" + strconv.Itoa(fSchema.Port)
 	}
-	minioClient, err := minio.New(fSchema.Host + port, fSchema.AccessKeyID, fSchema.SecretAccessKey, fSchema.UseSsl)
+	minioClient, err := minio.New(fSchema.Host+port, fSchema.AccessKeyID, fSchema.SecretAccessKey, fSchema.UseSsl)
 	if err != nil {
 		return nil, err
 	}

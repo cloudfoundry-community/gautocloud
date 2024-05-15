@@ -2,8 +2,8 @@ package raw
 
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/schema"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
+	. "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/schema"
 	"strings"
 )
 
@@ -45,21 +45,21 @@ func (c S3RawConnector) Load(schema interface{}) (interface{}, error) {
 			useSsl = true
 		}
 		return objstoretype.S3{
-			Host: fSchema.Uri.Host,
-			AccessKeyID: fSchema.Uri.Username,
+			Host:            fSchema.Uri.Host,
+			AccessKeyID:     fSchema.Uri.Username,
 			SecretAccessKey: fSchema.Uri.Password,
-			Bucket: fSchema.Uri.Name,
-			UseSsl: useSsl,
-			Port: fSchema.Uri.Port,
+			Bucket:          fSchema.Uri.Name,
+			UseSsl:          useSsl,
+			Port:            fSchema.Uri.Port,
 		}, nil
 	}
 	gSchema = objstoretype.S3{
-		Host: fSchema.Host,
-		AccessKeyID: fSchema.AccessKeyID,
+		Host:            fSchema.Host,
+		AccessKeyID:     fSchema.AccessKeyID,
 		SecretAccessKey: fSchema.SecretAccessKey,
-		Bucket: fSchema.Bucket,
-		Port: fSchema.Port,
-		UseSsl: true,
+		Bucket:          fSchema.Bucket,
+		Port:            fSchema.Port,
+		UseSsl:          true,
 	}
 	if c.IsVirtualHostBucket(gSchema) {
 		host, bucket := c.GetBucketFromHost(gSchema.Host)

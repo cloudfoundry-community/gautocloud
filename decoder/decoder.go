@@ -1,19 +1,19 @@
 // Package decoder provide a way to decode credentials from a service to a structure
-// It provide a cloud tag to help user match the correct credentials
+// It provides a cloud tag to help user match the correct credentials
 //
 // This is what you can pass as a structure:
-//  // Name is key of a service credentials, decoder will look at any matching credentials which have the key name and will pass the value of this credentials
-//  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
-//  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
-//  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-//  	Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
-//      Aslice   []string `cloud:"aslice" cloud-default:"value1,value2"` // you can also pass a slice
-//  }
+//
+//	// Name is key of a service credentials, decoder will look at any matching credentials which have the key name and will pass the value of this credentials
+//		Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
+//		Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
+//		User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
+//		Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
+//	    Aslice   []string `cloud:"aslice" cloud-default:"value1,value2"` // you can also pass a slice
+//	}
 package decoder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/azer/snakecase"
 	"net/url"
@@ -52,8 +52,8 @@ type QueryUri struct {
 	Value string
 }
 
-// The Unmarshaler interface may be implemented by types to customize their
-// behavior when being unmarshaled from a Map cloud. The UnmarshalCloud
+// Unmarshaler This interface may be implemented by types to customize their
+// behavior when being unmarshalled from a Map cloud. The UnmarshalCloud
 // method receives a function that may be called to unmarshal the original
 // value into a field or variable. It is safe to call the unmarshal
 // function parameter more than once if necessary.
@@ -61,7 +61,7 @@ type Unmarshaler interface {
 	UnmarshalCloud(data interface{}) error
 }
 
-// Decode a map of credentials into a reflected Value
+// UnmarshalToValue Decode a map of credentials into a reflected Value
 func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Value, noDefaultVal bool) error {
 	v := ps
 	if ps.Kind() == reflect.Ptr {
@@ -116,13 +116,13 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 	return nil
 }
 
-// Decode a map of credentials into a structure
+// Unmarshal Decode a map of credentials into a structure
 func Unmarshal(serviceCredentials map[string]interface{}, obj interface{}) error {
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps, false)
 }
 
-// Decode a map of credentials into a structure without default values
+// UnmarshalNoDefault Decode a map of credentials into a structure without default values
 func UnmarshalNoDefault(serviceCredentials map[string]interface{}, obj interface{}) error {
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps, true)
@@ -179,43 +179,32 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 	switch vField.Kind() {
 	case reflect.String:
 		vField.SetString(data.(string))
-		break
 	case reflect.Int:
 		vField.SetInt(int64(parseForInt(data, vField).(int)))
-		break
 	case reflect.Int8:
 		vField.SetInt(int64(parseForInt(data, vField).(int8)))
-		break
 	case reflect.Int16:
 		vField.SetInt(int64(parseForInt(data, vField).(int16)))
-		break
 	case reflect.Int32:
 		vField.SetInt(int64(parseForInt(data, vField).(int32)))
-		break
 	case reflect.Int64:
 		vField.SetInt(parseForInt(data, vField).(int64))
-		break
 	case reflect.Uint:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint)))
-		break
 	case reflect.Uint8:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint8)))
-		break
 	case reflect.Uint16:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint16)))
-		break
 	case reflect.Uint32:
 		vField.SetUint(uint64(parseForInt(data, vField).(uint32)))
-		break
 	case reflect.Uint64:
 		vField.SetUint(parseForInt(data, vField).(uint64))
-		break
 	case reflect.Slice:
 		if vField.IsNil() {
 			vField.Set(reflect.MakeSlice(reflect.SliceOf(vField.Type().Elem()), 0, 0))
 		}
 		if reflect.ValueOf(data).Kind() != reflect.Slice {
-			return errors.New(fmt.Sprintf("Type '%s' have not receive a slice.", vField.String()))
+			return fmt.Errorf("type '%s' have not receive a slice", vField.String())
 		}
 
 		dataValue := reflect.ValueOf(data)
@@ -252,19 +241,14 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 			}
 			vField.Set(reflect.Append(vField, newElem))
 		}
-		break
 	case reflect.Interface:
 		vField.Set(reflect.ValueOf(data))
-		break
 	case reflect.Bool:
 		vField.SetBool(data.(bool))
-		break
 	case reflect.Float32:
 		vField.SetFloat(parseForFloat(data, vField))
-		break
 	case reflect.Float64:
 		vField.SetFloat(parseForFloat(data, vField))
-		break
 	case reflect.Ptr:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
@@ -280,7 +264,6 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		if err != nil {
 			return err
 		}
-		break
 	default:
 		servUriType := reflect.TypeOf(ServiceUri{})
 		if vField.Type() != servUriType && reflect.TypeOf(data) != reflect.TypeOf(make(map[string]interface{})) {
@@ -299,7 +282,6 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		}
 		serviceUri := urlToServiceUri(serviceUrl)
 		vField.Set(reflect.ValueOf(serviceUri))
-		break
 	}
 	return nil
 }
@@ -411,7 +393,7 @@ func match(matcher, content string) bool {
 	return regex.MatchString(content)
 }
 func getKeyFromRegex(serviceCredentials map[string]interface{}, regexKey string) string {
-	for key, _ := range serviceCredentials {
+	for key := range serviceCredentials {
 		if match(regexKey, key) {
 			return key
 		}
@@ -487,9 +469,9 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		if err != nil {
 			return "", err
 		}
-		return int64(val), nil
+		return val, nil
 	case reflect.Uint:
-		val, err := strconv.ParseUint(defVal, 10, int(strconv.IntSize))
+		val, err := strconv.ParseUint(defVal, 10, strconv.IntSize)
 		if err != nil {
 			return "", err
 		}
@@ -517,7 +499,7 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		if err != nil {
 			return "", err
 		}
-		return uint64(val), nil
+		return val, nil
 	case reflect.Bool:
 		return strconv.ParseBool(defVal)
 	case reflect.Float32:
@@ -558,5 +540,4 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		}
 		return defVal, nil
 	}
-	return "", NewErrTypeNotSupported(vField)
 }
