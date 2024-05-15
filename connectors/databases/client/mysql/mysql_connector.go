@@ -80,7 +80,7 @@ func (c MysqlConnector) Load(schema interface{}) (interface{}, error) {
 	if err != nil {
 		return db, err
 	}
-	return &dbtype.MysqlDB{db}, nil
+	return &dbtype.MysqlDB{DB: db}, nil
 }
 func (c MysqlConnector) Schema() interface{} {
 	return c.mysqlRawConn.Schema()

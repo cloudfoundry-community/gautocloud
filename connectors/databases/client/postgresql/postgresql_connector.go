@@ -52,7 +52,7 @@ func (c PostgresqlConnector) Load(schema interface{}) (interface{}, error) {
 	if err != nil {
 		return db, err
 	}
-	return &dbtype.PostgresqlDB{db}, nil
+	return &dbtype.PostgresqlDB{DB: db}, nil
 }
 func (c PostgresqlConnector) Schema() interface{} {
 	return c.rawConn.Schema()

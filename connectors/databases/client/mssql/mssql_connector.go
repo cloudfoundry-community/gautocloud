@@ -52,7 +52,7 @@ func (c MssqlConnector) Load(schema interface{}) (interface{}, error) {
 	if err != nil {
 		return db, err
 	}
-	return &dbtype.MssqlDB{db}, nil
+	return &dbtype.MssqlDB{DB: db}, nil
 }
 func (c MssqlConnector) Schema() interface{} {
 	return c.rawConn.Schema()
