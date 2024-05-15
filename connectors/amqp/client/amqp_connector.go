@@ -6,7 +6,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/amqptype"
 	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/raw"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func init() {

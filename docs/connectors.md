@@ -191,9 +191,8 @@ All of these connectors responds on:
 **Tip**: You can load all based *Amqp Client* by importing: `_ "github.com/cloudfoundry-community/gautocloud/connectors/amqp"`
 
 ##### Type documentation
-The type `*amqp.Connection` can be found in package: `github.com/streadway/amqp`.
-
-You can find documentation related to package `github.com/streadway/amqp` here: [https://github.com/streadway/amqp](https://github.com/streadway/amqp).
+The type `*amqp.Connection` can be found in package: `github.com/rabbitmq/amqp091-go`;
+you can find it's documentation at: https://pkg.go.dev/github.com/rabbitmq/amqp091-go.
 
 
 ##### Example
@@ -202,7 +201,7 @@ package main
 import (
         "github.com/cloudfoundry-community/gautocloud"
         _ "github.com/cloudfoundry-community/gautocloud/connectors/amqp/client"
-        "github.com/streadway/amqp"
+        amqp "github.com/rabbitmq/amqp091-go"
 )
 func main() {
         var err error

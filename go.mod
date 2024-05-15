@@ -17,9 +17,9 @@ require (
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.33.1
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.18.2
-	github.com/streadway/amqp v1.1.0
 	github.com/urfave/cli v1.22.15
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/text v0.15.0
