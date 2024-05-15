@@ -3,7 +3,7 @@ package generic
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
-	"github.com/satori/go.uuid"
+	"github.com/google/uuid"
 )
 
 type ConfigGenericConnector struct {
@@ -14,7 +14,7 @@ func NewConfigGenericConnector(config interface{}, interceptors ...interceptor.I
 	return &ConfigGenericConnector{
 		SchemaBasedGenericConnector{
 			schema:       config,
-			id:           uuid.NewV4().String() + ":config",
+			id:           uuid.NewString() + ":config",
 			name:         ".*config.*",
 			tags:         []string{"config.*"},
 			interceptors: interceptors,

@@ -6,7 +6,7 @@ import (
 
 	"encoding/json"
 	"errors"
-	"github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"io"
 	"path/filepath"
@@ -237,7 +237,7 @@ func (c LocalCloudEnv) IsInCloudEnv() bool {
 func (c *LocalCloudEnv) GetAppInfo() AppInfo {
 	id := c.id
 	if id == "" {
-		id = uuid.NewV4().String()
+		id = uuid.NewString()
 		c.id = id
 	}
 	return AppInfo{
