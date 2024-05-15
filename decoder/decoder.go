@@ -558,5 +558,4 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		}
 		return defVal, nil
 	}
-	return "", NewErrTypeNotSupported(vField)
 }
