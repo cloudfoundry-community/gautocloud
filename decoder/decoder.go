@@ -2,13 +2,14 @@
 // It provide a cloud tag to help user match the correct credentials
 //
 // This is what you can pass as a structure:
-//  // Name is key of a service credentials, decoder will look at any matching credentials which have the key name and will pass the value of this credentials
-//  	Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
-//  	Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
-//  	User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
-//  	Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
-//      Aslice   []string `cloud:"aslice" cloud-default:"value1,value2"` // you can also pass a slice
-//  }
+//
+//	// Name is key of a service credentials, decoder will look at any matching credentials which have the key name and will pass the value of this credentials
+//		Name    string `cloud:"name"`           // note: by default if you don't provide a cloud tag the key will be the field name in snake_case
+//		Uri     decoder.ServiceUri              // ServiceUri is a special type. Decoder will expect an uri as a value and will give a ServiceUri
+//		User    string `cloud:".*user.*,regex"` // by passing `regex` in cloud tag it will say to decoder that the expected key must be match the regex
+//		Password string `cloud:".*user.*,regex" cloud-default:"apassword"` // by passing a tag named `cloud-default` decoder will understand that if the key is not found it must fill the field with this value
+//	    Aslice   []string `cloud:"aslice" cloud-default:"value1,value2"` // you can also pass a slice
+//	}
 package decoder
 
 import (
@@ -411,7 +412,7 @@ func match(matcher, content string) bool {
 	return regex.MatchString(content)
 }
 func getKeyFromRegex(serviceCredentials map[string]interface{}, regexKey string) string {
-	for key, _ := range serviceCredentials {
+	for key := range serviceCredentials {
 		if match(regexKey, key) {
 			return key
 		}

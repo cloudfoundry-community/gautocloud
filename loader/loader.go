@@ -157,9 +157,11 @@ func (l *GautocloudLoader) ReloadConnectors() {
 
 // Inject service(s) found by connectors with given type
 // Example:
-//  var svc *dbtype.MysqlDB
-//  err = loader.Inject(&svc)
-//  // svc will have the value of the first service found with type *dbtype.MysqlDB
+//
+//	var svc *dbtype.MysqlDB
+//	err = loader.Inject(&svc)
+//	// svc will have the value of the first service found with type *dbtype.MysqlDB
+//
 // If service parameter is not a slice it will give the first service found
 // If you pass a slice of a type in service parameter, it will inject in the slice all services found with this type
 // It returns an error if parameter is not a pointer or if no service(s) can be found
@@ -169,7 +171,7 @@ func (l GautocloudLoader) Inject(service interface{}) error {
 		return err
 	}
 	notFound := true
-	for id, _ := range l.connectors {
+	for id := range l.connectors {
 		err = l.InjectFromId(id, service)
 		if err == nil && service != nil {
 			notFound = false
@@ -236,9 +238,11 @@ func (l GautocloudLoader) getFirstValidCloudEnv() cloudenv.CloudEnv {
 // Inject service(s) found by a connector with given type
 // id is the id of a connector
 // Example:
-//  var svc *dbtype.MysqlDB
-//  err = gautocloud.InjectFromId("mysql", &svc)
-//  // svc will have the value of the first service found with type *dbtype.MysqlDB in this case
+//
+//	var svc *dbtype.MysqlDB
+//	err = gautocloud.InjectFromId("mysql", &svc)
+//	// svc will have the value of the first service found with type *dbtype.MysqlDB in this case
+//
 // If service parameter is not a slice it will give the first service found
 // If you pass a slice of a type in service parameter, it will inject in the slice all services found with this type
 // It returns an error if service parameter is not a pointer, if no service(s) can be found and if connector with given id doesn't exist
@@ -329,9 +333,11 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 // Return the first service found by a connector
 // id is the id of a connector
 // Example:
-//  var svc *dbtype.MysqlDB
-//  data, err = gautocloud.GetFirst("mysql")
-//  svc = data.(*dbtype.MysqlDB)
+//
+//	var svc *dbtype.MysqlDB
+//	data, err = gautocloud.GetFirst("mysql")
+//	svc = data.(*dbtype.MysqlDB)
+//
 // It returns the first service found or an error if no service can be found or if the connector doesn't exists
 func (l GautocloudLoader) GetFirst(id string) (interface{}, error) {
 	err := l.checkInCloudEnv()
@@ -361,9 +367,11 @@ func (l GautocloudLoader) checkConnectorIdExist(id string) error {
 // Return all services found by a connector
 // id is the id of a connector
 // Example:
-//  var svc []interface{}
-//  data, err = gautocloud.GetAll("mysql")
-//  svc = data[0].(*dbtype.MysqlDB)
+//
+//	var svc []interface{}
+//	data, err = gautocloud.GetAll("mysql")
+//	svc = data[0].(*dbtype.MysqlDB)
+//
 // warning: a connector may give you different types that's why GetAll return a slice of interface{}
 // It returns the first service found or an error if no service can be found or if the connector doesn't exists
 func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {

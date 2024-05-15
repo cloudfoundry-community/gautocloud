@@ -1,13 +1,13 @@
 package postgresql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
-	_ "github.com/lib/pq"
 	"database/sql"
 	"fmt"
 	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	_ "github.com/lib/pq"
 )
 
 func init() {

@@ -1,3 +1,4 @@
+//go:build gautocloud_mock
 // +build gautocloud_mock
 
 package test_mock_test

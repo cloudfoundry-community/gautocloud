@@ -1,16 +1,16 @@
 package main
 
 import (
-	"path"
-	"os"
-	. "github.com/cloudfoundry-community/gautocloud/test-utils"
-	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
 	"github.com/cloudfoundry-community/gautocloud"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
+	. "github.com/cloudfoundry-community/gautocloud/test-utils"
 	"html/template"
-	"strings"
+	"os"
+	"path"
 	"reflect"
-	"sort"
 	"runtime"
+	"sort"
+	"strings"
 )
 
 type DocStruct struct {
@@ -55,26 +55,26 @@ type GlobalDoc struct {
 
 func before() {
 	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
-		Type: "mysql",
-		User: "user",
+		Type:     "mysql",
+		User:     "user",
 		Password: "password",
-		Port: 3406,
-		Target: "mydb",
+		Port:     3406,
+		Target:   "mydb",
 	}))
 	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
-		Type: "postgres",
-		User: "user",
+		Type:     "postgres",
+		User:     "user",
 		Password: "password",
-		Port: 5532,
-		Target: "mydb",
-		Options: "sslmode=disable",
+		Port:     5532,
+		Target:   "mydb",
+		Options:  "sslmode=disable",
 	}))
 	os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
-		Type: "sqlserver",
-		User: "sa",
+		Type:     "sqlserver",
+		User:     "sa",
 		Password: "password",
-		Port: 1433,
-		Target: "test",
+		Port:     1433,
+		Target:   "test",
 	}))
 	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
 	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
@@ -84,37 +84,37 @@ func before() {
 	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
 	os.Setenv("SSO_SCOPES", "scope1,scope2")
 	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
-		Type: "mongo",
-		Port: 27017,
+		Type:   "mongo",
+		Port:   27017,
 		Target: "test",
 	}))
 	os.Setenv("ORACLE_URL", CreateEnvValue(ServiceUrl{
-		Type: "oci",
-		Port: 27017,
+		Type:   "oci",
+		Port:   27017,
 		Target: "test",
 	}))
 	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
-		Type: "redis",
-		User: "redis",
+		Type:     "redis",
+		User:     "redis",
 		Password: "redis",
-		Port: 6379,
+		Port:     6379,
 	}))
 	os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
-		Type: "amqp",
-		User: "user",
+		Type:     "amqp",
+		User:     "user",
 		Password: "password",
-		Port: 5672,
+		Port:     5672,
 	}))
 	os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
 	os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
-		Type: "s3",
-		User: "accessKey1",
+		Type:     "s3",
+		User:     "accessKey1",
 		Password: "verySecretKey1",
-		Port: 8090,
-		Target: "bucket",
+		Port:     8090,
+		Target:   "bucket",
 	}))
 	gautocloud.ReloadConnectors()
 }
@@ -129,7 +129,7 @@ func main() {
 	docs := getDocMap()
 	mk := make([]string, len(docs))
 	i := 0
-	for k, _ := range docs {
+	for k := range docs {
 		mk[i] = k
 		i++
 	}
@@ -141,21 +141,21 @@ func main() {
 		summaries[index] = Summary{
 			Name: docs[key].Name,
 			Slug: toSlug(docs[key].Name),
-			Sub: make([]Summary, 0),
+			Sub:  make([]Summary, 0),
 		}
 		for _, docConn := range docs[key].Connectors {
 			summary := summaries[index]
 			summary.Sub = append(summary.Sub, Summary{
 				Name: docConn.Name,
 				Slug: toSlug(docConn.Name),
-				Sub: make([]Summary, 0),
+				Sub:  make([]Summary, 0),
 			})
 			summaries[index] = summary
 		}
 	}
 	gd := GlobalDoc{
 		DocsConnector: docSlice,
-		Summaries: summaries,
+		Summaries:     summaries,
 	}
 	err = tmpl.Execute(os.Stdout, gd)
 	fatalIf(err)
@@ -168,13 +168,13 @@ func getDocMap() map[string]Doc {
 	docs := make(map[string]Doc)
 	for id, conn := range gautocloud.Connectors() {
 		rootIdSplit := strings.Split(id, ":")
-		rootId := rootIdSplit[len(rootIdSplit) - 1]
+		rootId := rootIdSplit[len(rootIdSplit)-1]
 		if _, ok := docs[rootId]; !ok {
 			docs[rootId] = Doc{
-				Name: strings.Title(rootId),
+				Name:        strings.Title(rootId),
 				RespondName: conn.Name(),
 				RespondTags: conn.Tags(),
-				Connectors: make([]DocConnector, 0),
+				Connectors:  make([]DocConnector, 0),
 			}
 		}
 		connType := reflect.TypeOf(conn).Elem()
@@ -201,7 +201,7 @@ func getDocMap() map[string]Doc {
 		typeWrapped := ""
 		if givenValue.NumField() == 1 {
 			typeShortSplit := strings.Split(givenValue.Field(0).Type().String(), ".")
-			typeShort := typeShortSplit[len(typeShortSplit) - 1]
+			typeShort := typeShortSplit[len(typeShortSplit)-1]
 			if len(typeShortSplit) > 1 && typeShort == givenValue.Type().Field(0).Name {
 				typeField := givenValue.Field(0).Type()
 				if typeField.Kind() == reflect.Ptr {
@@ -223,18 +223,18 @@ func getDocMap() map[string]Doc {
 			globalType = pkgSplit[4]
 		}
 		connDoc := DocConnector{
-			Name: strings.Title(rootId + " - " + connName),
-			Id: conn.Id(),
-			Pkg: pkgConn,
-			TypeName: givenType.String(),
-			TypePkg: giventTypePkg.PkgPath(),
+			Name:        strings.Title(rootId + " - " + connName),
+			Id:          conn.Id(),
+			Pkg:         pkgConn,
+			TypeName:    givenType.String(),
+			TypePkg:     giventTypePkg.PkgPath(),
 			TypeWrapped: typeWrapped,
-			DocUrl: docUrl,
-			Tip: tip,
-			GlobalType: strings.Title(globalType),
-			SimpleName: strings.Title(connName),
+			DocUrl:      docUrl,
+			Tip:         tip,
+			GlobalType:  strings.Title(globalType),
+			SimpleName:  strings.Title(connName),
 			StructGiven: generateDocStruct(givenData),
-			Closeable: isCloseable(givenData),
+			Closeable:   isCloseable(givenData),
 		}
 		doc := docs[rootId]
 		connectors := append(doc.Connectors, connDoc)
@@ -284,7 +284,7 @@ func generateDocStruct(data interface{}) DocStruct {
 	nameSplit := strings.Split(givenType.String(), ".")
 
 	structGiven := DocStruct{
-		Name: nameSplit[len(nameSplit) - 1],
+		Name: nameSplit[len(nameSplit)-1],
 	}
 	fields := make([]DocField, 0)
 	v := reflect.ValueOf(data)
@@ -304,8 +304,8 @@ func generateDocStruct(data interface{}) DocStruct {
 			docUrl = "See doc: " + docUrl
 		}
 		fields = append(fields, DocField{
-			Name: tField.Name,
-			Type: vField.Type().String(),
+			Name:    tField.Name,
+			Type:    vField.Type().String(),
 			Comment: docUrl,
 		})
 	}

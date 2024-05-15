@@ -1,8 +1,10 @@
 // This permit to intercept data which will be given back by gautocloud and modified it before giving back to user.
 // Interceptor should be used in a connector, to do so, connector have to implement ConnectorIntercepter:
-//  type ConnectorIntercepter interface {
-//  	Intercepter() interceptor.Intercepter
-//  }
+//
+//	type ConnectorIntercepter interface {
+//		Intercepter() interceptor.Intercepter
+//	}
+//
 // An interceptor work like a http middleware.
 package interceptor
 

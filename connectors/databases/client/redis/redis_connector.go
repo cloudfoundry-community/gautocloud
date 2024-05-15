@@ -1,12 +1,12 @@
 package redis
 
 import (
+	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
 	"github.com/go-redis/redis/v7"
-	"github.com/cloudfoundry-community/gautocloud"
 	"strconv"
-	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 )
 
 func init() {
@@ -41,12 +41,10 @@ func (c RedisConnector) Load(schema interface{}) (interface{}, error) {
 	}
 	fSchema := schema.(dbtype.RedisDatabase)
 	return redis.NewClient(&redis.Options{
-		Addr: c.GetConnString(fSchema),
+		Addr:     c.GetConnString(fSchema),
 		Password: fSchema.Password,
 	}), nil
 }
 func (c RedisConnector) Schema() interface{} {
 	return c.rawConn.Schema()
 }
-
-

@@ -13,18 +13,18 @@ type FakeCloudEnv struct {
 
 func NewFakeCloudEnv() cloudenv.CloudEnv {
 	return &FakeCloudEnv{
-		services: make([]cloudenv.Service, 0),
+		services:   make([]cloudenv.Service, 0),
 		inCloudEnv: true,
-		callLoad: 0,
+		callLoad:   0,
 	}
 }
 func (c FakeCloudEnv) Name() string {
 	return "fakecloudenv"
 }
-func (c FakeCloudEnv) GetServicesFromTags(tags []string) ([]cloudenv.Service) {
+func (c FakeCloudEnv) GetServicesFromTags(tags []string) []cloudenv.Service {
 	return c.services
 }
-func (c FakeCloudEnv) GetServicesFromName(name string) ([]cloudenv.Service) {
+func (c FakeCloudEnv) GetServicesFromName(name string) []cloudenv.Service {
 	return c.services
 }
 func (c *FakeCloudEnv) SetAppInfo(appInfo cloudenv.AppInfo) {

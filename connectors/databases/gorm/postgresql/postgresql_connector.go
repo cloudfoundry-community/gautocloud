@@ -1,14 +1,14 @@
 package postgresql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	_ "github.com/lib/pq"
 	"github.com/cloudfoundry-community/gautocloud"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/jinzhu/gorm"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/postgresql"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/lib/pq"
 )
 
 func init() {
@@ -22,7 +22,7 @@ type GormPostgresqlConnector struct {
 
 func NewGormPostgresqlConnector() connectors.Connector {
 	return &GormPostgresqlConnector{
-		wrapConn: postgresql.NewPostgresqlConnector(),
+		wrapConn:    postgresql.NewPostgresqlConnector(),
 		wrapRawConn: raw.NewPostgresqlRawConnector(),
 	}
 }

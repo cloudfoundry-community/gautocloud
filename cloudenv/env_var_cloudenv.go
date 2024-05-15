@@ -1,10 +1,10 @@
 package cloudenv
 
 import (
+	"bytes"
+	"encoding/json"
 	"os"
 	"strings"
-	"encoding/json"
-	"bytes"
 )
 
 type EnvVarCloudEnv struct {
@@ -33,20 +33,20 @@ func (c *EnvVarCloudEnv) InitEnv(environ []string) {
 	for _, envVar := range environ {
 		splitEnv := strings.Split(envVar, "=")
 		envVars = append(envVars, EnvVar{
-			Key: strings.ToLower(splitEnv[0]),
+			Key:   strings.ToLower(splitEnv[0]),
 			Value: strings.TrimSpace(strings.Join(splitEnv[1:], "=")),
 		})
 	}
 	c.envVars = envVars
 }
-func (c EnvVarCloudEnv) GetServicesFromTags(tags []string) ([]Service) {
+func (c EnvVarCloudEnv) GetServicesFromTags(tags []string) []Service {
 	services := make([]Service, 0)
 	for _, tag := range tags {
 		services = append(services, c.getServicesFromPrefix(tag)...)
 	}
 	return services
 }
-func (c EnvVarCloudEnv) GetServicesFromName(name string) ([]Service) {
+func (c EnvVarCloudEnv) GetServicesFromName(name string) []Service {
 	return c.getServicesFromPrefix(name)
 }
 func (c EnvVarCloudEnv) getServicesFromPrefix(prefix string) []Service {

@@ -1,13 +1,13 @@
 package mysql
 
 import (
-	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/client/mysql"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/raw"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func init() {
@@ -21,7 +21,7 @@ type GormMysqlConnector struct {
 
 func NewGormMysqlConnector() connectors.Connector {
 	return &GormMysqlConnector{
-		wrapConn: mysql.NewMysqlConnector(),
+		wrapConn:    mysql.NewMysqlConnector(),
 		wrapRawConn: raw.NewMysqlRawConnector(),
 	}
 }

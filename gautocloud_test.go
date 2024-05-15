@@ -3,9 +3,9 @@ package gautocloud_test
 import (
 	. "github.com/cloudfoundry-community/gautocloud"
 
+	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 )
 
 var _ = Describe("Gautocloud", func() {

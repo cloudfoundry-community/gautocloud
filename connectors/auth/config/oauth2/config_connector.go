@@ -1,11 +1,11 @@
 package oauth2
 
 import (
+	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/auth/raw"
-	"github.com/cloudfoundry-community/gautocloud"
-	"golang.org/x/oauth2"
 	. "github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
+	"golang.org/x/oauth2"
 )
 
 func init() {
@@ -37,11 +37,11 @@ func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
 	}
 	fSchema := schema.(Oauth2Schema)
 	config := &oauth2.Config{
-		ClientID: fSchema.ClientId,
+		ClientID:     fSchema.ClientId,
 		ClientSecret: fSchema.ClientSecret,
-		Scopes: fSchema.Scopes,
+		Scopes:       fSchema.Scopes,
 		Endpoint: oauth2.Endpoint{
-			AuthURL: fSchema.AuthorizationUri,
+			AuthURL:  fSchema.AuthorizationUri,
 			TokenURL: fSchema.TokenUri,
 		},
 	}
@@ -50,4 +50,3 @@ func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
 func (c Oauth2ConfigConnector) Schema() interface{} {
 	return c.rawConn.Schema()
 }
-

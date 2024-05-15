@@ -6,9 +6,11 @@ import "github.com/cloudfoundry-community/gautocloud/interceptor"
 // this is the interface to be implemented to create a new connector
 // You should add an init function in the same package of your connector and register it automatically in gautocloud when importing your connector
 // Example of init function:
-//  func init() {
-//    gautocloud.RegisterConnector(NewMyConnector())
-//  }
+//
+//	func init() {
+//	  gautocloud.RegisterConnector(NewMyConnector())
+//	}
+//
 // see implementation of any raw connectors to see how to implement a connector
 type Connector interface {
 	// This is the id of your connector and it must be unique and not have the same id of another connector
