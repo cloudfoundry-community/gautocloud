@@ -14,7 +14,6 @@ package decoder
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/azer/snakecase"
 	"net/url"
@@ -205,7 +204,7 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 			vField.Set(reflect.MakeSlice(reflect.SliceOf(vField.Type().Elem()), 0, 0))
 		}
 		if reflect.ValueOf(data).Kind() != reflect.Slice {
-			return errors.New(fmt.Sprintf("Type '%s' have not receive a slice.", vField.String()))
+			return fmt.Errorf("type '%s' have not receive a slice", vField.String())
 		}
 
 		dataValue := reflect.ValueOf(data)
