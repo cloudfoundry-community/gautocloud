@@ -488,9 +488,9 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		if err != nil {
 			return "", err
 		}
-		return int64(val), nil
+		return val, nil
 	case reflect.Uint:
-		val, err := strconv.ParseUint(defVal, 10, int(strconv.IntSize))
+		val, err := strconv.ParseUint(defVal, 10, strconv.IntSize)
 		if err != nil {
 			return "", err
 		}
@@ -518,7 +518,7 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 		if err != nil {
 			return "", err
 		}
-		return uint64(val), nil
+		return val, nil
 	case reflect.Bool:
 		return strconv.ParseBool(defVal)
 	case reflect.Float32:
