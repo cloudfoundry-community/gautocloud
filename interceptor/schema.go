@@ -27,7 +27,7 @@ func schema(current, found interface{}) (interface{}, error) {
 		schema = found
 	}
 	if currentIntercept, ok := schema.(SchemaIntercepter); ok {
-		err := currentIntercept.(SchemaIntercepter).Intercept(found)
+		err := currentIntercept.Intercept(found)
 		return schema, err
 	}
 	currentType := reflect.TypeOf(schema)
