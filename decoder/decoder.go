@@ -1,5 +1,5 @@
 // Package decoder provide a way to decode credentials from a service to a structure
-// It provide a cloud tag to help user match the correct credentials
+// It provides a cloud tag to help user match the correct credentials
 //
 // This is what you can pass as a structure:
 //
@@ -53,8 +53,8 @@ type QueryUri struct {
 	Value string
 }
 
-// The Unmarshaler interface may be implemented by types to customize their
-// behavior when being unmarshaled from a Map cloud. The UnmarshalCloud
+// Unmarshaler This interface may be implemented by types to customize their
+// behavior when being unmarshalled from a Map cloud. The UnmarshalCloud
 // method receives a function that may be called to unmarshal the original
 // value into a field or variable. It is safe to call the unmarshal
 // function parameter more than once if necessary.
@@ -62,7 +62,7 @@ type Unmarshaler interface {
 	UnmarshalCloud(data interface{}) error
 }
 
-// Decode a map of credentials into a reflected Value
+// UnmarshalToValue Decode a map of credentials into a reflected Value
 func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Value, noDefaultVal bool) error {
 	v := ps
 	if ps.Kind() == reflect.Ptr {
@@ -117,13 +117,13 @@ func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Valu
 	return nil
 }
 
-// Decode a map of credentials into a structure
+// Unmarshal Decode a map of credentials into a structure
 func Unmarshal(serviceCredentials map[string]interface{}, obj interface{}) error {
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps, false)
 }
 
-// Decode a map of credentials into a structure without default values
+// UnmarshalNoDefault Decode a map of credentials into a structure without default values
 func UnmarshalNoDefault(serviceCredentials map[string]interface{}, obj interface{}) error {
 	ps := reflect.ValueOf(obj)
 	return UnmarshalToValue(serviceCredentials, ps, true)

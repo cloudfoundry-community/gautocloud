@@ -1,6 +1,6 @@
-// This is an interceptor dedicated to push flags found to the final schema given by gautocloud.
+// Package arg This is an interceptor dedicated to push flags found to the final schema given by gautocloud.
 // if flags is not a zero value it will override value from schema given by gautocloud.
-// It use https://github.com/alexflint/go-arg to translate flags into a struct.
+// It uses https://github.com/alexflint/go-arg to translate flags into a struct.
 package arg
 
 import (
@@ -19,7 +19,7 @@ type ArgInterceptor struct {
 	exit   bool
 }
 
-// Option to set arg.Config from https://github.com/alexflint/go-arg
+// Config Option to set arg.Config from https://github.com/alexflint/go-arg
 // Default: arg.Config{}
 func Config(config arg.Config) optSetter {
 	return func(f *ArgInterceptor) {
@@ -27,7 +27,7 @@ func Config(config arg.Config) optSetter {
 	}
 }
 
-// Option to set args to be parsed as flags
+// Args Option to set args to be parsed as flags
 // Default: os.Args
 func Args(args []string) optSetter {
 	return func(f *ArgInterceptor) {
@@ -35,7 +35,7 @@ func Args(args []string) optSetter {
 	}
 }
 
-// Option to set writer for output
+// Writer Option to set writer for output
 // Default: os.Stdout
 func Writer(w io.Writer) optSetter {
 	return func(f *ArgInterceptor) {
@@ -43,7 +43,7 @@ func Writer(w io.Writer) optSetter {
 	}
 }
 
-// Option to exit program or not when --help or --version flags has been found
+// Exit Option to exit program or not when --help or --version flags has been found
 // Default: true
 func Exit(exit bool) optSetter {
 	return func(f *ArgInterceptor) {

@@ -77,10 +77,7 @@ func (c CfCloudEnv) GetServicesFromName(name string) []Service {
 	return c.convertCfServices(servicesFound)
 }
 func (c CfCloudEnv) IsInCloudEnv() bool {
-	if os.Getenv("VCAP_APPLICATION") != "" {
-		return true
-	}
-	return false
+	return os.Getenv("VCAP_APPLICATION") != ""
 }
 func (c CfCloudEnv) GetAppInfo() AppInfo {
 	return AppInfo{

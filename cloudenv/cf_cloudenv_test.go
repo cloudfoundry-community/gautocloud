@@ -34,7 +34,7 @@ var _ = Describe("CfCloudenv", func() {
 			services := cloudEnv.GetServicesFromTags([]string{"postgres.*"})
 			Expect(services).Should(HaveLen(1))
 		})
-		It("should give correct service(s) when have mulitple tag", func() {
+		It("should give correct service(s) when have multiple tag", func() {
 			services := cloudEnv.GetServicesFromTags([]string{"postgresql", "smtp"})
 			Expect(services).Should(HaveLen(2))
 		})

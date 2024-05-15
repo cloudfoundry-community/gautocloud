@@ -6,17 +6,17 @@ import (
 	"github.com/cloudfoundry-community/gautocloud/loader"
 )
 
-// Return the loader used by the facade
+// Loader Return the loader used by the facade
 func Loader() loader.Loader {
 	return defaultLoader
 }
 
-// Reload connectors to find services
+// ReloadConnectors Reload connectors to find services
 func ReloadConnectors() {
 	defaultLoader.ReloadConnectors()
 }
 
-// Register a connector in the loader
+// RegisterConnector Register a connector in the loader
 // This is mainly use for connectors creators
 func RegisterConnector(connector connectors.Connector) {
 	defaultLoader.RegisterConnector(connector)
@@ -36,7 +36,7 @@ func Inject(service interface{}) error {
 	return defaultLoader.Inject(service)
 }
 
-// Inject service(s) found by a connector with given type
+// InjectFromId Inject service(s) found by a connector with given type
 // id is the id of a connector
 // Example:
 //
@@ -51,7 +51,7 @@ func InjectFromId(id string, service interface{}) error {
 	return defaultLoader.InjectFromId(id, service)
 }
 
-// Return the first service found by a connector
+// GetFirst Return the first service found by a connector
 // id is the id of a connector
 // Example:
 //
@@ -59,12 +59,12 @@ func InjectFromId(id string, service interface{}) error {
 //	data, err = gautocloud.GetFirst("mysql")
 //	svc = data.(*dbtype.MysqlDB)
 //
-// It returns the first service found or an error if no service can be found or if the connector doesn't exists
+// It returns the first service found or an error if no service can be found or if the connector does not exist
 func GetFirst(id string) (interface{}, error) {
 	return defaultLoader.GetFirst(id)
 }
 
-// Return all services found by a connector
+// GetAll Return all services found by a connector
 // id is the id of a connector
 // Example:
 //
@@ -73,42 +73,42 @@ func GetFirst(id string) (interface{}, error) {
 //	svc = data[0].(*dbtype.MysqlDB)
 //
 // warning: a connector may give you different types that's why GetAll return a slice of interface{}
-// It returns the first service found or an error if no service can be found or if the connector doesn't exists
+// It returns the first service found or an error if no service can be found or if the connector does not exist
 func GetAll(id string) ([]interface{}, error) {
 	return defaultLoader.GetAll(id)
 }
 
-// Return all cloud environments loaded
+// CloudEnvs Return all cloud environments loaded
 func CloudEnvs() []cloudenv.CloudEnv {
 	return defaultLoader.CloudEnvs()
 }
 
-// Return all registered connectors
+// Connectors Return all registered connectors
 func Connectors() map[string]connectors.Connector {
 	return defaultLoader.Connectors()
 }
 
-// Return all services loaded
+// Store Return all services loaded
 func Store() map[string][]loader.StoredService {
 	return defaultLoader.Store()
 }
 
-// Remove all registered connectors
+// CleanConnectors Remove all registered connectors
 func CleanConnectors() {
 	defaultLoader.CleanConnectors()
 }
 
-// Return the current cloud env detected
+// CurrentCloudEnv Return the current cloud env detected
 func CurrentCloudEnv() cloudenv.CloudEnv {
 	return defaultLoader.CurrentCloudEnv()
 }
 
-// Return informations about instance of the running application
+// GetAppInfo Return information about instance of the running application
 func GetAppInfo() cloudenv.AppInfo {
 	return defaultLoader.GetAppInfo()
 }
 
-// Return true if you are in a cloud environment
+// IsInACloudEnv Return true if you are in a cloud environment
 func IsInACloudEnv() bool {
 	return defaultLoader.IsInACloudEnv()
 }

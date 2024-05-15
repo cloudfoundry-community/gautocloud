@@ -16,13 +16,13 @@ This permit to intercept data which will be given back by gautocloud and modifie
 
 These connectors are specials connectors that final users need to register manually when needed.
 
-One of usecase is to be able to retrieve configuration from services or simply add your own connector easily.
+One of use-case is to be able to retrieve configuration from services or simply add your own connector easily.
 
 #### Schema based
 
 Add a straight forward connector which give back schema fed by loader.
 
-This connector is also connector intercepter, it use interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema) 
+This connector is also connector intercepter, it uses interceptor [schema](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewSchema) 
 as default interceptor. 
 
 You can also set your interceptors to connector, they will be used only if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter).
@@ -90,7 +90,7 @@ func main() {
 
 This is a schema based connectors but `id`, `name` and `tags` are already set (can be registered multiple times).
 
-This connector is a connector intercepter, it use the default interceptor [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite)  
+This connector is a connector intercepter, it uses the default interceptor [overwrite](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#NewOverwrite)  
 which only be used if struct does not implement interface [SchemaIntercepter](https://godoc.org/github.com/cloudfoundry-community/gautocloud/interceptor#SchemaIntercepter) 
 and if no interceptors has been given to connector.
 

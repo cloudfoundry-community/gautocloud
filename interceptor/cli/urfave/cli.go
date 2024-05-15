@@ -1,4 +1,4 @@
-// This is an interceptor dedicated to push flags from https://github.com/urfave/cli to the final schema given by gautocloud.
+// Package urfave This is an interceptor dedicated to push flags from https://github.com/urfave/cli to the final schema given by gautocloud.
 // if flags is not a zero value it will override value from schema given by gautocloud.
 package urfave
 
@@ -20,7 +20,7 @@ func NewCli() *CliInterceptor {
 }
 func (i CliInterceptor) Intercept(current, found interface{}) (interface{}, error) {
 	if i.context == nil {
-		return nil, fmt.Errorf("Context must be passed to CliInterceptor, please set it with SetContext")
+		return nil, fmt.Errorf("context must be passed to CliInterceptor, please set it with SetContext")
 	}
 	schema := current
 	if schema == nil {

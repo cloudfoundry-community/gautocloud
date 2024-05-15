@@ -1,4 +1,4 @@
-// It has the responsibility to find the *CloudEnv* where your program run, store *Connector*s and retrieve
+// Package loader It has the responsibility to find the *CloudEnv* where your program run, store *Connector*s and retrieve
 // services from *CloudEnv* which corresponds to one or many *Connector* and finally it will pass to *Connector* the service
 // and store the result from connector.
 package loader
@@ -60,7 +60,7 @@ func newLoader(cloudEnvs []cloudenv.CloudEnv, logger *log.Logger) Loader {
 	return loader
 }
 
-// Create a new loader with cloud environment given
+// NewLoader Create a new loader with cloud environment given
 func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	if os.Getenv(DEBUG_MODE_ENV_VAR) != "" {
 		log.SetLevel(log.DebugLevel)
@@ -68,17 +68,17 @@ func NewLoader(cloudEnvs []cloudenv.CloudEnv) Loader {
 	return newLoader(cloudEnvs, log.StandardLogger())
 }
 
-// Return all cloud environments loaded
+// CloudEnvs Return all cloud environments loaded
 func (l GautocloudLoader) CloudEnvs() []cloudenv.CloudEnv {
 	return l.cloudEnvs
 }
 
-// Remove all registered connectors
+// CleanConnectors Remove all registered connectors
 func (l *GautocloudLoader) CleanConnectors() {
 	l.connectors = make(map[string]connectors.Connector)
 }
 
-// Return all services loaded
+// Store Return all services loaded
 func (l *GautocloudLoader) Store() map[string][]StoredService {
 	return l.store
 }
@@ -87,7 +87,7 @@ func logMessage(message string) string {
 	return LOG_MESSAGE_PREFIX + ": " + message
 }
 
-// Register a connector in the loader
+// RegisterConnector Register a connector in the loader
 // This is mainly use for connectors creators
 func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	if _, ok := l.connectors[connector.Id()]; ok {
@@ -110,7 +110,7 @@ func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 	entry.Debugf(logMessage("Finished loading connector."))
 }
 
-// Return all registered connectors
+// Connectors Return all registered connectors
 func (l GautocloudLoader) Connectors() map[string]connectors.Connector {
 	return l.connectors
 }
@@ -139,7 +139,7 @@ func (l GautocloudLoader) LoadCloudEnvs() {
 	}
 }
 
-// Reload connectors to find services
+// ReloadConnectors Reload connectors to find services
 func (l *GautocloudLoader) ReloadConnectors() {
 	l.LoadCloudEnvs()
 	err := l.checkInCloudEnv()
@@ -191,12 +191,12 @@ func (l GautocloudLoader) Inject(service interface{}) error {
 	return NewErrGiveService("Service with the type " + reflectType.String() + " cannot be found. (perhaps no services match any connectors)")
 }
 
-// Return the current cloud env detected
+// CurrentCloudEnv Return the current cloud env detected
 func (l GautocloudLoader) CurrentCloudEnv() cloudenv.CloudEnv {
 	return l.getFirstValidCloudEnv()
 }
 
-// Return informations about instance of the running application
+// GetAppInfo Return information about instance of the running application
 func (l GautocloudLoader) GetAppInfo() cloudenv.AppInfo {
 	return l.getFirstValidCloudEnv().GetAppInfo()
 }
@@ -214,7 +214,7 @@ func (l GautocloudLoader) getCloudEnvNames() []string {
 	return names
 }
 
-// Return true if you are in a cloud environment
+// IsInACloudEnv Return true if you are in a cloud environment
 func (l GautocloudLoader) IsInACloudEnv() bool {
 	for _, cloudEnv := range l.cloudEnvs {
 		if !cloudEnv.IsInCloudEnv() {
@@ -235,7 +235,7 @@ func (l GautocloudLoader) getFirstValidCloudEnv() cloudenv.CloudEnv {
 	return finalCloudEnv
 }
 
-// Inject service(s) found by a connector with given type
+// InjectFromId Inject service(s) found by a connector with given type
 // id is the id of a connector
 // Example:
 //
@@ -330,7 +330,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 	return finalData, err
 }
 
-// Return the first service found by a connector
+// GetFirst Return the first service found by a connector
 // id is the id of a connector
 // Example:
 //
@@ -338,7 +338,7 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 //	data, err = gautocloud.GetFirst("mysql")
 //	svc = data.(*dbtype.MysqlDB)
 //
-// It returns the first service found or an error if no service can be found or if the connector doesn't exists
+// It returns the first service found or an error if no service can be found or if the connector doesn't exist
 func (l GautocloudLoader) GetFirst(id string) (interface{}, error) {
 	err := l.checkInCloudEnv()
 	if err != nil {
@@ -364,7 +364,7 @@ func (l GautocloudLoader) checkConnectorIdExist(id string) error {
 	return nil
 }
 
-// Return all services found by a connector
+// GetAll Return all services found by a connector
 // id is the id of a connector
 // Example:
 //
@@ -373,7 +373,7 @@ func (l GautocloudLoader) checkConnectorIdExist(id string) error {
 //	svc = data[0].(*dbtype.MysqlDB)
 //
 // warning: a connector may give you different types that's why GetAll return a slice of interface{}
-// It returns the first service found or an error if no service can be found or if the connector doesn't exists
+// It returns the first service found or an error if no service can be found or if the connector doesn't exist
 func (l GautocloudLoader) GetAll(id string) ([]interface{}, error) {
 	err := l.checkInCloudEnv()
 	if err != nil {

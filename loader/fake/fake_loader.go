@@ -8,13 +8,13 @@ import (
 	"log"
 )
 
-// Mock of Loader interface
+// MockLoader Mock of Loader interface
 type MockLoader struct {
 	ctrl     *gomock.Controller
 	recorder *_MockLoaderRecorder
 }
 
-// Recorder for MockLoader (not exported)
+// _MockLoaderRecorder Recorder for MockLoader (not exported)
 type _MockLoaderRecorder struct {
 	mock *MockLoader
 }

@@ -36,7 +36,7 @@ func NewExampleConnector() connectors.Connector {
 	return &ExampleConnector{}
 }
 
-// This is the id of your connector and it must be unique and not have the same id of another connector
+// IThis is the id of your connector, and it must be unique and not have the same id of another connector
 // Note: if a connector id is already taken gautocloud will complain
 func (c ExampleConnector) Id() string {
 	return "example"
@@ -56,7 +56,7 @@ func (c ExampleConnector) Tags() []string {
 }
 
 // The parameter is a filled schema you gave in the function Schema
-// The first value to return is what you want and you have no obligation to give always the same type. gautocloud is interface agnostic
+// The first value to return is what you want, and you have no obligation to give always the same type. gautocloud is interface agnostic
 // You can give an error if an error occurred, this error will appear in logs
 func (c ExampleConnector) Load(schema interface{}) (interface{}, error) {
 	fSchema := schema.(ExampleSchema)

@@ -341,7 +341,7 @@ var _ = Describe("Loader", func() {
 				fakeInterceptor := fakecon.NewFakeInterceptor(
 					FakeSchema{},
 					interceptor.IntercepterFunc(func(current, old interface{}) (interface{}, error) {
-						return nil, fmt.Errorf("Error from intercepter")
+						return nil, fmt.Errorf("error from intercepter")
 					}),
 				)
 				loader.RegisterConnector(fakeInterceptor)
@@ -350,7 +350,7 @@ var _ = Describe("Loader", func() {
 				err := loader.InjectFromId(connector.Id(), &data)
 
 				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).Should(ContainSubstring("Error from intercepter"))
+				Expect(err.Error()).Should(ContainSubstring("error from intercepter"))
 			})
 		})
 		It("should return an error if content to inject is not a pointer", func() {
