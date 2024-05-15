@@ -317,13 +317,16 @@ func (l GautocloudLoader) getData(store StoredService, current interface{}) (int
 	entry.Debug(logMessage("Data intercepting by interceptor given by connector..."))
 	finalData, err := store.Interceptor.Intercept(current, store.Data)
 	if err != nil {
-		NewErrGiveService(
+		err := NewErrGiveService(
 			fmt.Sprintf(
 				"Error from interceptor given by connector for the type '%s': %s",
 				store.ReflectType.String(),
 				err.Error(),
 			),
 		)
+		if err != nil {
+			return nil, err
+		}
 		return store.Data, err
 	}
 	entry.Debug(logMessage("Finished data intercepting by interceptor given by connector."))
