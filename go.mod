@@ -3,7 +3,7 @@ module github.com/cloudfoundry-community/gautocloud
 go 1.22.3
 
 require (
-	github.com/alexflint/go-arg v1.5.0
+	github.com/alexflint/go-arg v1.5.1
 	github.com/azer/snakecase v1.0.0
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/denisenkom/go-mssqldb v0.12.3
