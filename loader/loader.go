@@ -107,7 +107,7 @@ func (l *GautocloudLoader) RegisterConnector(connector connectors.Connector) {
 		return
 	}
 	l.store[connector.Id()] = storedServices
-	entry.Debugf(logMessage("Finished loading connector."))
+	entry.Debug(logMessage("Finished loading connector."))
 }
 
 // Connectors Return all registered connectors
@@ -409,7 +409,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 	services = append(services, cloudEnv.GetServicesFromTags(connector.Tags())...)
 	services = l.addService(services, cloudEnv.GetServicesFromName(connector.Name())...)
 	if len(services) == 0 {
-		entry.Debugf(logMessage("No service found for connector."))
+		entry.Debug(logMessage("No service found for connector."))
 		return storedServices
 	}
 	serviceType := reflect.TypeOf(connector.Schema())
@@ -428,7 +428,7 @@ func (l *GautocloudLoader) load(connector connectors.Connector) []StoredService 
 		reflectType := reflect.TypeOf(loadedService)
 		entry.WithField("type", reflectType.String()).
 			WithField("credentials", service.Credentials).
-			Debugf(logMessage("Connector load a service."))
+			Debug(logMessage("Connector load a service."))
 
 		var intercepter interceptor.Intercepter = nil
 		if connIntercepter, ok := connector.(connectors.ConnectorIntercepter); ok {
