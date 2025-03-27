@@ -4,10 +4,11 @@ import (
 	. "github.com/cloudfoundry-community/gautocloud/cloudenv"
 
 	"bytes"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"os"
 	"path"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var yamlServices = []byte(`
