@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - master
+      - bump-go-mod
   pull_request:
 
 permissions:
