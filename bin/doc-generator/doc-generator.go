@@ -11,7 +11,7 @@ import (
 
 	"github.com/cloudfoundry-community/gautocloud"
 	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
-	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	test_utils "github.com/cloudfoundry-community/gautocloud/test-utils"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -57,7 +57,7 @@ type GlobalDoc struct {
 }
 
 func before() {
-	err := os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
+	err := os.Setenv("MYSQL_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "mysql",
 		User:     "user",
 		Password: "password",
@@ -65,7 +65,7 @@ func before() {
 		Target:   "mydb",
 	}))
 	fatalIf(err)
-	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("POSTGRES_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "postgres",
 		User:     "user",
 		Password: "password",
@@ -73,7 +73,8 @@ func before() {
 		Target:   "mydb",
 		Options:  "sslmode=disable",
 	}))
-	err = os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("MSSQL_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "sqlserver",
 		User:     "sa",
 		Password: "password",
@@ -82,6 +83,7 @@ func before() {
 	}))
 	fatalIf(err)
 	err = os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	fatalIf(err)
 	err = os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
 	fatalIf(err)
 	err = os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
@@ -94,38 +96,38 @@ func before() {
 	fatalIf(err)
 	err = os.Setenv("SSO_SCOPES", "scope1,scope2")
 	fatalIf(err)
-	err = os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("MONGODB_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:   "mongo",
 		Port:   27017,
 		Target: "test",
 	}))
 	fatalIf(err)
-	err = os.Setenv("ORACLE_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("ORACLE_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:   "oci",
 		Port:   27017,
 		Target: "test",
 	}))
 	fatalIf(err)
-	err = os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("REDIS_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "redis",
 		User:     "redis",
 		Password: "redis",
 		Port:     6379,
 	}))
 	fatalIf(err)
-	err = os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("AMQP_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "amqp",
 		User:     "user",
 		Password: "password",
 		Port:     5672,
 	}))
 	fatalIf(err)
-	err = os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("SMTP_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
 	fatalIf(err)
-	err = os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("S3_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "s3",
 		User:     "accessKey1",
 		Password: "verySecretKey1",

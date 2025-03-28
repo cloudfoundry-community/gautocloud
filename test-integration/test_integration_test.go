@@ -41,13 +41,14 @@ var _ = Describe("Connectors integration", func() {
 	log.SetLevel(log.DebugLevel)
 	err := os.Unsetenv("MAIL") // travis set this env var which make connector detect it
 	Expect(err).ToNot(HaveOccurred())
-	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
 		Type:     "mysql",
 		User:     "user",
 		Password: "password",
 		Port:     3406,
 		Target:   "mydb",
 	}))
+	Expect(err).ToNot(HaveOccurred())
 	err = os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
 		Type:     "postgres",
 		User:     "user",
