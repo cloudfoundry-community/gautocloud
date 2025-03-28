@@ -23,10 +23,9 @@ jobs:
           go-version: "1.24"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v7
-        linters:
-          enable:
-            - govet
-            - staticcheck
-            - unused
         with:
           version: v2.0
+          args: >
+            --enable govet
+            --enable staticcheck
+            --enable unused
