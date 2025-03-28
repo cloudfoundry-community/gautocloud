@@ -2,7 +2,7 @@ package raw
 
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/smtp/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/schema"
 	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/smtptype"
 )
 
@@ -20,8 +20,8 @@ func (c SmtpRawConnector) Name() string {
 func (c SmtpRawConnector) Tags() []string {
 	return []string{"smtp", "e?mail"}
 }
-func (c SmtpRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(SmtpSchema)
+func (c SmtpRawConnector) Load(smtpschema interface{}) (interface{}, error) {
+	fSchema := smtpschema.(schema.SmtpSchema)
 	if fSchema.Host != "" {
 		return smtptype.Smtp{
 			User:     fSchema.User,
@@ -42,5 +42,5 @@ func (c SmtpRawConnector) Load(schema interface{}) (interface{}, error) {
 	}, nil
 }
 func (c SmtpRawConnector) Schema() interface{} {
-	return SmtpSchema{}
+	return schema.SmtpSchema{}
 }

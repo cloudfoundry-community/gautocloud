@@ -6,11 +6,12 @@ package arg
 import (
 	"errors"
 	"fmt"
-	"github.com/alexflint/go-arg"
-	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	"io"
 	"os"
 	"reflect"
+
+	"github.com/alexflint/go-arg"
+	"github.com/cloudfoundry-community/gautocloud/interceptor"
 )
 
 type ArgInterceptor struct {
@@ -101,7 +102,10 @@ func (i ArgInterceptor) parse(schema, found interface{}) (interface{}, error) {
 		version = dest.Version()
 	}
 	if errors.Is(err, arg.ErrVersion) {
-		fmt.Fprintln(i.writer, version)
+		_, err := fmt.Fprintln(i.writer, version)
+		if err != nil {
+			return nil, err
+		}
 		if !i.exit {
 			return schema, nil
 		}

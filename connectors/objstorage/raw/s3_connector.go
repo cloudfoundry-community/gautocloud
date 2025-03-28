@@ -1,10 +1,11 @@
 package raw
 
 import (
+	"strings"
+
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/objstoretype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/objstorage/schema"
-	"strings"
+	"github.com/cloudfoundry-community/gautocloud/connectors/objstorage/schema"
 )
 
 type S3RawConnector struct{}
@@ -36,8 +37,8 @@ func (c S3RawConnector) GetBucketFromHost(host string) (endpoint string, bucket 
 	endpoint = strings.Join(splitHost[1:], ".")
 	return
 }
-func (c S3RawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(S3Schema)
+func (c S3RawConnector) Load(s3schema interface{}) (interface{}, error) {
+	fSchema := s3schema.(schema.S3Schema)
 	var gSchema objstoretype.S3
 	if fSchema.Uri.Host != "" {
 		useSsl := false
@@ -69,5 +70,5 @@ func (c S3RawConnector) Load(schema interface{}) (interface{}, error) {
 	return gSchema, nil
 }
 func (c S3RawConnector) Schema() interface{} {
-	return S3Schema{}
+	return schema.S3Schema{}
 }

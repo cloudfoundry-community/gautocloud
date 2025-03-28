@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type MysqlRawConnector struct{}
@@ -20,8 +20,8 @@ func (c MysqlRawConnector) Name() string {
 func (c MysqlRawConnector) Tags() []string {
 	return []string{"mysql", "maria.*"}
 }
-func (c MysqlRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(MysqlSchema)
+func (c MysqlRawConnector) Load(dbschema any) (any, error) {
+	fSchema := dbschema.(schema.MysqlSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.MysqlDatabase{
 			User:     fSchema.User,
@@ -45,6 +45,6 @@ func (c MysqlRawConnector) Load(schema interface{}) (interface{}, error) {
 		Options:  fSchema.Uri.RawQuery,
 	}, nil
 }
-func (c MysqlRawConnector) Schema() interface{} {
-	return MysqlSchema{}
+func (c MysqlRawConnector) Schema() any {
+	return schema.MysqlSchema{}
 }

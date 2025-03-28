@@ -4,10 +4,11 @@ import (
 	. "github.com/cloudfoundry-community/gautocloud/cloudenv"
 
 	"bytes"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"os"
 	"path"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var yamlServices = []byte(`
@@ -127,8 +128,14 @@ func defaultTest(cloudEnv CloudEnv) {
 
 var _ = Describe("LocalCloudenv", func() {
 	AfterEach(func() {
-		os.Unsetenv(LOCAL_ENV_KEY)
-		os.Unsetenv(LOCAL_CONFIG_ENV_KEY)
+		err := os.Unsetenv(LOCAL_ENV_KEY)
+		if err != nil {
+			Fail(err.Error())
+		}
+		err = os.Unsetenv(LOCAL_CONFIG_ENV_KEY)
+		if err != nil {
+			Fail(err.Error())
+		}
 	})
 	formatServices := []FormatService{
 		{
@@ -150,8 +157,7 @@ var _ = Describe("LocalCloudenv", func() {
 	}
 	for _, formatService := range formatServices {
 		Describe("When config file is a "+formatService.Type+" file", func() {
-			var cloudEnv CloudEnv
-			cloudEnv = NewLocalCloudEnvFromReader(bytes.NewBuffer(formatService.Content), formatService.Type)
+			cloudEnv := NewLocalCloudEnvFromReader(bytes.NewBuffer(formatService.Content), formatService.Type)
 			defaultTest(cloudEnv)
 		})
 	}

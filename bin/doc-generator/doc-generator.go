@@ -1,11 +1,6 @@
 package main
 
 import (
-	"github.com/cloudfoundry-community/gautocloud"
-	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
-	. "github.com/cloudfoundry-community/gautocloud/test-utils"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"html/template"
 	"os"
 	"path"
@@ -13,6 +8,12 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+
+	"github.com/cloudfoundry-community/gautocloud"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
+	test_utils "github.com/cloudfoundry-community/gautocloud/test-utils"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type DocStruct struct {
@@ -56,14 +57,15 @@ type GlobalDoc struct {
 }
 
 func before() {
-	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
+	err := os.Setenv("MYSQL_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "mysql",
 		User:     "user",
 		Password: "password",
 		Port:     3406,
 		Target:   "mydb",
 	}))
-	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("POSTGRES_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "postgres",
 		User:     "user",
 		Password: "password",
@@ -71,53 +73,68 @@ func before() {
 		Target:   "mydb",
 		Options:  "sslmode=disable",
 	}))
-	os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("MSSQL_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "sqlserver",
 		User:     "sa",
 		Password: "password",
 		Port:     1433,
 		Target:   "test",
 	}))
-	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
-	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
-	os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
-	os.Setenv("SSO_CLIENT_ID", "myId")
-	os.Setenv("SSO_CLIENT_SECRET", "mySecret")
-	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
-	os.Setenv("SSO_SCOPES", "scope1,scope2")
-	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	fatalIf(err)
+	err = os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
+	fatalIf(err)
+	err = os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
+	fatalIf(err)
+	err = os.Setenv("SSO_CLIENT_ID", "myId")
+	fatalIf(err)
+	err = os.Setenv("SSO_CLIENT_SECRET", "mySecret")
+	fatalIf(err)
+	err = os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
+	fatalIf(err)
+	err = os.Setenv("SSO_SCOPES", "scope1,scope2")
+	fatalIf(err)
+	err = os.Setenv("MONGODB_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:   "mongo",
 		Port:   27017,
 		Target: "test",
 	}))
-	os.Setenv("ORACLE_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("ORACLE_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:   "oci",
 		Port:   27017,
 		Target: "test",
 	}))
-	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("REDIS_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "redis",
 		User:     "redis",
 		Password: "redis",
 		Port:     6379,
 	}))
-	os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("AMQP_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "amqp",
 		User:     "user",
 		Password: "password",
 		Port:     5672,
 	}))
-	os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("SMTP_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
-	os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("S3_URL", test_utils.CreateEnvValue(test_utils.ServiceUrl{
 		Type:     "s3",
 		User:     "accessKey1",
 		Password: "verySecretKey1",
 		Port:     8090,
 		Target:   "bucket",
 	}))
+	fatalIf(err)
 	gautocloud.ReloadConnectors()
 }
 func main() {
@@ -164,7 +181,7 @@ func main() {
 
 }
 func toSlug(name string) string {
-	return strings.ToLower(strings.Replace(name, " ", "-", -1))
+	return strings.ToLower(strings.ReplaceAll(name, " ", "-"))
 }
 func getDocMap() map[string]Doc {
 	docs := make(map[string]Doc)
@@ -276,10 +293,7 @@ func isCloseable(data interface{}) bool {
 		return false
 	}
 	resp = v.MethodByName("Close")
-	if resp == (reflect.Value{}) {
-		return false
-	}
-	return true
+	return resp != (reflect.Value{})
 }
 func generateDocStruct(data interface{}) DocStruct {
 	givenType := reflect.TypeOf(data)

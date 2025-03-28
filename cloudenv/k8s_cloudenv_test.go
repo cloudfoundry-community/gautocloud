@@ -3,9 +3,10 @@ package cloudenv_test
 import (
 	. "github.com/cloudfoundry-community/gautocloud/cloudenv"
 
+	"os"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"os"
 )
 
 var _ = Describe("KubernetesCloudenv", func() {
@@ -102,7 +103,9 @@ var _ = Describe("KubernetesCloudenv", func() {
 	})
 	Context("IsInCloudEnv", func() {
 		It("should return false when have KUBERNETES_PORT env var exists", func() {
-			os.Unsetenv("KUBERNETES_PORT")
+			err := os.Unsetenv("KUBERNETES_PORT")
+			Expect(err).NotTo(HaveOccurred())
+
 			Expect(cloudEnv.IsInCloudEnv()).Should(BeFalse())
 		})
 		It("should return true when have KUBERNETES_PORT env var not exists", func() {

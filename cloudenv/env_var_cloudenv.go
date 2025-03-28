@@ -107,7 +107,10 @@ func (c EnvVarCloudEnv) decodeJson(value string) map[string]interface{} {
 	}
 	decoder := json.NewDecoder(bytes.NewReader([]byte(value)))
 	decoder.UseNumber()
-	decoder.Decode(&creds)
+	err := decoder.Decode(&creds)
+	if err != nil {
+		return nil
+	}
 	return creds
 }
 func (c EnvVarCloudEnv) EnvVars() []EnvVar {

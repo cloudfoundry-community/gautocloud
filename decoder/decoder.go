@@ -15,12 +15,13 @@ package decoder
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/azer/snakecase"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/azer/snakecase"
 )
 
 const (
@@ -323,10 +324,7 @@ func parseInTag(tag, fieldName string) Tag {
 	tag = strings.TrimSpace(tag)
 	splitedTag := strings.Split(tag, ",")
 	name := splitedTag[0]
-	skipped := false
-	if name == skipTag {
-		skipped = true
-	}
+	skipped := name == skipTag
 	if name == "" {
 		name = snakecase.SnakeCase(fieldName)
 	}

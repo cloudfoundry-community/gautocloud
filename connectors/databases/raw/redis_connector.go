@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type RedisRawConnector struct{}
@@ -20,8 +20,8 @@ func (c RedisRawConnector) Name() string {
 func (c RedisRawConnector) Tags() []string {
 	return []string{"redis"}
 }
-func (c RedisRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(RedisSchema)
+func (c RedisRawConnector) Load(dbschema any) (any, error) {
+	fSchema := dbschema.(schema.RedisSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.RedisDatabase{
 			Password: fSchema.Password,
@@ -42,6 +42,6 @@ func (c RedisRawConnector) Load(schema interface{}) (interface{}, error) {
 		Port:     port,
 	}, nil
 }
-func (c RedisRawConnector) Schema() interface{} {
-	return RedisSchema{}
+func (c RedisRawConnector) Schema() any {
+	return schema.RedisSchema{}
 }

@@ -4,11 +4,12 @@ package urfave
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	"github.com/urfave/cli"
-	"reflect"
-	"strings"
 )
 
 type CliInterceptor struct {
@@ -30,7 +31,7 @@ func (i CliInterceptor) Intercept(current, found interface{}) (interface{}, erro
 	flagNames := i.context.FlagNames()
 	flagNames = append(flagNames, i.context.GlobalFlagNames()...)
 	for _, name := range flagNames {
-		key := strings.Replace(name, "-", "_", -1)
+		key := strings.ReplaceAll(name, "-", "_")
 		value := i.context.Generic(name)
 		if value == nil {
 			value = i.context.GlobalGeneric(name)

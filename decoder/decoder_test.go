@@ -4,6 +4,7 @@ import (
 	. "github.com/cloudfoundry-community/gautocloud/decoder"
 
 	"encoding/json"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -264,7 +265,8 @@ var _ = Describe("Decoder", func() {
 			"myname": 1,
 		}
 		Expect(func() {
-			Unmarshal(data, &test)
+			err := Unmarshal(data, &test)
+			Expect(err).Should(HaveOccurred())
 		}).Should(Panic())
 	})
 	It("should give an error if structure have invalid type", func() {

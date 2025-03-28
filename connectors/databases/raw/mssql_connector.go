@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type MssqlRawConnector struct{}
@@ -20,8 +20,8 @@ func (c MssqlRawConnector) Name() string {
 func (c MssqlRawConnector) Tags() []string {
 	return []string{"mssql.*", "sqlserver"}
 }
-func (c MssqlRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(MssqlSchema)
+func (c MssqlRawConnector) Load(dbschema any) (any, error) {
+	fSchema := dbschema.(schema.MssqlSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.MssqlDatabase{
 			User:     fSchema.User,
@@ -45,6 +45,6 @@ func (c MssqlRawConnector) Load(schema interface{}) (interface{}, error) {
 		Options:  fSchema.Uri.RawQuery,
 	}, nil
 }
-func (c MssqlRawConnector) Schema() interface{} {
-	return MssqlSchema{}
+func (c MssqlRawConnector) Schema() any {
+	return schema.MssqlSchema{}
 }

@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/amqptype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/amqp/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/amqp/schema"
 )
 
 type AmqpRawConnector struct{}
@@ -20,8 +20,8 @@ func (c AmqpRawConnector) Name() string {
 func (c AmqpRawConnector) Tags() []string {
 	return []string{"amqp", "rabbitmq"}
 }
-func (c AmqpRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(AmqpSchema)
+func (c AmqpRawConnector) Load(amqpshema any) (any, error) {
+	fSchema := amqpshema.(schema.AmqpSchema)
 	if fSchema.Uri.Host == "" {
 		return amqptype.Amqp{
 			User:     fSchema.User,
@@ -43,6 +43,6 @@ func (c AmqpRawConnector) Load(schema interface{}) (interface{}, error) {
 		Port:     port,
 	}, nil
 }
-func (c AmqpRawConnector) Schema() interface{} {
-	return AmqpSchema{}
+func (c AmqpRawConnector) Schema() any {
+	return schema.AmqpSchema{}
 }

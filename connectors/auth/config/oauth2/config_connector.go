@@ -4,7 +4,7 @@ import (
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/auth/raw"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
 	"golang.org/x/oauth2"
 )
 
@@ -30,12 +30,12 @@ func (c Oauth2ConfigConnector) Name() string {
 func (c Oauth2ConfigConnector) Tags() []string {
 	return c.rawConn.Tags()
 }
-func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
-	schema, err := c.rawConn.Load(schema)
+func (c Oauth2ConfigConnector) Load(authschema any) (any, error) {
+	authschema, err := c.rawConn.Load(authschema)
 	if err != nil {
 		return nil, err
 	}
-	fSchema := schema.(Oauth2Schema)
+	fSchema := authschema.(schema.Oauth2Schema)
 	config := &oauth2.Config{
 		ClientID:     fSchema.ClientId,
 		ClientSecret: fSchema.ClientSecret,
@@ -47,6 +47,6 @@ func (c Oauth2ConfigConnector) Load(schema interface{}) (interface{}, error) {
 	}
 	return config, nil
 }
-func (c Oauth2ConfigConnector) Schema() interface{} {
+func (c Oauth2ConfigConnector) Schema() any {
 	return c.rawConn.Schema()
 }

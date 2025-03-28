@@ -1,16 +1,16 @@
 package configfile
 
 import (
-	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
+
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	"github.com/cloudfoundry-community/gautocloud/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"os"
-	"path/filepath"
-	"reflect"
 )
 
 type ConfigFileInterceptor struct {
@@ -44,12 +44,12 @@ func (i ConfigFileInterceptor) Intercept(current, found interface{}) (interface{
 	viper.SetConfigFile(confPath)
 	err = viper.ReadInConfig()
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Fatal error on reading config file: %s \n", err.Error()))
+		return nil, fmt.Errorf("fatal error on reading config file: %s", err.Error())
 	}
 	var creds map[interface{}]interface{}
 	err = viper.Unmarshal(&creds)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Fatal error when unmarshaling config file: %s \n", err.Error()))
+		return nil, fmt.Errorf("fatal error when unmarshaling config file: %s", err.Error())
 	}
 	finalCreds := utils.ConvertMapInterface(creds).(map[string]interface{})
 	schemaPtr := interceptor.InterfaceAsPtr(schema)

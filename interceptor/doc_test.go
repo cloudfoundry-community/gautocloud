@@ -2,16 +2,26 @@ package interceptor_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors/generic"
-	"os"
 )
 
 func init() {
 	os.Clearenv()
-	os.Setenv("DYNO", "true")
-	os.Setenv("CONFIG_FOO", "gautocloud")
-	os.Setenv("CONFIG_BAR", "<injected by gautocloud>")
+	err := os.Setenv("DYNO", "true")
+	if err != nil {
+		panic(err)
+	}
+	err = os.Setenv("CONFIG_FOO", "gautocloud")
+	if err != nil {
+		panic(err)
+	}
+	err = os.Setenv("CONFIG_BAR", "<injected by gautocloud>")
+	if err != nil {
+		panic(err)
+	}
 	gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MyConfig{}))
 	gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MySchema{}))
 	gautocloud.ReloadConnectors()
@@ -30,7 +40,7 @@ func ExampleNewOverwrite() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(fmt.Sprintf("%#v", config))
+	fmt.Printf("%#v\n", config)
 	// Output: interceptor_test.MyConfig{Foo:"my own data", Bar:"<injected by gautocloud>"}
 }
 
@@ -48,7 +58,10 @@ func (s *MySchema) Intercept(found interface{}) error {
 
 func ExampleNewSchema() {
 	var mySchema MySchema
-	gautocloud.Inject(&mySchema)
-	fmt.Println(fmt.Sprintf("%#v", mySchema))
+	err := gautocloud.Inject(&mySchema)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%#v\n", mySchema)
 	// Output: interceptor_test.MySchema{Foo:"write", Bar:"<injected by gautocloud>"}
 }

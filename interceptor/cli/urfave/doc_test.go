@@ -2,11 +2,12 @@ package urfave_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors/generic"
 	. "github.com/cloudfoundry-community/gautocloud/interceptor/cli/urfave"
 	"github.com/urfave/cli"
-	"os"
 )
 
 func Example() {
@@ -19,9 +20,15 @@ func Example() {
 
 	// Initialize a fake cloud env only for example, normally you should do this in init() function
 	os.Clearenv()
-	os.Setenv("DYNO", "true")
+	err := os.Setenv("DYNO", "true")
+	if err != nil {
+		panic(err)
+	}
 	// Here we set a value for Orig field from MyConfig schema
-	os.Setenv("CONFIG_ORIG", "<injected by gautocloud>")
+	err = os.Setenv("CONFIG_ORIG", "<injected by gautocloud>")
+	if err != nil {
+		panic(err)
+	}
 	gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MyConfig{}, cliInterceptor))
 	gautocloud.ReloadConnectors()
 	//////
@@ -38,7 +45,7 @@ func Example() {
 			panic(err)
 		}
 		// We can see that we have our config altered by flags found by urfave/cli
-		fmt.Println(fmt.Sprintf("%#v", config))
+		fmt.Printf("%#v\n", config)
 		return nil
 	}
 
@@ -67,7 +74,10 @@ func Example() {
 			Action: action,
 		},
 	}
-	app.Run([]string{"app", "--foo=bar", "doo", "--bar"})
+	err = app.Run([]string{"app", "--foo=bar", "doo", "--bar"})
+	if err != nil {
+		panic(err)
+	}
 
 	// Output: urfave_test.MyConfig{Foo:"bar", Bar:true, Orig:"<injected by gautocloud>"}
 }
