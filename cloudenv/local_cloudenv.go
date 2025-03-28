@@ -130,7 +130,6 @@ func (c *LocalCloudEnv) loadCloudFile() error {
 func (c *LocalCloudEnv) loadAppName() {
 	c.appName = "<unknown>"
 	codecRegistry := viper.NewCodecRegistry()
-	codecRegistry.RegisterCodec("hcl", hcl.Codec{})
 	err := codecRegistry.RegisterCodec("hcl", hcl.Codec{})
 	if err != nil {
 		panic(fmt.Errorf("fatal error on registering codec: %s", err))

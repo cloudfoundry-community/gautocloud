@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type MongodbRawConnector struct{}
@@ -20,8 +20,8 @@ func (c MongodbRawConnector) Name() string {
 func (c MongodbRawConnector) Tags() []string {
 	return []string{"mongo.*"}
 }
-func (c MongodbRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(MongoDbSchema)
+func (c MongodbRawConnector) Load(dbschema any) (any, error) {
+	fSchema := dbschema.(schema.MongoDbSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.MongodbDatabase{
 			User:     fSchema.User,
@@ -45,6 +45,6 @@ func (c MongodbRawConnector) Load(schema interface{}) (interface{}, error) {
 		Options:  fSchema.Uri.RawQuery,
 	}, nil
 }
-func (c MongodbRawConnector) Schema() interface{} {
-	return MongoDbSchema{}
+func (c MongodbRawConnector) Schema() any {
+	return schema.MongoDbSchema{}
 }

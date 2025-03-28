@@ -400,7 +400,9 @@ var _ = Describe("Loader", func() {
 		})
 		AfterEach(func() {
 			log.SetLevel(currentLvl)
-			os.Unsetenv(DEBUG_MODE_ENV_VAR)
+			err := os.Unsetenv(DEBUG_MODE_ENV_VAR)
+			Expect(err).NotTo(HaveOccurred())
+
 		})
 		It("should show debug log if env var set", func() {
 			log.SetLevel(log.WarnLevel)

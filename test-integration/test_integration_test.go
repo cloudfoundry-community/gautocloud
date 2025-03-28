@@ -39,7 +39,8 @@ var _ = Describe("Connectors integration", func() {
 	}
 
 	log.SetLevel(log.DebugLevel)
-	os.Unsetenv("MAIL") // travis set this env var which make connector detect it
+	err := os.Unsetenv("MAIL") // travis set this env var which make connector detect it
+	Expect(err).ToNot(HaveOccurred())
 	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
 		Type:     "mysql",
 		User:     "user",
@@ -47,7 +48,7 @@ var _ = Describe("Connectors integration", func() {
 		Port:     3406,
 		Target:   "mydb",
 	}))
-	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
 		Type:     "postgres",
 		User:     "user",
 		Password: "password",
@@ -55,26 +56,36 @@ var _ = Describe("Connectors integration", func() {
 		Target:   "mydb",
 		Options:  "sslmode=disable",
 	}))
-	os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
 		Type:     "sqlserver",
 		User:     "sa",
 		Password: "password",
 		Port:     1433,
 		Target:   "test",
 	}))
-	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
 		Type:   "mongo",
 		Port:   27017,
 		Target: "test",
 	}))
-	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
-	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
-	os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
-	os.Setenv("SSO_CLIENT_ID", "myId")
-	os.Setenv("SSO_CLIENT_SECRET", "mySecret")
-	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
-	os.Setenv("SSO_SCOPES", "scope1,scope2")
-	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_CLIENT_ID", "myId")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_CLIENT_SECRET", "mySecret")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SSO_SCOPES", "scope1,scope2")
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
 		Type:     "redis",
 		User:     "redis",
 		Password: "redis",

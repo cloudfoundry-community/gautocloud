@@ -20,9 +20,15 @@ func Example() {
 
 	// Initialize a fake cloud env only for example, normally you should do this in init() function
 	os.Clearenv()
-	os.Setenv("DYNO", "true")
+	err := os.Setenv("DYNO", "true")
+	if err != nil {
+		panic(err)
+	}
 	// Here we set a value for Orig field from MyConfig schema
-	os.Setenv("CONFIG_ORIG", "<injected by gautocloud>")
+	err = os.Setenv("CONFIG_ORIG", "<injected by gautocloud>")
+	if err != nil {
+		panic(err)
+	}
 	gautocloud.RegisterConnector(generic.NewConfigGenericConnector(MyConfig{}, cliInterceptor))
 	gautocloud.ReloadConnectors()
 	//////
@@ -68,7 +74,10 @@ func Example() {
 			Action: action,
 		},
 	}
-	app.Run([]string{"app", "--foo=bar", "doo", "--bar"})
+	err = app.Run([]string{"app", "--foo=bar", "doo", "--bar"})
+	if err != nil {
+		panic(err)
+	}
 
 	// Output: urfave_test.MyConfig{Foo:"bar", Bar:true, Orig:"<injected by gautocloud>"}
 }
