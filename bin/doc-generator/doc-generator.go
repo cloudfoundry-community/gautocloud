@@ -1,11 +1,6 @@
 package main
 
 import (
-	"github.com/cloudfoundry-community/gautocloud"
-	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
-	. "github.com/cloudfoundry-community/gautocloud/test-utils"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"html/template"
 	"os"
 	"path"
@@ -13,6 +8,12 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+
+	"github.com/cloudfoundry-community/gautocloud"
+	_ "github.com/cloudfoundry-community/gautocloud/connectors/all"
+	. "github.com/cloudfoundry-community/gautocloud/test-utils"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type DocStruct struct {
@@ -164,7 +165,7 @@ func main() {
 
 }
 func toSlug(name string) string {
-	return strings.ToLower(strings.Replace(name, " ", "-", -1))
+	return strings.ToLower(strings.ReplaceAll(name, " ", "-"))
 }
 func getDocMap() map[string]Doc {
 	docs := make(map[string]Doc)
@@ -276,10 +277,7 @@ func isCloseable(data interface{}) bool {
 		return false
 	}
 	resp = v.MethodByName("Close")
-	if resp == (reflect.Value{}) {
-		return false
-	}
-	return true
+	return resp != (reflect.Value{})
 }
 func generateDocStruct(data interface{}) DocStruct {
 	givenType := reflect.TypeOf(data)

@@ -1,11 +1,14 @@
 package loader_test
 
 import (
-	. "github.com/cloudfoundry-community/gautocloud/loader"
 	"os"
+
+	. "github.com/cloudfoundry-community/gautocloud/loader"
 
 	"bytes"
 	"fmt"
+	"reflect"
+
 	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	fakecloud "github.com/cloudfoundry-community/gautocloud/cloudenv/fake"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
@@ -15,7 +18,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	log "github.com/sirupsen/logrus"
-	"reflect"
 )
 
 type FakeSchema struct {
@@ -407,7 +409,8 @@ var _ = Describe("Loader", func() {
 			fakeCloudEnv1 := fakecloud.NewFakeCloudEnv()
 			fakeCloudEnv1.(*fakecloud.FakeCloudEnv).SetInCloudEnv(true)
 
-			os.Setenv(DEBUG_MODE_ENV_VAR, "1")
+			err := os.Setenv(DEBUG_MODE_ENV_VAR, "1")
+			Expect(err).NotTo(HaveOccurred())
 			loader = NewLoader([]cloudenv.CloudEnv{fakeCloudEnv, fakeCloudEnv1})
 
 			Expect(logBuf.String()).Should(ContainSubstring("Environment detected and loaded"))

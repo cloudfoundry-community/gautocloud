@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"encoding/json"
-	"errors"
 	"io"
 	"path/filepath"
 	"reflect"
@@ -41,12 +40,15 @@ func NewLocalCloudEnv() CloudEnv {
 func NewLocalCloudEnvFromReader(r io.Reader, configType string) CloudEnv {
 	cloudEnv := &LocalCloudEnv{}
 	codecRegistry := viper.NewCodecRegistry()
-	codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	err := codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	if err != nil {
+		panic(fmt.Errorf("fatal error on registering codec: %s", err))
+	}
 	v := viper.NewWithOptions(viper.WithCodecRegistry(codecRegistry))
 	v.SetConfigType(configType)
-	err := v.ReadConfig(r)
+	err = v.ReadConfig(r)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error on reading cloud file: %s \n", err))
+		panic(fmt.Errorf("fatal error on reading cloud file: %s", err))
 	}
 	cloudEnv.loadServices(v.Get(SERVICES_CONFIG_KEY))
 	cloudEnv.loadAppName()
@@ -79,18 +81,21 @@ func (c *LocalCloudEnv) loadConfigFile() error {
 		return nil
 	}
 	codecRegistry := viper.NewCodecRegistry()
-	codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	err = codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	if err != nil {
+		panic(fmt.Errorf("fatal error on registering codec: %s", err))
+	}
 	v := viper.NewWithOptions(viper.WithCodecRegistry(codecRegistry))
 	v.SetConfigType(filepath.Ext(confPath)[1:])
 	v.SetConfigFile(confPath)
 	err = v.ReadInConfig()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Fatal error on reading config file: %s \n", err.Error()))
+		return fmt.Errorf("fatal error on reading config file: %s", err.Error())
 	}
 	var creds map[interface{}]interface{}
 	err = v.Unmarshal(&creds)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Fatal error when unmarshaling config file: %s \n", err.Error()))
+		return fmt.Errorf("fatal error when unmarshaling config file: %s", err.Error())
 	}
 	finalCreds := c.convertMapInterface(creds).(map[string]interface{})
 	c.servicesLocal = append(c.servicesLocal, ServiceLocal{
@@ -102,13 +107,16 @@ func (c *LocalCloudEnv) loadConfigFile() error {
 }
 func (c *LocalCloudEnv) loadCloudFile() error {
 	codecRegistry := viper.NewCodecRegistry()
-	codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	err := codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	if err != nil {
+		panic(fmt.Errorf("fatal error on registering codec: %s", err))
+	}
 	v := viper.NewWithOptions(viper.WithCodecRegistry(codecRegistry))
 	v.SetConfigType(filepath.Ext(os.Getenv(LOCAL_ENV_KEY))[1:])
 	v.SetConfigFile(os.Getenv(LOCAL_ENV_KEY))
-	err := v.ReadInConfig()
+	err = v.ReadInConfig()
 	if err != nil {
-		return errors.New(fmt.Sprintf("Fatal error on reading cloud file: %s \n", err.Error()))
+		return fmt.Errorf("fatal error on reading cloud file: %s", err.Error())
 	}
 	services := v.Get(SERVICES_CONFIG_KEY)
 	if services != nil {
@@ -123,6 +131,10 @@ func (c *LocalCloudEnv) loadAppName() {
 	c.appName = "<unknown>"
 	codecRegistry := viper.NewCodecRegistry()
 	codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	err := codecRegistry.RegisterCodec("hcl", hcl.Codec{})
+	if err != nil {
+		panic(fmt.Errorf("fatal error on registering codec: %s", err))
+	}
 	v := viper.NewWithOptions(viper.WithCodecRegistry(codecRegistry))
 	appName := v.Get("app_name")
 	if appName != nil {
@@ -221,12 +233,12 @@ func (c *LocalCloudEnv) loadServices(v interface{}) {
 	}
 	b, err := json.Marshal(dataFinal)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error during loading cloud file: %s \n", err))
+		panic(fmt.Errorf("fatal error during loading cloud file: %s", err))
 	}
 	var services []ServiceLocal
 	err = json.Unmarshal(b, &services)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error during loading cloud file: %s \n", err))
+		panic(fmt.Errorf("fatal error during loading cloud file: %s", err))
 	}
 	c.servicesLocal = services
 }

@@ -61,7 +61,8 @@ var _ = Describe("Urfave", func() {
 				},
 			}
 
-			app.Run([]string{"app", "--foo=bar", "doo", "--foo-bar"})
+			err := app.Run([]string{"app", "--foo=bar", "doo", "--foo-bar"})
+			Expect(err).ToNot(HaveOccurred())
 
 			Expect(ran).To(BeTrue())
 		})
@@ -99,7 +100,8 @@ var _ = Describe("Urfave", func() {
 				},
 			}
 
-			app.Run([]string{"app", "doo"})
+			err := app.Run([]string{"app", "doo"})
+			Expect(err).ToNot(HaveOccurred())
 
 			Expect(ran).To(BeTrue())
 		})

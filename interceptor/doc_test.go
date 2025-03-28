@@ -2,9 +2,10 @@ package interceptor_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors/generic"
-	"os"
 )
 
 func init() {
@@ -30,7 +31,7 @@ func ExampleNewOverwrite() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(fmt.Sprintf("%#v", config))
+	fmt.Printf("%#v\n", config)
 	// Output: interceptor_test.MyConfig{Foo:"my own data", Bar:"<injected by gautocloud>"}
 }
 
@@ -49,6 +50,6 @@ func (s *MySchema) Intercept(found interface{}) error {
 func ExampleNewSchema() {
 	var mySchema MySchema
 	gautocloud.Inject(&mySchema)
-	fmt.Println(fmt.Sprintf("%#v", mySchema))
+	fmt.Printf("%#v\n", mySchema)
 	// Output: interceptor_test.MySchema{Foo:"write", Bar:"<injected by gautocloud>"}
 }

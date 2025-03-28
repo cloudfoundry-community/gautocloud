@@ -2,11 +2,12 @@ package urfave_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/cloudfoundry-community/gautocloud"
 	"github.com/cloudfoundry-community/gautocloud/connectors/generic"
 	. "github.com/cloudfoundry-community/gautocloud/interceptor/cli/urfave"
 	"github.com/urfave/cli"
-	"os"
 )
 
 func Example() {
@@ -38,7 +39,7 @@ func Example() {
 			panic(err)
 		}
 		// We can see that we have our config altered by flags found by urfave/cli
-		fmt.Println(fmt.Sprintf("%#v", config))
+		fmt.Printf("%#v\n", config)
 		return nil
 	}
 

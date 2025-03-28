@@ -3,9 +3,10 @@ package cloudenv_test
 import (
 	. "github.com/cloudfoundry-community/gautocloud/cloudenv"
 
+	"os"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"os"
 )
 
 var _ = Describe("HerokuCloudenv", func() {
@@ -116,13 +117,13 @@ var _ = Describe("HerokuCloudenv", func() {
 	})
 	Context("IsInCloudEnv", func() {
 		It("should return false when have DYNO env var exists", func() {
-			os.Unsetenv("DYNO")
+			err := os.Unsetenv("DYNO")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(cloudEnv.IsInCloudEnv()).Should(BeFalse())
 		})
 		It("should return true when have DYNO env var not exists", func() {
 			err := os.Setenv("DYNO", "")
 			Expect(err).NotTo(HaveOccurred())
-
 			Expect(cloudEnv.IsInCloudEnv()).Should(BeTrue())
 		})
 	})

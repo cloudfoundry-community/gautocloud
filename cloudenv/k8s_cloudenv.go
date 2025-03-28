@@ -36,7 +36,7 @@ func (c KubernetesCloudEnv) SanitizeEnvVars(envVars []string) []string {
 			finalEnvVars = append(finalEnvVars, "KUBERNETES_URI="+strings.Join(splitEnvVar[1:], "="))
 
 		}
-		splitEnvVar[0] = strings.Replace(splitEnvVar[0], "_SERVICE", "", -1)
+		splitEnvVar[0] = strings.ReplaceAll(splitEnvVar[0], "_SERVICE", "")
 		finalEnvVars = append(finalEnvVars, strings.Join(splitEnvVar, "="))
 	}
 	return finalEnvVars

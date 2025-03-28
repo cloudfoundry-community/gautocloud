@@ -2,7 +2,7 @@ package raw
 
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/auth/schema"
 )
 
 type Oauth2RawConnector struct{}
@@ -19,9 +19,9 @@ func (c Oauth2RawConnector) Name() string {
 func (c Oauth2RawConnector) Tags() []string {
 	return []string{"oauth.*", "sso"}
 }
-func (c Oauth2RawConnector) Load(schema interface{}) (interface{}, error) {
-	return schema.(Oauth2Schema), nil
+func (c Oauth2RawConnector) Load(authschema any) (any, error) {
+	return authschema.(schema.Oauth2Schema), nil
 }
-func (c Oauth2RawConnector) Schema() interface{} {
-	return Oauth2Schema{}
+func (c Oauth2RawConnector) Schema() any {
+	return schema.Oauth2Schema{}
 }

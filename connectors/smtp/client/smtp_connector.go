@@ -3,14 +3,15 @@ package client
 import (
 	"crypto/tls"
 	"errors"
-	"github.com/cloudfoundry-community/gautocloud"
-	"github.com/cloudfoundry-community/gautocloud/connectors"
-	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/raw"
-	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/smtptype"
 	"net"
 	"net/smtp"
 	"strconv"
 	"time"
+
+	"github.com/cloudfoundry-community/gautocloud"
+	"github.com/cloudfoundry-community/gautocloud/connectors"
+	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/raw"
+	"github.com/cloudfoundry-community/gautocloud/connectors/smtp/smtptype"
 )
 
 func init() {
@@ -55,24 +56,45 @@ func (c SmtpConnector) GetSmtp(schema smtptype.Smtp, withAuth bool, isTls bool, 
 	}
 	client, err := smtp.NewClient(conn, host)
 	if err != nil {
-		conn.Close()
+		err := conn.Close()
+		if err != nil {
+			return client, err
+		}
 		return client, err
 	}
 	if isTls && startTls && withAuth {
 		err = client.StartTLS(tlsconfig)
 		if err != nil {
-			client.Close()
-			client.Quit()
-			conn.Close()
+			err = client.Close()
+			if err != nil {
+				return client, err
+			}
+			err = client.Quit()
+			if err != nil {
+				return client, err
+			}
+			err = conn.Close()
+			if err != nil {
+				return client, err
+			}
 			return client, err
 		}
 	}
 	if withAuth {
 		err = client.Auth(c.GetAuth(schema))
 		if err != nil {
-			client.Close()
-			client.Quit()
-			conn.Close()
+			err = client.Close()
+			if err != nil {
+				return client, err
+			}
+			err = client.Quit()
+			if err != nil {
+				return client, err
+			}
+			err = conn.Close()
+			if err != nil {
+				return client, err
+			}
 			return client, err
 		}
 	}
