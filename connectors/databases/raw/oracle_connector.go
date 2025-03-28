@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type OracleRawConnector struct{}
@@ -20,8 +20,8 @@ func (c OracleRawConnector) Name() string {
 func (c OracleRawConnector) Tags() []string {
 	return []string{"oracle", "oci.*"}
 }
-func (c OracleRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(OracleSchema)
+func (c OracleRawConnector) Load(dbschema any) (any, error) {
+	fSchema := dbschema.(schema.OracleSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.OracleDatabase{
 			User:     fSchema.User,
@@ -45,6 +45,6 @@ func (c OracleRawConnector) Load(schema interface{}) (interface{}, error) {
 		Options:  fSchema.Uri.RawQuery,
 	}, nil
 }
-func (c OracleRawConnector) Schema() interface{} {
-	return OracleSchema{}
+func (c OracleRawConnector) Schema() any {
+	return schema.OracleSchema{}
 }

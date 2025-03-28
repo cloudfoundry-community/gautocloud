@@ -3,7 +3,7 @@ package raw
 import (
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/connectors/databases/dbtype"
-	. "github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
+	"github.com/cloudfoundry-community/gautocloud/connectors/databases/schema"
 )
 
 type PostgresqlRawConnector struct{}
@@ -20,8 +20,8 @@ func (c PostgresqlRawConnector) Name() string {
 func (c PostgresqlRawConnector) Tags() []string {
 	return []string{"postgres.*"}
 }
-func (c PostgresqlRawConnector) Load(schema interface{}) (interface{}, error) {
-	fSchema := schema.(PostgresqlSchema)
+func (c PostgresqlRawConnector) Load(dbschema interface{}) (interface{}, error) {
+	fSchema := dbschema.(schema.PostgresqlSchema)
 	if fSchema.Uri.Host == "" {
 		return dbtype.PostgresqlDatabase{
 			User:     fSchema.User,
@@ -46,5 +46,5 @@ func (c PostgresqlRawConnector) Load(schema interface{}) (interface{}, error) {
 	}, nil
 }
 func (c PostgresqlRawConnector) Schema() interface{} {
-	return PostgresqlSchema{}
+	return schema.PostgresqlSchema{}
 }

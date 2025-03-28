@@ -91,23 +91,27 @@ var _ = Describe("Connectors integration", func() {
 		Password: "redis",
 		Port:     6379,
 	}))
-	os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
 		Type:     "amqp",
 		User:     "user",
 		Password: "password",
 		Port:     5672,
 	}))
-	os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
-	os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
+	Expect(err).ToNot(HaveOccurred())
+	err = os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
 		Type:     "http",
 		User:     "accessKey1",
 		Password: "verySecretKey1",
 		Port:     8090,
 		Target:   "bucket",
 	}))
+	Expect(err).ToNot(HaveOccurred())
 	gautocloud.ReloadConnectors()
 
 	Context("Mysql", func() {

@@ -57,13 +57,14 @@ type GlobalDoc struct {
 }
 
 func before() {
-	os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
+	err := os.Setenv("MYSQL_URL", CreateEnvValue(ServiceUrl{
 		Type:     "mysql",
 		User:     "user",
 		Password: "password",
 		Port:     3406,
 		Target:   "mydb",
 	}))
+	fatalIf(err)
 	os.Setenv("POSTGRES_URL", CreateEnvValue(ServiceUrl{
 		Type:     "postgres",
 		User:     "user",
@@ -72,53 +73,66 @@ func before() {
 		Target:   "mydb",
 		Options:  "sslmode=disable",
 	}))
-	os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
+	err = os.Setenv("MSSQL_URL", CreateEnvValue(ServiceUrl{
 		Type:     "sqlserver",
 		User:     "sa",
 		Password: "password",
 		Port:     1433,
 		Target:   "test",
 	}))
-	os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
-	os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
-	os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
-	os.Setenv("SSO_CLIENT_ID", "myId")
-	os.Setenv("SSO_CLIENT_SECRET", "mySecret")
-	os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
-	os.Setenv("SSO_SCOPES", "scope1,scope2")
-	os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("SSO_TOKEN_URI", "http://localhost/tokenUri")
+	err = os.Setenv("SSO_AUTH_URI", "http://localhost/authUri")
+	fatalIf(err)
+	err = os.Setenv("SSO_USER_INFO_URI", "http://localhost/userInfo")
+	fatalIf(err)
+	err = os.Setenv("SSO_CLIENT_ID", "myId")
+	fatalIf(err)
+	err = os.Setenv("SSO_CLIENT_SECRET", "mySecret")
+	fatalIf(err)
+	err = os.Setenv("SSO_GRANT_TYPE", "grant1,grant2")
+	fatalIf(err)
+	err = os.Setenv("SSO_SCOPES", "scope1,scope2")
+	fatalIf(err)
+	err = os.Setenv("MONGODB_URL", CreateEnvValue(ServiceUrl{
 		Type:   "mongo",
 		Port:   27017,
 		Target: "test",
 	}))
-	os.Setenv("ORACLE_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("ORACLE_URL", CreateEnvValue(ServiceUrl{
 		Type:   "oci",
 		Port:   27017,
 		Target: "test",
 	}))
-	os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("REDIS_URL", CreateEnvValue(ServiceUrl{
 		Type:     "redis",
 		User:     "redis",
 		Password: "redis",
 		Port:     6379,
 	}))
-	os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("AMQP_URL", CreateEnvValue(ServiceUrl{
 		Type:     "amqp",
 		User:     "user",
 		Password: "password",
 		Port:     5672,
 	}))
-	os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("SMTP_URL", CreateEnvValue(ServiceUrl{
 		Type: "smtp",
 		Port: 587,
 	}))
-	os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
+	fatalIf(err)
+	err = os.Setenv("S3_URL", CreateEnvValue(ServiceUrl{
 		Type:     "s3",
 		User:     "accessKey1",
 		Password: "verySecretKey1",
 		Port:     8090,
 		Target:   "bucket",
 	}))
+	fatalIf(err)
 	gautocloud.ReloadConnectors()
 }
 func main() {
