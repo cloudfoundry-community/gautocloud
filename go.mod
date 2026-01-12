@@ -23,7 +23,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/urfave/cli v1.22.17
 	golang.org/x/oauth2 v0.34.0
-	golang.org/x/text v0.32.0
+	golang.org/x/text v0.33.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )
 
