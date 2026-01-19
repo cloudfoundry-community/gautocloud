@@ -19,7 +19,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.38.3
 	github.com/rabbitmq/amqp091-go v1.10.0
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/viper v1.21.0
 	github.com/urfave/cli v1.22.17
 	golang.org/x/oauth2 v0.34.0
