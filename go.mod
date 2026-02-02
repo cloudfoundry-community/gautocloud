@@ -14,7 +14,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
 	github.com/jinzhu/gorm v1.9.16
-	github.com/lib/pq v1.10.9
+	github.com/lib/pq v1.11.1
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.38.3
