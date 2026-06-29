@@ -5,13 +5,14 @@ package loader
 
 import (
 	"fmt"
+	"os"
+	"reflect"
+
 	"github.com/cloudfoundry-community/gautocloud/cloudenv"
 	"github.com/cloudfoundry-community/gautocloud/connectors"
 	"github.com/cloudfoundry-community/gautocloud/decoder"
 	"github.com/cloudfoundry-community/gautocloud/interceptor"
 	log "github.com/sirupsen/logrus"
-	"os"
-	"reflect"
 )
 
 const (
@@ -180,7 +181,7 @@ func (l GautocloudLoader) Inject(service interface{}) error {
 	if !notFound {
 		return nil
 	}
-	if reflect.TypeOf(service).Kind() != reflect.Ptr {
+	if reflect.TypeOf(service).Kind() != reflect.Pointer {
 		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()
@@ -255,7 +256,7 @@ func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	if err != nil {
 		return err
 	}
-	if reflect.TypeOf(service).Kind() != reflect.Ptr {
+	if reflect.TypeOf(service).Kind() != reflect.Pointer {
 		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()

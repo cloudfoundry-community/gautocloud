@@ -74,7 +74,7 @@ func (i ArgInterceptor) Intercept(current, found interface{}) (interface{}, erro
 		schema = found
 	}
 	sType := reflect.TypeOf(schema)
-	if sType.Kind() == reflect.Ptr {
+	if sType.Kind() == reflect.Pointer {
 		return i.parse(schema, found)
 	}
 	final, err := i.parse(reflect.New(sType).Interface(), interceptor.InterfaceAsPtrCopy(found))
