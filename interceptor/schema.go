@@ -33,7 +33,7 @@ func schema(current, found interface{}) (interface{}, error) {
 	currentType := reflect.TypeOf(schema)
 	currentValue := reflect.ValueOf(schema)
 
-	if currentType.Kind() == reflect.Ptr {
+	if currentType.Kind() == reflect.Pointer {
 		currentCopyElem := currentValue.Elem()
 		currentCopy := currentCopyElem.Interface()
 		if _, ok := currentCopy.(SchemaIntercepter); !ok {

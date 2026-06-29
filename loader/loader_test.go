@@ -131,7 +131,7 @@ var _ = Describe("Loader", func() {
 				data, err := loader.GetFirst(connector.Id())
 				Expect(err).ToNot(HaveOccurred())
 				Expect(data).Should(BeEquivalentTo(&srv1Expected))
-				Expect(reflect.TypeOf(data).Kind()).Should(Equal(reflect.Ptr))
+				Expect(reflect.TypeOf(data).Kind()).Should(Equal(reflect.Pointer))
 			})
 		})
 		It("should return an error if no content cannot be given", func() {
@@ -176,8 +176,8 @@ var _ = Describe("Loader", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(data).Should(BeEquivalentTo([]interface{}{&srv1Expected, &srv2Expected}))
 				Expect(reflect.TypeOf(data).Kind()).Should(Equal(reflect.Slice))
-				Expect(reflect.TypeOf(data[0]).Kind()).Should(Equal(reflect.Ptr))
-				Expect(reflect.TypeOf(data[1]).Kind()).Should(Equal(reflect.Ptr))
+				Expect(reflect.TypeOf(data[0]).Kind()).Should(Equal(reflect.Pointer))
+				Expect(reflect.TypeOf(data[1]).Kind()).Should(Equal(reflect.Pointer))
 			})
 		})
 		It("should return an empty slice if no content cannot be given", func() {

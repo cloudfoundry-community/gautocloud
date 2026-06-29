@@ -65,7 +65,7 @@ type Unmarshaler interface {
 // UnmarshalToValue Decode a map of credentials into a reflected Value
 func UnmarshalToValue(serviceCredentials map[string]interface{}, ps reflect.Value, noDefaultVal bool) error {
 	v := ps
-	if ps.Kind() == reflect.Ptr {
+	if ps.Kind() == reflect.Pointer {
 		v = ps.Elem()
 	}
 	t := v.Type()
@@ -130,7 +130,7 @@ func UnmarshalNoDefault(serviceCredentials map[string]interface{}, obj interface
 }
 
 func isUnmarshaler(vField reflect.Value) bool {
-	if vField.Type().Kind() != reflect.Ptr {
+	if vField.Type().Kind() != reflect.Pointer {
 		return false
 	}
 	ptrVal := vField
@@ -219,7 +219,7 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 				dataValueElem = dataValueElem.Elem()
 			}
 			newElem = dataValueElem
-			if vField.Type().Elem().Kind() == reflect.Ptr {
+			if vField.Type().Elem().Kind() == reflect.Pointer {
 				newElem = reflect.New(vField.Type().Elem().Elem())
 				if isUnmarshaler(newElem) {
 					err := newElem.Interface().(Unmarshaler).UnmarshalCloud(dataValueElem.Interface())
@@ -250,7 +250,7 @@ func affect(data interface{}, vField reflect.Value, noDefaultVal bool) error {
 		vField.SetFloat(parseForFloat(data, vField))
 	case reflect.Float64:
 		vField.SetFloat(parseForFloat(data, vField))
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
 		}
@@ -300,7 +300,7 @@ func unmarshalUntypedMap(data map[string]interface{}, vField reflect.Value, noDe
 			continue
 		}
 		typeElem := vField.Type().Elem()
-		if typeElem.Kind() == reflect.Ptr {
+		if typeElem.Kind() == reflect.Pointer {
 			typeElem = typeElem.Elem()
 		}
 		newElem := reflect.New(typeElem)
@@ -308,7 +308,7 @@ func unmarshalUntypedMap(data map[string]interface{}, vField reflect.Value, noDe
 		if err != nil {
 			return err
 		}
-		if vField.Type().Elem().Kind() != reflect.Ptr {
+		if vField.Type().Elem().Kind() != reflect.Pointer {
 			newElem = newElem.Elem()
 		}
 		vField.SetMapIndex(reflect.ValueOf(name), newElem)
@@ -523,7 +523,7 @@ func convertStringValue(defVal string, vField reflect.Value) (interface{}, error
 			finalField = reflect.Append(finalField, reflect.ValueOf(finDefVal))
 		}
 		return finalField.Interface(), nil
-	case reflect.Ptr:
+	case reflect.Pointer:
 		if vField.IsNil() {
 			vField.Set(reflect.New(vField.Type().Elem()))
 		}

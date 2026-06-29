@@ -58,7 +58,7 @@ func (i ConfigFileInterceptor) Intercept(current, found interface{}) (interface{
 	if err != nil {
 		return nil, err
 	}
-	if reflect.TypeOf(schema).Kind() == reflect.Ptr {
+	if reflect.TypeOf(schema).Kind() == reflect.Pointer {
 		return interceptor.NewOverwrite().Intercept(schemaPtr, found)
 	}
 	return interceptor.NewOverwrite().Intercept(
