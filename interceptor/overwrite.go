@@ -20,7 +20,9 @@ func overwrite(current, found interface{}) (interface{}, error) {
 	cVal := reflect.ValueOf(current)
 	fVal := reflect.ValueOf(found)
 	isPointer := false
-	if cVal.Kind() == reflect.Ptr {
+	cValKind := cVal.Kind()
+	ptrKind := reflect.Ptr //nolint:govet
+	if cValKind == ptrKind {
 		cVal = cVal.Elem()
 		fVal = fVal.Elem()
 		isPointer = true

@@ -44,7 +44,8 @@ func (i CliInterceptor) Intercept(current, found interface{}) (interface{}, erro
 	if err != nil {
 		return nil, err
 	}
-	if reflect.TypeOf(schema).Kind() == reflect.Ptr {
+	schemaKind := reflect.TypeOf(schema).Kind()
+	if schemaKind == reflect.Ptr { //nolint:govet
 		return interceptor.NewOverwrite().Intercept(schemaPtr, found)
 	}
 	return interceptor.NewOverwrite().Intercept(

@@ -204,7 +204,7 @@ func getDocMap() map[string]Doc {
 		givenData := store[0].Data
 		givenType := reflect.TypeOf(givenData)
 		giventTypePkg := givenType
-		if giventTypePkg.Kind() == reflect.Ptr {
+		if giventTypePkg.Kind() == reflect.Ptr { //nolint:govet
 			giventTypePkg = giventTypePkg.Elem()
 		}
 		docUrl := generateDocUrl(giventTypePkg.PkgPath())
@@ -214,7 +214,7 @@ func getDocMap() map[string]Doc {
 			connName = path.Base(path.Dir(connType.PkgPath()))
 		}
 		givenValue := reflect.ValueOf(givenData)
-		if givenType.Kind() == reflect.Ptr {
+		if givenType.Kind() == reflect.Ptr { //nolint:govet
 			givenValue = givenValue.Elem()
 		}
 		typeWrapped := ""
@@ -223,7 +223,7 @@ func getDocMap() map[string]Doc {
 			typeShort := typeShortSplit[len(typeShortSplit)-1]
 			if len(typeShortSplit) > 1 && typeShort == givenValue.Type().Field(0).Name {
 				typeField := givenValue.Field(0).Type()
-				if typeField.Kind() == reflect.Ptr {
+			if typeField.Kind() == reflect.Ptr { //nolint:govet
 					typeField = typeField.Elem()
 				}
 				if strings.Contains(giventTypePkg.PkgPath(), "gautocloud") {
@@ -287,7 +287,7 @@ func isCloseable(data interface{}) bool {
 	if resp != (reflect.Value{}) {
 		return true
 	}
-	if givenType.Kind() == reflect.Ptr {
+	if givenType.Kind() == reflect.Ptr { //nolint:govet
 		v = v.Elem()
 	} else {
 		return false
@@ -304,7 +304,7 @@ func generateDocStruct(data interface{}) DocStruct {
 	}
 	fields := make([]DocField, 0)
 	v := reflect.ValueOf(data)
-	if givenType.Kind() == reflect.Ptr {
+	if givenType.Kind() == reflect.Ptr { //nolint:govet
 		v = v.Elem()
 	}
 	t := v.Type()
@@ -312,7 +312,7 @@ func generateDocStruct(data interface{}) DocStruct {
 		vField := v.Field(index)
 		tField := t.Field(index)
 		docType := vField.Type()
-		if docType.Kind() == reflect.Ptr || docType.Kind() == reflect.Slice {
+		if docType.Kind() == reflect.Ptr || docType.Kind() == reflect.Slice { //nolint:govet
 			docType = docType.Elem()
 		}
 		docUrl := generateDocUrl(docType.PkgPath())

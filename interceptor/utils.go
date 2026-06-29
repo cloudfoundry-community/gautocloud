@@ -6,7 +6,7 @@ import (
 
 func InterfaceAsPtr(i interface{}) interface{} {
 	iType := reflect.TypeOf(i)
-	if iType.Kind() == reflect.Ptr {
+	if iType.Kind() == reflect.Ptr { //nolint:govet
 		return i
 	}
 	return reflect.New(iType).Interface()
@@ -14,7 +14,7 @@ func InterfaceAsPtr(i interface{}) interface{} {
 
 func InterfaceAsPtrCopy(i interface{}) interface{} {
 	iType := reflect.TypeOf(i)
-	if iType.Kind() == reflect.Ptr {
+	if iType.Kind() == reflect.Ptr { //nolint:govet
 		return i
 	}
 	iPtr := reflect.New(iType)

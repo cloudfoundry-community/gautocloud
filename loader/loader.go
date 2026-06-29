@@ -180,7 +180,7 @@ func (l GautocloudLoader) Inject(service interface{}) error {
 	if !notFound {
 		return nil
 	}
-	if reflect.TypeOf(service).Kind() != reflect.Ptr {
+	if reflect.TypeOf(service).Kind() != reflect.Ptr { //nolint:govet
 		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()
@@ -255,7 +255,8 @@ func (l GautocloudLoader) InjectFromId(id string, service interface{}) error {
 	if err != nil {
 		return err
 	}
-	if reflect.TypeOf(service).Kind() != reflect.Ptr {
+	serviceKind := reflect.TypeOf(service).Kind()
+	if serviceKind != reflect.Ptr { //nolint:govet
 		return NewErrPtrNotGiven()
 	}
 	reflectType := reflect.TypeOf(service).Elem()
